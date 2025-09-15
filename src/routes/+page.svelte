@@ -1,12 +1,29 @@
 <script lang="ts">
-	import { Switch } from '$lib';
+	import { Switch, MultiSwitch } from '$lib';
 
 	let horizontalChecked = $state(false);
 	let verticalChecked = $state(true);
 	let disabledChecked = $state(false);
 
+	let multiStep3 = $state(0);
+	let multiStep4 = $state(1);
+	let multiStepVertical = $state(2);
+	let temperatureStep = $state(1);
+
+	// Temperature step styles - cold to hot
+	const temperatureStyles = [
+		{ backgroundColor: '#3b82f6', thumbColor: '#1e40af', borderColor: '#2563eb' }, // Cold - Blue
+		{ backgroundColor: '#10b981', thumbColor: '#047857', borderColor: '#059669' }, // Warm - Green
+		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', borderColor: '#f59e0b' }, // Hot - Orange
+		{ backgroundColor: '#ef4444', thumbColor: '#dc2626', borderColor: '#ef4444' }  // Very Hot - Red
+	];
+
 	function onToggle(checked: boolean, type: string) {
 		console.log(`${type} switch toggled:`, checked);
+	}
+
+	function onStepChange(index: number, type: string) {
+		console.log(`${type} multi-switch changed to step:`, index);
 	}
 </script>
 
@@ -104,6 +121,72 @@
 				<Switch size={80} direction="vertical" />
 				<span>Large Vertical</span>
 			</div>
+		</div>
+	</section>
+
+	<section>
+		<h2>Multi-Step Switches</h2>
+		<div class="switch-demo">
+			<MultiSwitch
+				bind:selectedIndex={multiStep3}
+				steps={3}
+				size={60}
+				onStepChange={(index) => onStepChange(index, '3-step')}
+			>
+				{#snippet children({ selectedIndex })}
+					<span class="thumb-content">
+						{selectedIndex + 1}
+					</span>
+				{/snippet}
+			</MultiSwitch>
+			<span>3-Step Switch (Current: {multiStep3 + 1})</span>
+		</div>
+		<div class="switch-demo">
+			<MultiSwitch
+				bind:selectedIndex={multiStep4}
+				steps={4}
+				size={80}
+				onStepChange={(index) => onStepChange(index, '4-step')}
+			>
+				{#snippet children({ selectedIndex })}
+					<span class="thumb-content">
+						{['Low', 'Med', 'High', 'Max'][selectedIndex]}
+					</span>
+				{/snippet}
+			</MultiSwitch>
+			<span>4-Step Switch (Current: {['Low', 'Medium', 'High', 'Maximum'][multiStep4]})</span>
+		</div>
+		<div class="switch-demo vertical">
+			<MultiSwitch
+				bind:selectedIndex={multiStepVertical}
+				steps={3}
+				direction="vertical"
+				size={50}
+				onStepChange={(index) => onStepChange(index, 'vertical 3-step')}
+			>
+				{#snippet children({ selectedIndex })}
+					<span class="thumb-content">
+						{['🔥', '💧', '❄️'][selectedIndex]}
+					</span>
+				{/snippet}
+			</MultiSwitch>
+			<span>Vertical Multi-Switch (Current: {['Hot', 'Warm', 'Cold'][multiStepVertical]})</span>
+		</div>
+		<div class="switch-demo">
+			<MultiSwitch
+				bind:selectedIndex={temperatureStep}
+				steps={4}
+				size={70}
+				stepStyles={temperatureStyles}
+				onStepChange={(index) => onStepChange(index, 'temperature')}
+			>
+				{#snippet children({ selectedIndex })}
+					<span class="thumb-content" style="color: white; font-weight: bold;">
+						{['❄️', '🌡️', '🔥', '🌋'][selectedIndex]}
+					</span>
+				{/snippet}
+			</MultiSwitch>
+			<span>Temperature Control (Current: {['Cold', 'Warm', 'Hot', 'Very Hot'][temperatureStep]})</span>
 		</div>
 	</section>
 </div>

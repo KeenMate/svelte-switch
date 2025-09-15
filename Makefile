@@ -73,3 +73,17 @@ update: ## Update dependencies
 
 outdated: ## Check for outdated dependencies
 	npm outdated
+
+# Publishing
+package: ## Build package for distribution
+	npm run package
+
+publish-check: package ## Validate package before publishing
+	@echo "Package validation complete!"
+	@echo "To publish: make publish"
+
+publish: package ## Publish package to npm
+	npm publish
+
+publish-dry: package ## Dry run publish to see what would be published
+	npm publish --dry-run
