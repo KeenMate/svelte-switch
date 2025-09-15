@@ -1,0 +1,122 @@
+// Main Sass file for Svelte Switch Component
+
+// Variables
+$border-radius: 4px;
+$margin: 2px; // 2px margin/padding for top, bottom, left, right
+$switch-height: 32px; // Fixed switch height
+$thumb-height: 28px; // Fixed thumb height
+
+// Colors
+$switch-bg-off: #ccc;
+$switch-bg-on: #4299e1;
+$thumb-bg: white;
+$focus-color: rgba(66, 153, 225, 0.5);
+
+// Animations
+$transition-duration: 0.3s;
+$transition-easing: ease;
+
+// Effects
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+$focus-shadow: 0 0 0 3px $focus-color;
+
+// Calculation Functions
+@function slider-height() {
+  @return $thumb-height; // Use explicit thumb height (28px)
+}
+
+@function switch-width() {
+  @return ($thumb-height * 2) + ($margin * 2); // (28px * 2) + (2px * 2) = 60px
+}
+
+@function thumb-offset() {
+  @return switch-width() - $thumb-height - ($margin * 2); // 60px - 28px - 6px = 26px
+}
+
+// Mixins
+@mixin transition($property: all) {
+  transition: $property $transition-duration $transition-easing;
+}
+
+@mixin focus-outline {
+  &:focus-visible {
+    outline: none;
+    box-shadow: $focus-shadow;
+  }
+}
+
+@mixin disabled-state {
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// Switch Component Styles
+.switch {
+  position: relative;
+  background-color: $switch-bg-off;
+  border-radius: $border-radius;
+  cursor: pointer;
+  @include transition(background-color);
+  outline: none;
+  user-select: none;
+
+  // Default dimensions (can be overridden by component)
+  width: switch-width(); // (28px * 2) + 4px = 60px
+  height: $switch-height; // 32px
+
+  // Expose Sass calculations as CSS custom properties
+  --thumb-offset: #{thumb-offset()};
+  --margin: #{$margin};
+  --switch-width: #{switch-width()};
+  --switch-height: #{$switch-height};
+  --thumb-height: #{$thumb-height};
+
+  // Scale factor (default 1, overridden by component)
+  --scale: 1;
+
+  // Scaled dimensions using CSS calc()
+  width: calc(var(--switch-width) * var(--scale));
+  height: calc(var(--switch-height) * var(--scale));
+
+  &.vertical {
+    width: calc(var(--switch-height) * var(--scale));
+    height: calc(var(--switch-width) * var(--scale));
+  }
+
+  @include focus-outline;
+
+  &.checked {
+    background-color: $switch-bg-on;
+  }
+
+  @include disabled-state;
+}
+
+.thumb {
+  position: absolute;
+  background-color: $thumb-bg;
+  border-radius: $border-radius;
+  top: $margin;
+  left: $margin;
+  @include transition(transform);
+  box-shadow: $shadow;
+
+  // Scaled dimensions using CSS calc()
+  width: calc(var(--thumb-height) * var(--scale));
+  height: calc(var(--thumb-height) * var(--scale));
+  top: calc(var(--margin) * var(--scale));
+  left: calc(var(--margin) * var(--scale));
+
+  // Center content within thumb
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.switch.vertical .thumb {
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(var(--margin) * var(--scale));
+}
