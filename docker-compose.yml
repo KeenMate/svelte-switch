@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  svelte-switch-showcase:
+    build: .
+    ports:
+      - "3000:80"
+    container_name: svelte-switch-demo

@@ -1,276 +1,167 @@
 <script lang="ts">
 	import { Switch, MultiSwitch } from '$lib';
 
-	let horizontalChecked = $state(false);
-	let verticalChecked = $state(true);
-	let disabledChecked = $state(false);
+	let basicChecked = $state(false);
+	let featureIndex = $state(1);
 
-	let multiStep3 = $state(0);
-	let multiStep4 = $state(1);
-	let multiStepVertical = $state(2);
-	let temperatureStep = $state(1);
-
-	// Temperature step styles - cold to hot
-	const temperatureStyles = [
-		{ backgroundColor: '#3b82f6', thumbColor: '#1e40af', borderColor: '#2563eb' }, // Cold - Blue
-		{ backgroundColor: '#10b981', thumbColor: '#047857', borderColor: '#059669' }, // Warm - Green
-		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', borderColor: '#f59e0b' }, // Hot - Orange
-		{ backgroundColor: '#ef4444', thumbColor: '#dc2626', borderColor: '#ef4444' }  // Very Hot - Red
+	// Feature showcase styles
+	const featureStyles = [
+		{ backgroundColor: '#6366f1', thumbColor: '#4338ca', borderColor: '#5b21b6' }, // Purple
+		{ backgroundColor: '#10b981', thumbColor: '#047857', borderColor: '#059669' }, // Green
+		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', borderColor: '#f59e0b' }, // Orange
 	];
-
-	function onToggle(checked: boolean, type: string) {
-		console.log(`${type} switch toggled:`, checked);
-	}
-
-	function onStepChange(index: number, type: string) {
-		console.log(`${type} multi-switch changed to step:`, index);
-	}
 </script>
 
-<h1>Svelte Switch Component Demo</h1>
-
-<div class="demo-container">
-	<section>
-		<h2>Horizontal Switch (Default)</h2>
-		<div class="switch-demo">
-			<Switch
-				bind:checked={horizontalChecked}
-				onToggle={(checked) => onToggle(checked, 'Horizontal')}
-			/>
-			<span>Status: {horizontalChecked ? 'ON' : 'OFF'}</span>
+<div class="row">
+	<div class="col-12">
+		<div class="jumbotron bg-light p-5 rounded">
+			<h1 class="display-4">🔄 Svelte Switch v1.0</h1>
+			<p class="lead">
+				A modern, customizable switch component library for Svelte 5
+				with support for both binary and multi-step switches.
+			</p>
+			<hr class="my-4">
+			<p>
+				This showcase demonstrates all the key features and capabilities of the library.
+				Use the navigation menu to explore different aspects of the components.
+			</p>
 		</div>
-	</section>
-
-	<section>
-		<h2>Vertical Switch</h2>
-		<div class="switch-demo vertical">
-			<Switch
-				bind:checked={verticalChecked}
-				direction="vertical"
-				onToggle={(checked) => onToggle(checked, 'Vertical')}
-			/>
-			<span>Status: {verticalChecked ? 'ON' : 'OFF'}</span>
-		</div>
-	</section>
-
-	<section>
-		<h2>Different Sizes</h2>
-		<div class="size-demo">
-			<div class="size-item">
-				<Switch size={30} />
-				<span>Small (30px)</span>
-			</div>
-			<div class="size-item">
-				<Switch size={50} checked />
-				<span>Medium (50px)</span>
-			</div>
-			<div class="size-item">
-				<Switch size={70} />
-				<span>Large (70px)</span>
-			</div>
-		</div>
-	</section>
-
-	<section>
-		<h2>Disabled State</h2>
-		<div class="switch-demo">
-			<Switch
-				bind:checked={disabledChecked}
-				disabled
-			/>
-			<span>Disabled Switch</span>
-		</div>
-	</section>
-
-	<section>
-		<h2>Custom Content (Slot)</h2>
-		<div class="switch-demo">
-			<Switch size={60}>
-				{#snippet children({ checked })}
-					<span class="thumb-content">
-						{checked ? '✓' : '✗'}
-					</span>
-				{/snippet}
-			</Switch>
-			<span>Switch with Icons</span>
-		</div>
-		<div class="switch-demo">
-			<Switch size={80}>
-				{#snippet children({ checked })}
-					<span class="thumb-content">
-						{checked ? 'ON' : 'OFF'}
-					</span>
-				{/snippet}
-			</Switch>
-			<span>Switch with Text</span>
-		</div>
-	</section>
-
-	<section>
-		<h2>Vertical Different Sizes</h2>
-		<div class="size-demo vertical-sizes">
-			<div class="size-item">
-				<Switch size={40} direction="vertical" />
-				<span>Small Vertical</span>
-			</div>
-			<div class="size-item">
-				<Switch size={60} direction="vertical" checked />
-				<span>Medium Vertical</span>
-			</div>
-			<div class="size-item">
-				<Switch size={80} direction="vertical" />
-				<span>Large Vertical</span>
-			</div>
-		</div>
-	</section>
-
-	<section>
-		<h2>Multi-Step Switches</h2>
-		<div class="switch-demo">
-			<MultiSwitch
-				bind:selectedIndex={multiStep3}
-				steps={3}
-				size={60}
-				onStepChange={(index) => onStepChange(index, '3-step')}
-			>
-				{#snippet children({ selectedIndex })}
-					<span class="thumb-content">
-						{selectedIndex + 1}
-					</span>
-				{/snippet}
-			</MultiSwitch>
-			<span>3-Step Switch (Current: {multiStep3 + 1})</span>
-		</div>
-		<div class="switch-demo">
-			<MultiSwitch
-				bind:selectedIndex={multiStep4}
-				steps={4}
-				size={80}
-				onStepChange={(index) => onStepChange(index, '4-step')}
-			>
-				{#snippet children({ selectedIndex })}
-					<span class="thumb-content">
-						{['Low', 'Med', 'High', 'Max'][selectedIndex]}
-					</span>
-				{/snippet}
-			</MultiSwitch>
-			<span>4-Step Switch (Current: {['Low', 'Medium', 'High', 'Maximum'][multiStep4]})</span>
-		</div>
-		<div class="switch-demo vertical">
-			<MultiSwitch
-				bind:selectedIndex={multiStepVertical}
-				steps={3}
-				direction="vertical"
-				size={50}
-				onStepChange={(index) => onStepChange(index, 'vertical 3-step')}
-			>
-				{#snippet children({ selectedIndex })}
-					<span class="thumb-content">
-						{['🔥', '💧', '❄️'][selectedIndex]}
-					</span>
-				{/snippet}
-			</MultiSwitch>
-			<span>Vertical Multi-Switch (Current: {['Hot', 'Warm', 'Cold'][multiStepVertical]})</span>
-		</div>
-		<div class="switch-demo">
-			<MultiSwitch
-				bind:selectedIndex={temperatureStep}
-				steps={4}
-				size={70}
-				stepStyles={temperatureStyles}
-				onStepChange={(index) => onStepChange(index, 'temperature')}
-			>
-				{#snippet children({ selectedIndex })}
-					<span class="thumb-content" style="color: white; font-weight: bold;">
-						{['❄️', '🌡️', '🔥', '🌋'][selectedIndex]}
-					</span>
-				{/snippet}
-			</MultiSwitch>
-			<span>Temperature Control (Current: {['Cold', 'Warm', 'Hot', 'Very Hot'][temperatureStep]})</span>
-		</div>
-	</section>
+	</div>
 </div>
 
-<style lang="scss">
-	// Sass variables for demo styling
-	$max-width: 800px;
-	$section-bg: #f8fafc;
-	$section-border: #e2e8f0;
-	$section-radius: 8px;
-	$primary-text: #2d3748;
-	$secondary-text: #4a5568;
-	$muted-text: #718096;
-	$font-stack: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+<div class="row mt-4">
+	<div class="col-lg-6">
+		<div class="card h-100">
+			<div class="card-body">
+				<h5 class="card-title">🔘 Binary Switch</h5>
+				<p class="card-text">
+					Classic on/off toggle functionality with customizable sizing, orientation, and styling options.
+				</p>
+				<div class="text-center py-3">
+					<Switch
+						bind:checked={basicChecked}
+						size={60}
+					>
+						{#snippet children({ checked })}
+							<span class="thumb-content">
+								{checked ? '✓' : '✗'}
+							</span>
+						{/snippet}
+					</Switch>
+				</div>
+				<a href="/basic" class="btn btn-primary">Learn More</a>
+			</div>
+		</div>
+	</div>
 
-	.demo-container {
-		max-width: $max-width;
-		margin: 0 auto;
-		padding: 2rem;
-		font-family: $font-stack;
-	}
+	<div class="col-lg-6">
+		<div class="card h-100">
+			<div class="card-body">
+				<h5 class="card-title">🎚️ Multi-Step Switch</h5>
+				<p class="card-text">
+					Variable step switches perfect for volume controls, temperature settings, and multi-option selections.
+				</p>
+				<div class="text-center py-3">
+					<MultiSwitch
+						bind:selectedIndex={featureIndex}
+						steps={3}
+						size={70}
+						stepStyles={featureStyles}
+					>
+						{#snippet children({ selectedIndex })}
+							<span class="thumb-content" style="color: white; font-weight: bold;">
+								{['🚀', '⭐', '🔥'][selectedIndex]}
+							</span>
+						{/snippet}
+					</MultiSwitch>
+				</div>
+				<a href="/multi-step" class="btn btn-outline-primary">Explore</a>
+			</div>
+		</div>
+	</div>
+</div>
 
-	section {
-		margin-bottom: 3rem;
-		padding: 1.5rem;
-		border: 1px solid $section-border;
-		border-radius: $section-radius;
-		background-color: $section-bg;
-	}
+<div class="row mt-4">
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">🎨 Custom Styling</h5>
+				<p class="card-text">
+					Visual customization options, color theming, and CSS class configurations.
+				</p>
+				<a href="/custom-styling" class="btn btn-outline-primary">Customize</a>
+			</div>
+		</div>
+	</div>
 
-	h1 {
-		text-align: center;
-		color: $primary-text;
-		margin-bottom: 2rem;
-	}
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">📏 Sizes & Orientations</h5>
+				<p class="card-text">
+					Flexible sizing and both horizontal and vertical orientation support.
+				</p>
+				<a href="/sizes" class="btn btn-outline-primary">Resize</a>
+			</div>
+		</div>
+	</div>
 
-	h2 {
-		color: $secondary-text;
-		margin-bottom: 1rem;
-		font-size: 1.25rem;
-	}
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">⌨️ Accessibility</h5>
+				<p class="card-text">
+					Full keyboard navigation, ARIA support, and screen reader compatibility.
+				</p>
+				<a href="/basic" class="btn btn-outline-primary">Test</a>
+			</div>
+		</div>
+	</div>
+</div>
 
-	.switch-demo {
-		display: flex;
-		align-items: center;
-		gap: 1rem;
+<div class="row mt-5">
+	<div class="col-12">
+		<div class="alert alert-info">
+			<h6 class="alert-heading">🚀 Quick Start</h6>
+			<div class="row">
+				<div class="col-md-6">
+					<strong>Installation:</strong>
+					<pre class="bg-dark text-light p-2 rounded mt-2"><code>npm install @keenmate/svelte-switch</code></pre>
+				</div>
+				<div class="col-md-6">
+					<strong>Basic Usage:</strong>
+					<pre class="bg-dark text-light p-2 rounded mt-2"><code>&lt;Switch bind:checked={'{myValue}'} /&gt;</code></pre>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
-		&.vertical {
-			flex-direction: column;
-			align-items: center;
-			gap: 1rem;
-		}
-	}
+<div class="row mt-4">
+	<div class="col-12">
+		<div class="alert alert-success">
+			<h6 class="alert-heading">✨ Key Features</h6>
+			<div class="row">
+				<div class="col-md-6">
+					<ul class="mb-0">
+						<li><strong>Zero Dependencies</strong> - Only peer dependency on Svelte 5</li>
+						<li><strong>TypeScript Support</strong> - Complete type safety</li>
+						<li><strong>Accessibility</strong> - Full keyboard and screen reader support</li>
+					</ul>
+				</div>
+				<div class="col-md-6">
+					<ul class="mb-0">
+						<li><strong>Custom Content</strong> - Slot support for icons and text</li>
+						<li><strong>Flexible Styling</strong> - SCSS variables and CSS custom properties</li>
+						<li><strong>Modern Svelte 5</strong> - Built with latest Svelte features</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 
-	.size-demo {
-		display: flex;
-		gap: 2rem;
-		flex-wrap: wrap;
-		align-items: center;
-
-		&.vertical-sizes {
-			align-items: flex-start;
-		}
-	}
-
-	.size-item {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.vertical-sizes .size-item {
-		flex-direction: row;
-		align-items: center;
-		gap: 1rem;
-	}
-
-	span {
-		font-size: 0.875rem;
-		color: $muted-text;
-		font-weight: 500;
-	}
-
+<style>
 	:global(.thumb-content) {
 		font-size: 0.75rem;
 		font-weight: 600;
