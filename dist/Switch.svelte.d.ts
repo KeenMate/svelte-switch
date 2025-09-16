@@ -1,8 +1,8 @@
-type Direction = 'horizontal' | 'vertical';
+type Orientation = 'horizontal' | 'vertical';
 interface Props {
     checked?: boolean;
-    disabled?: boolean;
-    direction?: Direction;
+    isDisabled?: boolean;
+    orientation?: Orientation;
     size?: number;
     onToggle?: (checked: boolean) => void;
     children?: import('svelte').Snippet<[{

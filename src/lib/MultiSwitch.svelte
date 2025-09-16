@@ -1,5 +1,5 @@
 <script lang="ts">
-	type Direction = 'horizontal' | 'vertical';
+	type Orientation = 'horizontal' | 'vertical';
 
 	interface StepStyle {
 		backgroundColor?: string;
@@ -9,10 +9,10 @@
 
 	interface Props {
 		selectedIndex?: number;
-		disabled?: boolean;
-		direction?: Direction;
+		isDisabled?: boolean;
+		orientation?: Orientation;
 		size?: number;
-		steps?: number;
+		stepsCount?: number;
 		stepStyles?: StepStyle[];
 		onStepChange?: (index: number) => void;
 		children?: import('svelte').Snippet<[{ selectedIndex: number, stepIndex: number, isSelected: boolean }]>;
@@ -20,28 +20,28 @@
 
 	let {
 		selectedIndex = $bindable(0),
-		disabled = false,
-		direction = 'horizontal',
+		isDisabled = false,
+		orientation = 'horizontal',
 		size = 50,
-		steps = 3,
+		stepsCount = 3,
 		stepStyles = [],
 		onStepChange,
 		children
 	}: Props = $props();
 
-	const isVertical = $derived(direction === 'vertical');
+	const isVertical = $derived(orientation === 'vertical');
 
 	// Calculate scale factor based on default size (50px)
 	const scale = $derived(size / 50);
 
 	function selectStep(index: number) {
-		if (disabled) return;
+		if (isDisabled) return;
 		selectedIndex = index;
 		onStepChange?.(index);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (disabled) return;
+		if (isDisabled) return;
 
 		if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
 			event.preventDefault();
@@ -49,7 +49,7 @@
 			onStepChange?.(selectedIndex);
 		} else if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
 			event.preventDefault();
-			selectedIndex = Math.min(steps - 1, selectedIndex + 1);
+			selectedIndex = Math.min(stepsCount - 1, selectedIndex + 1);
 			onStepChange?.(selectedIndex);
 		}
 	}
@@ -59,29 +59,29 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="multi-switch"
-	class:disabled
+	class:disabled={isDisabled}
 	class:vertical={isVertical}
 	style:--scale="{scale}"
-	style:--steps="{steps}"
+	style:--steps="{stepsCount}"
 	style:--current-bg-color="{stepStyles[selectedIndex]?.backgroundColor || ''}"
 	style:--current-thumb-color="{stepStyles[selectedIndex]?.thumbColor || ''}"
 	style:--current-border-color="{stepStyles[selectedIndex]?.borderColor || ''}"
 	onclick={(e) => {
-		if (disabled) return;
+		if (isDisabled) return;
 		const rect = e.currentTarget.getBoundingClientRect();
 		const pos = isVertical
 			? (e.clientY - rect.top) / rect.height
 			: (e.clientX - rect.left) / rect.width;
-		const step = Math.floor(pos * steps);
-		selectStep(Math.max(0, Math.min(steps - 1, step)));
+		const step = Math.floor(pos * stepsCount);
+		selectStep(Math.max(0, Math.min(stepsCount - 1, step)));
 	}}
 	onkeydown={handleKeydown}
 	role="slider"
 	aria-valuemin="0"
-	aria-valuemax="{steps - 1}"
+	aria-valuemax="{stepsCount - 1}"
 	aria-valuenow="{selectedIndex}"
-	aria-disabled={disabled}
-	tabindex={disabled ? -1 : 0}
+	aria-disabled={isDisabled}
+	tabindex={isDisabled ? -1 : 0}
 >
 	<div
 		class="thumb"
@@ -93,7 +93,7 @@
 	</div>
 
 	<!-- Step indicators/background segments -->
-	{#each Array(steps) as _, index}
+	{#each Array(stepsCount) as _, index}
 		<div
 			class="step-segment"
 			class:active={index === selectedIndex}

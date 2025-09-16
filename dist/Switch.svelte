@@ -1,10 +1,10 @@
 <script lang="ts">
-	type Direction = 'horizontal' | 'vertical';
+	type Orientation = 'horizontal' | 'vertical';
 
 	interface Props {
 		checked?: boolean;
-		disabled?: boolean;
-		direction?: Direction;
+		isDisabled?: boolean;
+		orientation?: Orientation;
 		size?: number;
 		onToggle?: (checked: boolean) => void;
 		children?: import('svelte').Snippet<[{ checked: boolean }]>;
@@ -12,20 +12,20 @@
 
 	let {
 		checked = $bindable(false),
-		disabled = false,
-		direction = 'horizontal',
+		isDisabled = false,
+		orientation = 'horizontal',
 		size = 50,
 		onToggle,
 		children
 	}: Props = $props();
 
-	const isVertical = $derived(direction === 'vertical');
+	const isVertical = $derived(orientation === 'vertical');
 
 	// Calculate scale factor based on default size (50px)
 	const scale = $derived(size / 50);
 
 	function toggle() {
-		if (disabled) return;
+		if (isDisabled) return;
 		checked = !checked;
 		onToggle?.(checked);
 	}
@@ -43,15 +43,15 @@
 <div
 	class="switch"
 	class:checked
-	class:disabled
+	class:disabled={isDisabled}
 	class:vertical={isVertical}
 	style:--scale="{scale}"
 	onclick={toggle}
 	onkeydown={handleKeydown}
 	role="switch"
 	aria-checked={checked}
-	aria-disabled={disabled}
-	tabindex={disabled ? -1 : 0}
+	aria-disabled={isDisabled}
+	tabindex={isDisabled ? -1 : 0}
 >
 	<div
 		class="thumb"

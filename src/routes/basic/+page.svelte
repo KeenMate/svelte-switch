@@ -4,8 +4,8 @@
 
 	// Basic switch configuration
 	let checked = $state(false);
-	let disabled = $state(false);
-	let direction = $state<'horizontal' | 'vertical'>('horizontal');
+	let isDisabled = $state(false);
+	let orientation = $state<'horizontal' | 'vertical'>('horizontal');
 	let size = $state(50);
 
 	function onToggle(checked: boolean) {
@@ -28,8 +28,8 @@
 			<div class="text-center">
 				<Switch
 					bind:checked
-					{disabled}
-					{direction}
+					{isDisabled}
+					{orientation}
 					{size}
 					{onToggle}
 				/>
@@ -63,7 +63,7 @@
 					<input
 						class="form-check-input"
 						type="checkbox"
-						bind:checked={disabled}
+						bind:checked={isDisabled}
 						id="disabledControl"
 					/>
 					<label class="form-check-label" for="disabledControl">
@@ -73,8 +73,8 @@
 			</div>
 
 			<div class="form-group mb-3">
-				<label class="form-label">Direction</label>
-				<select class="form-select form-select-sm" bind:value={direction}>
+				<label class="form-label">Orientation</label>
+				<select class="form-select form-select-sm" bind:value={orientation}>
 					<option value="horizontal">Horizontal</option>
 					<option value="vertical">Vertical</option>
 				</select>
@@ -98,16 +98,16 @@
 			<p><code>checked</code> - Boolean state of the switch (bindable)</p>
 
 			<h6>Optional Properties</h6>
-			<p><code>disabled</code> - Disable switch interaction (default: false)</p>
-			<p><code>direction</code> - "horizontal" or "vertical" orientation (default: "horizontal")</p>
+			<p><code>isDisabled</code> - Disable switch interaction (default: false)</p>
+			<p><code>orientation</code> - "horizontal" or "vertical" orientation (default: "horizontal")</p>
 			<p><code>size</code> - Switch size in pixels (default: 50)</p>
 			<p><code>onToggle</code> - Callback function when switch state changes</p>
 
 			<h6>Usage Example</h6>
 			<pre><code>&lt;Switch
   bind:checked={'{isEnabled}'}
-  disabled={'{isFormDisabled}'}
-  direction="horizontal"
+  isDisabled={'{isFormDisabled}'}
+  orientation="horizontal"
   size={'{60}'}
   onToggle={'{handleToggle}'}
 /&gt;</code></pre>

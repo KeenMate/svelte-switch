@@ -4,9 +4,13 @@
 
 	// Size configurations
 	let selectedSize = $state(50);
-	let direction = $state<'horizontal' | 'vertical'>('horizontal');
+	let orientation = $state<'horizontal' | 'vertical'>('horizontal');
 	let checked = $state(false);
 	let multiSelectedIndex = $state(1);
+
+	// Orientation comparison switches
+	let horizontalChecked = $state(true);
+	let verticalChecked = $state(true);
 
 	// Size presets
 	const sizePresets = [
@@ -62,7 +66,7 @@
 			<div class="text-center">
 				<Switch
 					bind:checked
-					{direction}
+					{orientation}
 					size={selectedSize}
 					onToggle={onToggle}
 				>
@@ -77,7 +81,7 @@
 						{selectedSize}px • {scaledDimensions.width}×{scaledDimensions.height}
 					</div>
 					<div class="badge bg-secondary ms-2">
-						{direction}
+						{orientation}
 					</div>
 				</div>
 			</div>
@@ -103,10 +107,10 @@
 			<div class="form-group mb-3">
 				<label class="form-label">Orientation</label>
 				<div class="btn-group w-100" role="group">
-					<input type="radio" class="btn-check" bind:group={direction} value="horizontal" id="horizontal">
+					<input type="radio" class="btn-check" bind:group={orientation} value="horizontal" id="horizontal">
 					<label class="btn btn-outline-primary" for="horizontal">🔄 Horizontal</label>
 
-					<input type="radio" class="btn-check" bind:group={direction} value="vertical" id="vertical">
+					<input type="radio" class="btn-check" bind:group={orientation} value="vertical" id="vertical">
 					<label class="btn btn-outline-primary" for="vertical">↕️ Vertical</label>
 				</div>
 			</div>
@@ -115,8 +119,8 @@
 				<label class="form-label">Calculated Dimensions</label>
 				<div class="bg-light p-2 rounded">
 					<small class="text-muted">
-						Width: <strong>{direction === 'horizontal' ? scaledDimensions.width : scaledDimensions.height}px</strong><br>
-						Height: <strong>{direction === 'horizontal' ? scaledDimensions.height : scaledDimensions.width}px</strong><br>
+						Width: <strong>{orientation === 'horizontal' ? scaledDimensions.width : scaledDimensions.height}px</strong><br>
+						Height: <strong>{orientation === 'horizontal' ? scaledDimensions.height : scaledDimensions.width}px</strong><br>
 						Scale: <strong>{(selectedSize / 50).toFixed(2)}×</strong>
 					</small>
 				</div>
@@ -144,8 +148,8 @@
 			<h6>Scaling Behavior</h6>
 			<p>All dimensions scale proportionally from the base size. Width scales automatically to maintain proper aspect ratio.</p>
 
-			<h6>Direction Property</h6>
-			<p><code>direction</code> - "horizontal" or "vertical" orientation</p>
+			<h6>Orientation Property</h6>
+			<p><code>orientation</code> - "horizontal" or "vertical" orientation</p>
 
 			<h6>Responsive Design</h6>
 			<p>Use different sizes for different screen sizes to ensure optimal touch targets and visual hierarchy.</p>
@@ -229,19 +233,19 @@
 				<div class="col-6 text-center">
 					<h6 class="text-primary mb-3">Horizontal</h6>
 					<Switch
-						checked={true}
-						direction="horizontal"
+						bind:checked={horizontalChecked}
+						orientation="horizontal"
 						size={60}
 					>
 						{#snippet children({ checked })}
-							<span class="thumb-content">→</span>
+							<span class="thumb-content">{checked ? '←' : '→'}</span>
 						{/snippet}
 					</Switch>
 					<div class="mt-3">
 						<MultiSwitch
 							selectedIndex={2}
-							steps={4}
-							direction="horizontal"
+							stepsCount={4}
+							orientation="horizontal"
 							size={50}
 						>
 							{#snippet children({ selectedIndex })}
@@ -253,19 +257,19 @@
 				<div class="col-6 text-center">
 					<h6 class="text-success mb-3">Vertical</h6>
 					<Switch
-						checked={true}
-						direction="vertical"
+						bind:checked={verticalChecked}
+						orientation="vertical"
 						size={60}
 					>
 						{#snippet children({ checked })}
-							<span class="thumb-content">↑</span>
+							<span class="thumb-content">{checked ? '↑' : '↓'}</span>
 						{/snippet}
 					</Switch>
 					<div class="mt-3">
 						<MultiSwitch
 							selectedIndex={2}
-							steps={4}
-							direction="vertical"
+							stepsCount={4}
+							orientation="vertical"
 							size={50}
 						>
 							{#snippet children({ selectedIndex })}
@@ -279,28 +283,46 @@
 
 		<div slot="controls">
 			<div class="form-group mb-3">
+				<label class="form-label">Interactive Controls</label>
+				<div class="form-check">
+					<input
+						class="form-check-input"
+						type="checkbox"
+						bind:checked={horizontalChecked}
+						id="horizontalToggle"
+					/>
+					<label class="form-check-label" for="horizontalToggle">
+						Horizontal Switch ({horizontalChecked ? 'ON ←' : 'OFF →'})
+					</label>
+				</div>
+				<div class="form-check">
+					<input
+						class="form-check-input"
+						type="checkbox"
+						bind:checked={verticalChecked}
+						id="verticalToggle"
+					/>
+					<label class="form-check-label" for="verticalToggle">
+						Vertical Switch ({verticalChecked ? 'ON ↑' : 'OFF ↓'})
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group mb-3">
+				<label class="form-label">Arrow Direction Logic</label>
+				<div class="bg-light p-2 rounded small text-muted">
+					<strong>Horizontal:</strong> OFF → (thumb left, arrow right) | ON ← (thumb right, arrow left)<br>
+					<strong>Vertical:</strong> OFF ↓ (thumb bottom, arrow down) | ON ↑ (thumb top, arrow up)
+				</div>
+			</div>
+
+			<div class="form-group mb-3">
 				<label class="form-label">Responsive Breakpoints</label>
 				<select class="form-select" bind:value={currentBreakpoint}>
 					<option value="mobile">Mobile (40px)</option>
 					<option value="tablet">Tablet (50px)</option>
 					<option value="desktop">Desktop (60px)</option>
 				</select>
-			</div>
-
-			<div class="form-group mb-3">
-				<label class="form-label">Current Size</label>
-				<div class="bg-light p-2 rounded">
-					<strong>{responsiveSizes[currentBreakpoint as keyof typeof responsiveSizes]}px</strong>
-					for {currentBreakpoint} devices
-				</div>
-			</div>
-
-			<div class="form-group mb-3">
-				<label class="form-label">Layout Considerations</label>
-				<div class="small text-muted">
-					<strong>Horizontal:</strong> Best for most interfaces<br>
-					<strong>Vertical:</strong> Space-saving, unique layouts
-				</div>
 			</div>
 		</div>
 

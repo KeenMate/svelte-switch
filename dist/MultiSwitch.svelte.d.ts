@@ -1,4 +1,4 @@
-type Direction = 'horizontal' | 'vertical';
+type Orientation = 'horizontal' | 'vertical';
 interface StepStyle {
     backgroundColor?: string;
     thumbColor?: string;
@@ -6,10 +6,10 @@ interface StepStyle {
 }
 interface Props {
     selectedIndex?: number;
-    disabled?: boolean;
-    direction?: Direction;
+    isDisabled?: boolean;
+    orientation?: Orientation;
     size?: number;
-    steps?: number;
+    stepsCount?: number;
     stepStyles?: StepStyle[];
     onStepChange?: (index: number) => void;
     children?: import('svelte').Snippet<[{

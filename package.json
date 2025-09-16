@@ -1,6 +1,6 @@
 {
 	"name": "@keenmate/svelte-switch",
-	"version": "1.0.0-rc01",
+	"version": "1.0.0",
 	"description": "A modern, customizable switch component for Svelte 5 with support for both binary and multi-step switches",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -31,7 +31,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/keenmate/svelte-switch.git"
+		"url": "git+https://github.com/keenmate/svelte-switch.git"
 	},
 	"homepage": "https://github.com/keenmate/svelte-switch#readme",
 	"bugs": {

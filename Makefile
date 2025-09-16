@@ -1,6 +1,6 @@
 # Svelte Switch Component Makefile
 
-.PHONY: help install dev build preview clean lint format type-check test
+.PHONY: help install dev build preview clean lint format type-check test docker-build docker-run docker-stop
 
 # Default target
 help: ## Show this help message
@@ -87,3 +87,14 @@ publish: package ## Publish package to npm
 
 publish-dry: package ## Dry run publish to see what would be published
 	npm publish --dry-run
+
+# Docker
+docker-build: ## Build Docker image
+	docker build --progress plain -t registry.km8.es/svelte-switch-docs:production .
+
+docker-run: docker-build ## Build and run Docker container
+	docker run -p 8080:80 --name svelte-switch-docs registry.km8.es/svelte-switch-docs:production
+
+docker-stop: ## Stop and remove Docker container
+	docker stop svelte-switch-docs || true
+	docker rm svelte-switch-docs || true

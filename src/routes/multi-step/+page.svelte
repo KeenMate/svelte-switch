@@ -4,10 +4,10 @@
 
 	// Multi-step configuration
 	let selectedIndex = $state(0);
-	let disabled = $state(false);
-	let direction = $state<'horizontal' | 'vertical'>('horizontal');
+	let isDisabled = $state(false);
+	let orientation = $state<'horizontal' | 'vertical'>('horizontal');
 	let size = $state(60);
-	let steps = $state(3);
+	let stepsCount = $state(3);
 
 	// Temperature step styles
 	const temperatureStyles = [
@@ -23,11 +23,11 @@
 
 	// Dynamic labels
 	const stepLabels = $derived(() => {
-		switch (steps) {
+		switch (stepsCount) {
 			case 3: return ['Low', 'Med', 'High'];
 			case 4: return ['Off', 'Low', 'Med', 'High'];
 			case 5: return ['Off', 'Low', 'Med', 'High', 'Max'];
-			default: return Array.from({ length: steps }, (_, i) => (i + 1).toString());
+			default: return Array.from({ length: stepsCount }, (_, i) => (i + 1).toString());
 		}
 	});
 </script>
@@ -47,10 +47,10 @@
 			<div class="text-center">
 				<MultiSwitch
 					bind:selectedIndex
-					{disabled}
-					{direction}
+					{isDisabled}
+					{orientation}
 					{size}
-					{steps}
+					{stepsCount}
 					{onStepChange}
 				>
 					{#snippet children({ selectedIndex })}
@@ -71,7 +71,7 @@
 			<div class="form-group mb-3">
 				<label class="form-label">Selected Step</label>
 				<select class="form-select form-select-sm" bind:value={selectedIndex}>
-					{#each Array(steps) as _, index}
+					{#each Array(stepsCount) as _, index}
 						<option value={index}>Step {index + 1}: {stepLabels[index]}</option>
 					{/each}
 				</select>
@@ -82,12 +82,12 @@
 				<input
 					type="range"
 					class="form-range"
-					bind:value={steps}
+					bind:value={stepsCount}
 					min="3"
 					max="6"
 					step="1"
 				/>
-				<small class="text-muted">{steps} steps</small>
+				<small class="text-muted">{stepsCount} steps</small>
 			</div>
 
 			<div class="form-group mb-3">
@@ -96,7 +96,7 @@
 					<input
 						class="form-check-input"
 						type="checkbox"
-						bind:checked={disabled}
+						bind:checked={isDisabled}
 						id="disabledControl"
 					/>
 					<label class="form-check-label" for="disabledControl">
@@ -106,8 +106,8 @@
 			</div>
 
 			<div class="form-group mb-3">
-				<label class="form-label">Direction</label>
-				<select class="form-select form-select-sm" bind:value={direction}>
+				<label class="form-label">Orientation</label>
+				<select class="form-select form-select-sm" bind:value={orientation}>
 					<option value="horizontal">Horizontal</option>
 					<option value="vertical">Vertical</option>
 				</select>
@@ -129,11 +129,11 @@
 		<div slot="description">
 			<h6>Required Properties</h6>
 			<p><code>selectedIndex</code> - Currently selected step index (bindable)</p>
-			<p><code>steps</code> - Number of steps (default: 3)</p>
+			<p><code>stepsCount</code> - Number of steps (default: 3)</p>
 
 			<h6>Optional Properties</h6>
-			<p><code>disabled</code> - Disable switch interaction (default: false)</p>
-			<p><code>direction</code> - "horizontal" or "vertical" orientation (default: "horizontal")</p>
+			<p><code>isDisabled</code> - Disable switch interaction (default: false)</p>
+			<p><code>orientation</code> - "horizontal" or "vertical" orientation (default: "horizontal")</p>
 			<p><code>size</code> - Switch size in pixels (default: 50)</p>
 			<p><code>onStepChange</code> - Callback function when step changes</p>
 			<p><code>stepStyles</code> - Array of style objects for each step</p>
@@ -141,7 +141,7 @@
 			<h6>Usage Example</h6>
 			<pre><code>&lt;MultiSwitch
   bind:selectedIndex={'{currentStep}'}
-  steps={'{4}'}
+  stepsCount={'{4}'}
   size={'{70}'}
   onStepChange={'{handleStepChange}'}
 &gt;
@@ -164,7 +164,7 @@
 			<div class="text-center">
 				<MultiSwitch
 					selectedIndex={1}
-					steps={4}
+					stepsCount={4}
 					size={70}
 					stepStyles={temperatureStyles}
 				>

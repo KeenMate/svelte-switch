@@ -64,7 +64,7 @@
 				<div class="text-center py-3">
 					<MultiSwitch
 						bind:selectedIndex={featureIndex}
-						steps={3}
+						stepsCount={3}
 						size={70}
 						stepStyles={featureStyles}
 					>

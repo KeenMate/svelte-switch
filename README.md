@@ -1,6 +1,8 @@
 # @keenmate/svelte-switch
 
-A modern, customizable switch component for Svelte 5 with support for both binary and multi-step switches.
+A modern, customizable switch component library for Svelte 5 with support for both binary and multi-step switches.
+
+🎮 **[Live Demo & Documentation](https://svelte-switch.demo.keenmate.com)**
 
 ## Features
 
@@ -39,7 +41,7 @@ npm install @keenmate/svelte-switch
 ```svelte
 <Switch
   bind:checked
-  direction="vertical"
+  orientation="vertical"
   size={60}
 />
 ```
@@ -65,7 +67,7 @@ npm install @keenmate/svelte-switch
 
 <MultiSwitch
   bind:selectedIndex
-  steps={4}
+  stepsCount={4}
   size={80}
 >
   {#snippet children({ selectedIndex })}
@@ -88,7 +90,7 @@ npm install @keenmate/svelte-switch
 
 <MultiSwitch
   bind:selectedIndex
-  steps={4}
+  stepsCount={4}
   size={70}
   stepStyles={temperatureStyles}
 >
@@ -105,8 +107,8 @@ npm install @keenmate/svelte-switch
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `checked` | `boolean` | `false` | Bindable checked state |
-| `disabled` | `boolean` | `false` | Disable the switch |
-| `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
+| `isDisabled` | `boolean` | `false` | Disable the switch |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
 | `size` | `number` | `50` | Switch size in pixels |
 | `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
 | `children` | `Snippet<[{ checked: boolean }]>` | - | Custom content for thumb |
@@ -116,10 +118,10 @@ npm install @keenmate/svelte-switch
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `selectedIndex` | `number` | `0` | Bindable selected step index |
-| `disabled` | `boolean` | `false` | Disable the switch |
-| `direction` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
+| `isDisabled` | `boolean` | `false` | Disable the switch |
+| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
 | `size` | `number` | `50` | Switch size in pixels |
-| `steps` | `number` | `3` | Number of steps |
+| `stepsCount` | `number` | `3` | Number of steps |
 | `stepStyles` | `StepStyle[]` | `[]` | Custom styling for each step |
 | `onStepChange` | `(index: number) => void` | - | Step change event handler |
 | `children` | `Snippet<[{ selectedIndex: number, stepIndex: number, isSelected: boolean }]>` | - | Custom content for thumb |
@@ -158,6 +160,16 @@ The component uses CSS custom properties for dynamic styling. All calculations a
 ## License
 
 MIT
+
+## Demo & Documentation
+
+🎮 **[Interactive Demo Website](https://svelte-switch.demo.keenmate.com)**
+
+Explore all features with live examples, interactive controls, and comprehensive documentation.
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for detailed release notes and version history.
 
 ## Contributing
 
