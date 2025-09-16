@@ -107,7 +107,7 @@
   style:--current-bg-color={getStyleForIndex(currentIndex).backgroundColor ||
     ""}
   style:--current-thumb-color={getStyleForIndex(currentIndex).thumbColor || ""}
-  style:--current-border-color={getStyleForIndex(currentIndex).thumbBorderColor ||
+  style:--current-thumb-border-color={getStyleForIndex(currentIndex).thumbBorderColor ||
     ""}
   onclick={toggle}
   onkeydown={handleKeydown}

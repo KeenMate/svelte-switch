@@ -119,7 +119,7 @@
   style:--steps={effectiveStepsCount}
   style:--current-bg-color={getStyleForIndex(selectedIndex).backgroundColor || ""}
   style:--current-thumb-color={getStyleForIndex(selectedIndex).thumbColor || ""}
-  style:--current-border-color={getStyleForIndex(selectedIndex).thumbBorderColor || ""}
+  style:--current-thumb-border-color={getStyleForIndex(selectedIndex).thumbBorderColor || ""}
   onclick={(e) => {
     if (isDisabled) return;
     const rect = e.currentTarget.getBoundingClientRect();

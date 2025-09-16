@@ -114,7 +114,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
   box-shadow: $shadow;
 
   // Custom thumb border if provided
-  border: 1px solid var(--current-border-color, transparent);
+  border: 1px solid var(--current-thumb-border-color, transparent);
 
   // Scaled dimensions using CSS calc()
   width: calc(var(--thumb-height) * var(--scale));
@@ -189,7 +189,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
     z-index: 10; // Ensure thumb renders above step segments
 
     // Custom thumb border if provided
-    border: 1px solid var(--current-border-color, transparent);
+    border: 1px solid var(--current-thumb-border-color, transparent);
 
     // Scaled dimensions
     width: calc(var(--thumb-height) * var(--scale));

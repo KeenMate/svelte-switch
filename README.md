@@ -201,7 +201,7 @@ The component uses CSS custom properties for dynamic styling. All calculations a
 - `--steps`: Number of steps (MultiSwitch)
 - `--current-bg-color`: Dynamic background color
 - `--current-thumb-color`: Dynamic thumb color
-- `--current-border-color`: Dynamic thumb border color
+- `--current-thumb-border-color`: Dynamic thumb border color
 
 ## Requirements
 
