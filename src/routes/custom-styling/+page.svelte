@@ -58,29 +58,31 @@
 	<ShowcaseSection
 		title="Predefined Themes"
 		subtitle="Choose from built-in color themes for quick styling">
-		<div slot="demo" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-			<div class="text-center">
-				<Switch
-					bind:checked
-					size={70}
-					stepStyles={[currentTheme]}
-					onToggle={onToggle}
-				>
-					{#snippet children({ checked })}
-						<span class="thumb-content" style="color: {currentTheme.thumbColor}; font-weight: bold;">
-							{checked ? '✓' : '○'}
+		{#snippet demo()}
+			<div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+				<div class="text-center">
+					<Switch
+						bind:checked
+						size={70}
+						itemStyles={[currentTheme]}
+						onToggle={onToggle}
+					>
+						{#snippet children({ currentIndex, item, isSelected })}
+							<span class="thumb-content" style="color: {currentTheme.thumbColor}; font-weight: bold;">
+								{isSelected ? '✓' : '○'}
+							</span>
+						{/snippet}
+					</Switch>
+					<div class="mt-3">
+						<span class="badge" style="background-color: {currentTheme.backgroundColor};">
+							{selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)} Theme
 						</span>
-					{/snippet}
-				</Switch>
-				<div class="mt-3">
-					<span class="badge" style="background-color: {currentTheme.backgroundColor};">
-						{selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)} Theme
-					</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Theme Selection</label>
 				<select class="form-select" bind:value={selectedTheme}>
@@ -113,9 +115,9 @@
 					</label>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Predefined Themes</h6>
 			<p>Six built-in themes: <code>default</code>, <code>success</code>, <code>warning</code>, <code>danger</code>, <code>purple</code>, <code>dark</code></p>
 
@@ -124,38 +126,40 @@
 
 			<h6>Usage</h6>
 			<pre><code>const theme = {'{backgroundColor: "#10b981", thumbColor: "#065f46"}'};
-&lt;Switch stepStyles={'{[theme]}'} /&gt;</code></pre>
+&lt;Switch itemStyles={'{[theme]}'} /&gt;</code></pre>
 
 			<h6>Dynamic Theming</h6>
 			<p>Themes can be switched dynamically and work with both Switch and MultiSwitch components.</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 
 	<ShowcaseSection
 		title="Custom Color Picker"
 		subtitle="Create your own color combinations with live preview">
-		<div slot="demo" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-			<div class="text-center">
-				<Switch
-					checked={true}
-					size={70}
-					stepStyles={customStyle}
-				>
-					{#snippet children({ checked })}
-						<span class="thumb-content" style="color: {customThumb === '#ffffff' ? '#333' : '#fff'}; font-weight: bold;">
-							{checked ? '★' : '☆'}
+		{#snippet demo()}
+			<div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+				<div class="text-center">
+					<Switch
+						checked={true}
+						size={70}
+						itemStyles={customStyle}
+					>
+						{#snippet children({ currentIndex, item, isSelected })}
+							<span class="thumb-content" style="color: {customThumb === '#ffffff' ? '#333' : '#fff'}; font-weight: bold;">
+								{isSelected ? '★' : '☆'}
+							</span>
+						{/snippet}
+					</Switch>
+					<div class="mt-3">
+						<span class="badge" style="background-color: {customBg}; color: white;">
+							Custom Colors
 						</span>
-					{/snippet}
-				</Switch>
-				<div class="mt-3">
-					<span class="badge" style="background-color: {customBg}; color: white;">
-						Custom Colors
-					</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Background Color</label>
 				<div class="d-flex gap-2 align-items-center">
@@ -209,9 +213,9 @@
 					/>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Custom Styling</h6>
 			<p>Use color pickers or hex values to create unique color combinations</p>
 
@@ -225,42 +229,47 @@
 
 			<h6>Hex Format</h6>
 			<p>All colors accept standard hex format: <code>#ff6b6b</code>, <code>#ffffff</code>, etc.</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 
 	<ShowcaseSection
 		title="Multi-Step Gradient Themes"
 		subtitle="Advanced styling with different colors for each step">
-		<div slot="demo" class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
-			<div class="text-center">
-				<MultiSwitch
-					bind:selectedIndex
-					steps={4}
-					size={80}
-					stepStyles={gradientStyles}
-					onStepChange={onStepChange}
-				>
-					{#snippet children({ selectedIndex })}
-						<span class="thumb-content" style="color: white; font-weight: bold; font-size: 1rem;">
-							{['🌅', '🌸', '🌊', '🌿'][selectedIndex]}
+		{#snippet demo()}
+			<div class="d-flex justify-content-center align-items-center" style="min-height: 200px;">
+				<div class="text-center">
+					<MultiSwitch
+						bind:selectedIndex
+						itemsCount={4}
+						size={80}
+						itemStyles={gradientStyles}
+						onStepChange={onStepChange}
+					>
+						{#snippet children({ currentIndex, item, isSelected })}
+							<span class="thumb-content" style="color: white; font-weight: bold; font-size: 1rem;">
+								{['🌅', '🌸', '🌊', '🌿'][currentIndex]}
+							</span>
+						{/snippet}
+					</MultiSwitch>
+					<div class="mt-3">
+						<span class="badge bg-primary">
+							{['Sunset', 'Blossom', 'Ocean', 'Nature'][selectedIndex]} Theme
 						</span>
-					{/snippet}
-				</MultiSwitch>
-				<div class="mt-3">
-					<span class="badge bg-primary">
-						{['Sunset', 'Blossom', 'Ocean', 'Nature'][selectedIndex]} Theme
-					</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Step Themes</label>
 				<div class="row g-2">
 					{#each gradientStyles as style, index}
 						<div class="col-6">
-							<div class="card p-2 {selectedIndex === index ? 'border-primary' : ''}">
+							<div
+								class="card p-2 theme-card {selectedIndex === index ? 'border-primary' : ''}"
+								onclick={() => selectedIndex = index}
+							>
 								<div class="d-flex gap-2">
 									<div class="color-preview-small" style="background-color: {style.backgroundColor};"></div>
 									<div class="color-preview-small" style="background-color: {style.thumbColor};"></div>
@@ -281,9 +290,9 @@
 					{/each}
 				</select>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Multi-Step Styling</h6>
 			<p>Each step can have its own unique color scheme for rich visual experiences</p>
 
@@ -291,7 +300,7 @@
 			<p>Create cohesive color progressions that guide users through different states</p>
 
 			<h6>Step Array</h6>
-			<pre><code>const stepStyles = [
+			<pre><code>const itemStyles = [
   {'{backgroundColor: "#667eea", thumbColor: "#764ba2"}'},
   {'{backgroundColor: "#f093fb", thumbColor: "#f5576c"}'},
   // ... more steps
@@ -299,7 +308,7 @@
 
 			<h6>Dynamic Updates</h6>
 			<p>Colors transition smoothly as users navigate between steps, creating engaging interactions</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 </div>
 
@@ -331,5 +340,19 @@
 
 	.card {
 		transition: border-color 0.2s ease;
+	}
+
+	.theme-card {
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.theme-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.theme-card.border-primary {
+		box-shadow: 0 2px 8px rgba(13, 110, 253, 0.3);
 	}
 </style>

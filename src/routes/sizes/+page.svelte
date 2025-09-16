@@ -62,32 +62,34 @@
 	<ShowcaseSection
 		title="Dynamic Sizing"
 		subtitle="Interactive size adjustment with real-time preview">
-		<div slot="demo" class="d-flex justify-content-center align-items-center" style="min-height: 250px;">
-			<div class="text-center">
-				<Switch
-					bind:checked
-					{orientation}
-					size={selectedSize}
-					onToggle={onToggle}
-				>
-					{#snippet children({ checked })}
-						<span class="thumb-content" style="font-size: {Math.max(0.5, selectedSize / 80)}rem; font-weight: bold;">
-							{checked ? '✓' : '○'}
-						</span>
-					{/snippet}
-				</Switch>
-				<div class="mt-3">
-					<div class="badge bg-info">
-						{selectedSize}px • {scaledDimensions.width}×{scaledDimensions.height}
-					</div>
-					<div class="badge bg-secondary ms-2">
+		{#snippet demo()}
+			<div class="d-flex justify-content-center align-items-center" style="min-height: 250px;">
+				<div class="text-center">
+					<Switch
+						bind:checked
 						{orientation}
+						size={selectedSize}
+						onToggle={onToggle}
+					>
+						{#snippet children({ currentIndex, item, isSelected })}
+							<span class="thumb-content" style="font-size: {Math.max(0.5, selectedSize / 80)}rem; font-weight: bold;">
+								{isSelected ? '✓' : '○'}
+							</span>
+						{/snippet}
+					</Switch>
+					<div class="mt-3">
+						<div class="badge bg-info">
+							{selectedSize}px • {scaledDimensions.width}×{scaledDimensions.height}
+						</div>
+						<div class="badge bg-secondary ms-2">
+							{orientation}
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Size: {selectedSize}px</label>
 				<input
@@ -139,9 +141,9 @@
 					</label>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Size Property</h6>
 			<p><code>size</code> - Base height in pixels (default: 50px)</p>
 
@@ -156,38 +158,40 @@
 
 			<h6>Accessibility</h6>
 			<p>Minimum recommended size is 40px for proper touch target accessibility on mobile devices.</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 
 	<ShowcaseSection
 		title="Size Presets"
 		subtitle="Common size configurations for different use cases">
-		<div slot="demo" style="min-height: 300px; overflow-y: auto;">
-			<div class="d-flex flex-column gap-4 align-items-center py-3">
-				{#each sizePresets as preset}
-					<div class="text-center">
-						<div class="mb-2">
-							<Switch
-								checked={preset.size >= 50}
-								size={preset.size}
-							>
-								{#snippet children({ checked })}
-									<span class="thumb-content" style="font-size: {Math.max(0.4, preset.size / 100)}rem;">
-										{preset.size >= 50 ? '✓' : '○'}
-									</span>
-								{/snippet}
-							</Switch>
+		{#snippet demo()}
+			<div style="min-height: 300px; overflow-y: auto;">
+				<div class="d-flex flex-column gap-4 align-items-center py-3">
+					{#each sizePresets as preset}
+						<div class="text-center">
+							<div class="mb-2">
+								<Switch
+									checked={preset.size >= 50}
+									size={preset.size}
+								>
+									{#snippet children({ currentIndex, item, isSelected })}
+										<span class="thumb-content" style="font-size: {Math.max(0.4, preset.size / 100)}rem;">
+											{isSelected ? '✓' : '✗'}
+										</span>
+									{/snippet}
+								</Switch>
+							</div>
+							<div class="small">
+								<strong>{preset.label}</strong><br>
+								<span class="text-muted">{preset.size}px</span>
+							</div>
 						</div>
-						<div class="small">
-							<strong>{preset.label}</strong><br>
-							<span class="text-muted">{preset.size}px</span>
-						</div>
-					</div>
-				{/each}
+					{/each}
+				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Size Presets</label>
 				{#each sizePresets as preset}
@@ -206,9 +210,9 @@
 					</div>
 				{/each}
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Size Guidelines</h6>
 			<p><strong>30-40px:</strong> Compact interfaces, secondary controls</p>
 			<p><strong>50-60px:</strong> Standard sizes for primary controls</p>
@@ -222,66 +226,68 @@
 
 			<h6>Performance</h6>
 			<p>All sizes render efficiently using CSS scaling rather than different assets</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 
 	<ShowcaseSection
 		title="Orientation Comparison"
 		subtitle="Side-by-side horizontal and vertical switches">
-		<div slot="demo" class="d-flex justify-content-center align-items-center" style="min-height: 250px;">
-			<div class="row w-100">
-				<div class="col-6 text-center">
-					<h6 class="text-primary mb-3">Horizontal</h6>
-					<Switch
-						bind:checked={horizontalChecked}
-						orientation="horizontal"
-						size={60}
-					>
-						{#snippet children({ checked })}
-							<span class="thumb-content">{checked ? '←' : '→'}</span>
-						{/snippet}
-					</Switch>
-					<div class="mt-3">
-						<MultiSwitch
-							selectedIndex={2}
-							stepsCount={4}
+		{#snippet demo()}
+			<div class="d-flex justify-content-center align-items-center" style="min-height: 250px;">
+				<div class="row w-100">
+					<div class="col-6 text-center">
+						<h6 class="text-primary mb-3">Horizontal</h6>
+						<Switch
+							bind:checked={horizontalChecked}
 							orientation="horizontal"
-							size={50}
+							size={60}
 						>
-							{#snippet children({ selectedIndex })}
-								<span class="thumb-content">{selectedIndex + 1}</span>
+							{#snippet children({ currentIndex, item, isSelected })}
+								<span class="thumb-content">{isSelected ? '←' : '→'}</span>
 							{/snippet}
-						</MultiSwitch>
+						</Switch>
+						<div class="mt-3">
+							<MultiSwitch
+								selectedIndex={2}
+								itemsCount={4}
+								orientation="horizontal"
+								size={50}
+							>
+								{#snippet children({ currentIndex, item, isSelected })}
+									<span class="thumb-content">{currentIndex + 1}</span>
+								{/snippet}
+							</MultiSwitch>
+						</div>
 					</div>
-				</div>
-				<div class="col-6 text-center">
-					<h6 class="text-success mb-3">Vertical</h6>
-					<Switch
-						bind:checked={verticalChecked}
-						orientation="vertical"
-						size={60}
-					>
-						{#snippet children({ checked })}
-							<span class="thumb-content">{checked ? '↑' : '↓'}</span>
-						{/snippet}
-					</Switch>
-					<div class="mt-3">
-						<MultiSwitch
-							selectedIndex={2}
-							stepsCount={4}
+					<div class="col-6 text-center">
+						<h6 class="text-success mb-3">Vertical</h6>
+						<Switch
+							bind:checked={verticalChecked}
 							orientation="vertical"
-							size={50}
+							size={60}
 						>
-							{#snippet children({ selectedIndex })}
-								<span class="thumb-content">{selectedIndex + 1}</span>
+							{#snippet children({ currentIndex, item, isSelected })}
+								<span class="thumb-content">{isSelected ? '↑' : '↓'}</span>
 							{/snippet}
-						</MultiSwitch>
+						</Switch>
+						<div class="mt-3">
+							<MultiSwitch
+								selectedIndex={2}
+								itemsCount={4}
+								orientation="vertical"
+								size={50}
+							>
+								{#snippet children({ currentIndex, item, isSelected })}
+									<span class="thumb-content">{currentIndex + 1}</span>
+								{/snippet}
+							</MultiSwitch>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Interactive Controls</label>
 				<div class="form-check">
@@ -324,9 +330,9 @@
 					<option value="desktop">Desktop (60px)</option>
 				</select>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Horizontal Orientation</h6>
 			<p>Default orientation, familiar to users, works well in most layouts</p>
 
@@ -344,7 +350,7 @@
 
 			<h6>Multi-Step Support</h6>
 			<p>Both Switch and MultiSwitch components support horizontal and vertical orientations</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 </div>
 

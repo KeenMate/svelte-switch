@@ -1,13 +1,21 @@
 <script lang="ts">
 	type Orientation = 'horizontal' | 'vertical';
 
+	interface StepStyle {
+		backgroundColor?: string;
+		thumbColor?: string;
+		borderColor?: string;
+	}
+
 	interface Props {
 		checked?: boolean;
 		isDisabled?: boolean;
 		orientation?: Orientation;
 		size?: number;
+		items?: any[] | null;
+		itemStyles?: StepStyle[];
 		onToggle?: (checked: boolean) => void;
-		children?: import('svelte').Snippet<[{ checked: boolean }]>;
+		children?: import('svelte').Snippet<[{ currentIndex: number; item: any; isSelected: boolean }]>;
 	}
 
 	let {
@@ -15,6 +23,8 @@
 		isDisabled = false,
 		orientation = 'horizontal',
 		size = 50,
+		items = null,
+		itemStyles = [],
 		onToggle,
 		children
 	}: Props = $props();
@@ -23,6 +33,18 @@
 
 	// Calculate scale factor based on default size (50px)
 	const scale = $derived(size / 50);
+
+	// Validate items array - must be exactly 2 items if provided
+	$effect(() => {
+		if (items !== null && items.length !== 2) {
+			console.warn('Switch component: items array must contain exactly 2 items');
+		}
+	});
+
+	// Derived values for children snippet
+	const currentIndex = $derived(checked ? 1 : 0);
+	const currentItem = $derived(items ? items[currentIndex] : undefined);
+	const isSelected = $derived(checked);
 
 	function toggle() {
 		if (isDisabled) return;
@@ -38,11 +60,13 @@
 	}
 
 	// External update method for HTML/JavaScript usage
-	export function update(updates: Partial<Pick<Props, 'checked' | 'isDisabled' | 'orientation' | 'size'>>) {
+	export function update(updates: Partial<Pick<Props, 'checked' | 'isDisabled' | 'orientation' | 'size' | 'items' | 'itemStyles'>>) {
 		if (updates.checked !== undefined) checked = updates.checked;
 		if (updates.isDisabled !== undefined) isDisabled = updates.isDisabled;
 		if (updates.orientation !== undefined) orientation = updates.orientation;
 		if (updates.size !== undefined) size = updates.size;
+		if (updates.items !== undefined) items = updates.items;
+		if (updates.itemStyles !== undefined) itemStyles = updates.itemStyles;
 	}
 </script>
 
@@ -54,6 +78,9 @@
 	class:disabled={isDisabled}
 	class:vertical={isVertical}
 	style:--scale="{scale}"
+	style:--current-bg-color={itemStyles[currentIndex]?.backgroundColor || ""}
+	style:--current-thumb-color={itemStyles[currentIndex]?.thumbColor || ""}
+	style:--current-border-color={itemStyles[currentIndex]?.borderColor || ""}
 	onclick={toggle}
 	onkeydown={handleKeydown}
 	role="switch"
@@ -67,7 +94,7 @@
 			? `translateY(${checked ? 'calc(var(--thumb-offset) * var(--scale))' : '0px'}) translateX(-50%)`
 			: `translateX(${checked ? 'calc(var(--thumb-offset) * var(--scale))' : '0px'})`}
 	>
-		{@render children?.({ checked })}
+		{@render children?.({ currentIndex, item: currentItem, isSelected })}
 	</div>
 </div>
 

@@ -24,24 +24,26 @@
 	<ShowcaseSection
 		title="Essential Properties"
 		subtitle="The basic configuration options for a binary switch">
-		<div slot="demo" class="d-flex justify-content-center align-items-center" style="min-height: 120px;">
-			<div class="text-center">
-				<Switch
-					bind:checked
-					{isDisabled}
-					{orientation}
-					{size}
-					{onToggle}
-				/>
-				<div class="mt-3">
-					<span class="badge {checked ? 'bg-success' : 'bg-secondary'}">
-						{checked ? 'ON' : 'OFF'}
-					</span>
+		{#snippet demo()}
+			<div class="d-flex justify-content-center align-items-center" style="min-height: 120px;">
+				<div class="text-center">
+					<Switch
+						bind:checked
+						{isDisabled}
+						{orientation}
+						{size}
+						{onToggle}
+					/>
+					<div class="mt-3">
+						<span class="badge {checked ? 'bg-success' : 'bg-secondary'}">
+							{checked ? 'ON' : 'OFF'}
+						</span>
+					</div>
 				</div>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="controls">
+		{#snippet controls()}
 			<div class="form-group mb-3">
 				<label class="form-label">Checked State</label>
 				<div class="form-check">
@@ -91,9 +93,9 @@
 					step="5"
 				/>
 			</div>
-		</div>
+		{/snippet}
 
-		<div slot="description">
+		{#snippet description()}
 			<h6>Required Properties</h6>
 			<p><code>checked</code> - Boolean state of the switch (bindable)</p>
 
@@ -115,6 +117,6 @@
 			<h6>Keyboard Support</h6>
 			<p>• <kbd>Space</kbd> or <kbd>Enter</kbd> - Toggle switch state</p>
 			<p>• <kbd>Tab</kbd> - Focus management</p>
-		</div>
+		{/snippet}
 	</ShowcaseSection>
 </div>

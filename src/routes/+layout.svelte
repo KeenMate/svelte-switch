@@ -9,7 +9,9 @@
 		{ href: '/basic', label: 'Basic Switch', icon: '🔘' },
 		{ href: '/multi-step', label: 'Multi-Step', icon: '🎚️' },
 		{ href: '/custom-styling', label: 'Custom Styling', icon: '🎨' },
-		{ href: '/sizes', label: 'Sizes & Orientations', icon: '📏' }
+		{ href: '/sizes', label: 'Sizes & Orientations', icon: '📏' },
+		{ href: '/defcon-example', label: 'DEFCON Example', icon: '🚨' },
+		{ href: '/external-updates', label: 'External Updates', icon: '⚡' }
 	];
 </script>
 

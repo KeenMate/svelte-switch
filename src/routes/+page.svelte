@@ -154,6 +154,7 @@
 						<li><strong>Custom Content</strong> - Slot support for icons and text</li>
 						<li><strong>Flexible Styling</strong> - SCSS variables and CSS custom properties</li>
 						<li><strong>Modern Svelte 5</strong> - Built with latest Svelte features</li>
+						<li><strong>External Updates</strong> - Unified update() method for vanilla JS integration</li>
 					</ul>
 				</div>
 			</div>
