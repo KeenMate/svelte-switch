@@ -8,12 +8,12 @@
 
 	// Theme configurations
 	const themes = {
-		default: { backgroundColor: '#4299e1', thumbColor: 'white', borderColor: 'transparent' },
-		success: { backgroundColor: '#10b981', thumbColor: '#065f46', borderColor: '#047857' },
-		warning: { backgroundColor: '#f59e0b', thumbColor: '#92400e', borderColor: '#d97706' },
-		danger: { backgroundColor: '#ef4444', thumbColor: '#991b1b', borderColor: '#dc2626' },
-		purple: { backgroundColor: '#8b5cf6', thumbColor: '#5b21b6', borderColor: '#7c3aed' },
-		dark: { backgroundColor: '#374151', thumbColor: '#111827', borderColor: '#4b5563' }
+		default: { backgroundColor: '#4299e1', thumbColor: 'white', thumbBorderColor: 'transparent' },
+		success: { backgroundColor: '#10b981', thumbColor: '#065f46', thumbBorderColor: '#047857' },
+		warning: { backgroundColor: '#f59e0b', thumbColor: '#92400e', thumbBorderColor: '#d97706' },
+		danger: { backgroundColor: '#ef4444', thumbColor: '#991b1b', thumbBorderColor: '#dc2626' },
+		purple: { backgroundColor: '#8b5cf6', thumbColor: '#5b21b6', thumbBorderColor: '#7c3aed' },
+		dark: { backgroundColor: '#374151', thumbColor: '#111827', thumbBorderColor: '#4b5563' }
 	};
 
 	let selectedTheme = $state('success');
@@ -21,7 +21,7 @@
 	// Custom color configuration
 	let customBg = $state('#ff6b6b');
 	let customThumb = $state('#ffffff');
-	let customBorder = $state('#ff5252');
+	let customThumbBorder = $state('#ff5252');
 
 	// Multi-step gradient themes
 	const gradientStyles = [
@@ -35,7 +35,7 @@
 	const customStyle = $derived({
 		backgroundColor: customBg,
 		thumbColor: customThumb,
-		thumbBorderColor: customBorder
+		thumbBorderColor: customThumbBorder
 	});
 
 	function onToggle(checked: boolean) {
@@ -97,9 +97,9 @@
 				<div class="d-flex gap-2 mt-2">
 					<div class="color-preview" style="background-color: {currentTheme.backgroundColor};" title="Background"></div>
 					<div class="color-preview" style="background-color: {currentTheme.thumbColor};" title="Thumb"></div>
-					<div class="color-preview" style="background-color: {currentTheme.borderColor};" title="Border"></div>
+					<div class="color-preview" style="background-color: {currentTheme.thumbBorderColor};" title="Thumb border"></div>
 				</div>
-				<small class="text-muted">Background • Thumb • Border</small>
+				<small class="text-muted">Background • Thumb • Thumb border</small>
 			</div>
 
 			<div class="form-group mb-3">
@@ -122,7 +122,7 @@
 			<p>Six built-in themes: <code>default</code>, <code>success</code>, <code>warning</code>, <code>danger</code>, <code>purple</code>, <code>dark</code></p>
 
 			<h6>Theme Structure</h6>
-			<p>Each theme defines <code>backgroundColor</code>, <code>thumbColor</code>, and <code>borderColor</code></p>
+			<p>Each theme defines <code>backgroundColor</code>, <code>thumbColor</code>, and <code>thumbBorderColor</code></p>
 
 			<h6>Usage</h6>
 			<pre><code>const theme = {'{backgroundColor: "#10b981", thumbColor: "#065f46"}'};
@@ -197,18 +197,18 @@
 			</div>
 
 			<div class="form-group mb-3">
-				<label class="form-label">Border Color</label>
+				<label class="form-label">Thumb border color</label>
 				<div class="d-flex gap-2 align-items-center">
 					<input
 						type="color"
 						class="form-control form-control-color"
-						bind:value={customBorder}
+						bind:value={customThumbBorder}
 						style="width: 60px; height: 40px;"
 					/>
 					<input
 						type="text"
 						class="form-control form-control-sm"
-						bind:value={customBorder}
+						bind:value={customThumbBorder}
 						placeholder="#ff5252"
 					/>
 				</div>
@@ -222,7 +222,7 @@
 			<h6>Color Properties</h6>
 			<p><code>backgroundColor</code> - Switch background when active</p>
 			<p><code>thumbColor</code> - Color of the thumb element</p>
-			<p><code>thumbBorderColor</code> - Border color for the thumb element</p>
+			<p><code>thumbBorderColor</code> - Thumb border color for the thumb element</p>
 
 			<h6>Live Preview</h6>
 			<p>Colors update immediately as you adjust them, providing instant visual feedback</p>
@@ -273,7 +273,7 @@
 								<div class="d-flex gap-2">
 									<div class="color-preview-small" style="background-color: {style.backgroundColor};"></div>
 									<div class="color-preview-small" style="background-color: {style.thumbColor};"></div>
-									<div class="color-preview-small" style="background-color: {style.borderColor};"></div>
+									<div class="color-preview-small" style="background-color: {style.thumbBorderColor};"></div>
 								</div>
 								<small class="text-muted mt-1">{['Sunset', 'Blossom', 'Ocean', 'Nature'][index]}</small>
 							</div>
