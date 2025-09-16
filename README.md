@@ -113,6 +113,12 @@ npm install @keenmate/svelte-switch
 | `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
 | `children` | `Snippet<[{ checked: boolean }]>` | - | Custom content for thumb |
 
+### Switch Methods
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `update()` | `{ checked?, isDisabled?, orientation?, size? }` | Updates component properties from external JavaScript/HTML |
+
 ### MultiSwitch Props
 
 | Prop | Type | Default | Description |
@@ -126,6 +132,12 @@ npm install @keenmate/svelte-switch
 | `onStepChange` | `(index: number) => void` | - | Step change event handler |
 | `children` | `Snippet<[{ selectedIndex: number, stepIndex: number, isSelected: boolean }]>` | - | Custom content for thumb |
 
+### MultiSwitch Methods
+
+| Method | Parameters | Description |
+|--------|------------|-------------|
+| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, stepsCount?, stepStyles? }` | Updates component properties from external JavaScript/HTML |
+
 ### StepStyle Interface
 
 ```typescript
@@ -135,6 +147,44 @@ interface StepStyle {
   borderColor?: string;
 }
 ```
+
+## External JavaScript/HTML Usage
+
+When using the components directly from vanilla JavaScript or HTML (not within Svelte), you can use the `update()` method to programmatically change component properties:
+
+```javascript
+// Create Switch instance
+const switchInstance = new Switch({
+  target: document.getElementById('switch-container'),
+  props: { checked: false, size: 50 }
+});
+
+// Update properties externally
+switchInstance.update({
+  checked: true,
+  size: 80,
+  isDisabled: false
+});
+
+// Create MultiSwitch instance
+const multiSwitchInstance = new MultiSwitch({
+  target: document.getElementById('multiswitch-container'),
+  props: { selectedIndex: 0, stepsCount: 4 }
+});
+
+// Update properties externally
+multiSwitchInstance.update({
+  selectedIndex: 2,
+  size: 70,
+  stepsCount: 5,
+  stepStyles: [
+    { backgroundColor: '#ff0000', thumbColor: '#ffffff' },
+    { backgroundColor: '#00ff00', thumbColor: '#000000' }
+  ]
+});
+```
+
+This mechanism addresses Svelte 5 reactivity issues when components are used outside of Svelte environments.
 
 ## Keyboard Navigation
 

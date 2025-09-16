@@ -36,6 +36,14 @@
 			toggle();
 		}
 	}
+
+	// External update method for HTML/JavaScript usage
+	export function update(updates: Partial<Pick<Props, 'checked' | 'isDisabled' | 'orientation' | 'size'>>) {
+		if (updates.checked !== undefined) checked = updates.checked;
+		if (updates.isDisabled !== undefined) isDisabled = updates.isDisabled;
+		if (updates.orientation !== undefined) orientation = updates.orientation;
+		if (updates.size !== undefined) size = updates.size;
+	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->

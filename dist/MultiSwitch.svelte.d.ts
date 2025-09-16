@@ -18,6 +18,8 @@ interface Props {
         isSelected: boolean;
     }]>;
 }
-declare const MultiSwitch: import("svelte").Component<Props, {}, "selectedIndex">;
+declare const MultiSwitch: import("svelte").Component<Props, {
+    update: (updates: Partial<Pick<Props, "selectedIndex" | "isDisabled" | "orientation" | "size" | "stepsCount" | "stepStyles">>) => void;
+}, "selectedIndex">;
 type MultiSwitch = ReturnType<typeof MultiSwitch>;
 export default MultiSwitch;

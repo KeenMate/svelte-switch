@@ -53,6 +53,16 @@
 			onStepChange?.(selectedIndex);
 		}
 	}
+
+	// External update method for HTML/JavaScript usage
+	export function update(updates: Partial<Pick<Props, 'selectedIndex' | 'isDisabled' | 'orientation' | 'size' | 'stepsCount' | 'stepStyles'>>) {
+		if (updates.selectedIndex !== undefined) selectedIndex = updates.selectedIndex;
+		if (updates.isDisabled !== undefined) isDisabled = updates.isDisabled;
+		if (updates.orientation !== undefined) orientation = updates.orientation;
+		if (updates.size !== undefined) size = updates.size;
+		if (updates.stepsCount !== undefined) stepsCount = updates.stepsCount;
+		if (updates.stepStyles !== undefined) stepStyles = updates.stepStyles;
+	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->

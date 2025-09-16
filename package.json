@@ -1,6 +1,6 @@
 {
 	"name": "@keenmate/svelte-switch",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "A modern, customizable switch component for Svelte 5 with support for both binary and multi-step switches",
 	"type": "module",
 	"main": "./dist/index.js",

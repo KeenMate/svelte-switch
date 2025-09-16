@@ -9,6 +9,8 @@ interface Props {
         checked: boolean;
     }]>;
 }
-declare const Switch: import("svelte").Component<Props, {}, "checked">;
+declare const Switch: import("svelte").Component<Props, {
+    update: (updates: Partial<Pick<Props, "checked" | "isDisabled" | "orientation" | "size">>) => void;
+}, "checked">;
 type Switch = ReturnType<typeof Switch>;
 export default Switch;

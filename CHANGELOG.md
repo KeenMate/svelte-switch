@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-01-16
+
+### ✨ Added
+
+#### **External Update Mechanism**
+- **Update Methods** - Both Switch and MultiSwitch components now export `update()` methods for external property updates
+- **JavaScript/HTML Integration** - Addresses Svelte 5 reactivity issues when components are used directly from vanilla JavaScript or HTML
+- **Type-Safe Updates** - Update methods accept partial property objects with full TypeScript support
+- **Backward Compatibility** - Existing Svelte-to-Svelte usage remains unchanged
+
+#### **Switch Update Method**
+```javascript
+switchInstance.update({
+  checked: true,
+  size: 80,
+  isDisabled: false,
+  orientation: 'vertical'
+});
+```
+
+#### **MultiSwitch Update Method**
+```javascript
+multiSwitchInstance.update({
+  selectedIndex: 2,
+  size: 70,
+  stepsCount: 5,
+  stepStyles: [/* style objects */],
+  isDisabled: true,
+  orientation: 'horizontal'
+});
+```
+
+### 📚 Documentation
+
+- **Updated README.md** - Added comprehensive external usage section with examples
+- **Updated CLAUDE.md** - Added development guidance for external update mechanism
+- **API Reference Enhancement** - Added method documentation tables for both components
+
+### 🔧 Technical Details
+
+- **Preserves Svelte Props** - Normal Svelte binding and props continue to work as expected
+- **External Only Feature** - Update methods are specifically for non-Svelte environments
+- **Selective Updates** - Only provided properties are updated, undefined values are ignored
+- **Reactivity Maintained** - Updates trigger proper reactivity and re-rendering
+
 ## [1.0.0] - 2025-01-16
 
 ### 🎉 Initial Release
@@ -103,4 +148,5 @@ This release establishes a solid foundation for a modern Svelte 5 component libr
 - Type-safe API with clear naming conventions
 - Production-ready build and deployment pipeline
 
+[1.1.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.1.0
 [1.0.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.0.0
