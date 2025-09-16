@@ -4,7 +4,7 @@
   interface StepStyle {
     backgroundColor?: string;
     thumbColor?: string;
-    borderColor?: string;
+    thumbBorderColor?: string;
   }
 
   interface Props {
@@ -14,7 +14,7 @@
     size?: number;
     itemsCount?: number;
     items?: any[] | null;
-    itemStyles?: StepStyle[];
+    itemStyles?: StepStyle[] | StepStyle;
     onStepChange?: (index: number) => void;
     children?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
@@ -32,6 +32,16 @@
     onStepChange,
     children,
   }: Props = $props();
+
+  // Helper function to get style for a specific index
+  const getStyleForIndex = (index: number): StepStyle => {
+    if (Array.isArray(itemStyles)) {
+      return itemStyles[index] || {};
+    } else if (itemStyles && typeof itemStyles === 'object') {
+      return itemStyles;
+    }
+    return {};
+  };
 
   const isVertical = $derived(orientation === "vertical");
 
@@ -107,9 +117,9 @@
   class:vertical={isVertical}
   style:--scale={scale}
   style:--steps={effectiveStepsCount}
-  style:--current-bg-color={itemStyles[selectedIndex]?.backgroundColor || ""}
-  style:--current-thumb-color={itemStyles[selectedIndex]?.thumbColor || ""}
-  style:--current-border-color={itemStyles[selectedIndex]?.borderColor || ""}
+  style:--current-bg-color={getStyleForIndex(selectedIndex).backgroundColor || ""}
+  style:--current-thumb-color={getStyleForIndex(selectedIndex).thumbColor || ""}
+  style:--current-border-color={getStyleForIndex(selectedIndex).thumbBorderColor || ""}
   onclick={(e) => {
     if (isDisabled) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -142,8 +152,8 @@
       class="step-segment"
       class:active={index === selectedIndex}
       style:--step-index={index}
-      style:--step-bg-color={itemStyles[index]?.backgroundColor || ""}
-      style:--step-border-color={itemStyles[index]?.borderColor || ""}
+      style:--step-bg-color={getStyleForIndex(index).backgroundColor || ""}
+      style:--step-border-color={getStyleForIndex(index).thumbBorderColor || ""}
     >
       {@render children?.({
         currentIndex: index,

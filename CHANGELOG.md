@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### 🔄 Changed
+
+#### **Property Naming Improvements**
+- **BREAKING**: Renamed `borderColor` to `thumbBorderColor` in `StepStyle` interface
+- **Enhanced Clarity** - Property now clearly indicates it affects thumb border only
+- **Future-Ready** - Leaves room for separate `borderColor` property for switch container
+- **Consistent Naming** - Matches pattern of `thumbColor` for thumb-specific properties
+
+#### **Styling System Enhancements**
+- **Flexible itemStyles Type** - `itemStyles` prop now accepts either `StepStyle[]` (array) or `StepStyle` (single object)
+- **Array Mode**: Each item gets its own style - `itemStyles={[style1, style2, style3]}`
+- **Object Mode**: All items share same style - `itemStyles={singleStyle}`
+- **CSS Coalescing Fixed** - Switch component now properly uses CSS custom properties with fallbacks
+- **Background Color Fix** - Switch component styling now matches MultiSwitch behavior
+
+#### **Demo Site Modernization**
+- **Svelte 5 Snippets** - Converted all demo pages from legacy slot syntax to modern snippet syntax
+- **Consistent API** - Updated all examples to use `itemsCount` and `itemStyles` consistently
+- **Updated Documentation** - All property references now use correct naming conventions
+
+### 🐛 Fixed
+
+#### **Switch Component Styling**
+- **Background Color Override** - Fixed Switch component ignoring custom `backgroundColor` from `itemStyles`
+- **CSS Custom Properties** - Switch now uses `var(--current-bg-color, $switch-bg-off)` coalescing pattern
+- **Thumb Border Support** - Added missing border styling support to Switch thumb element
+- **Styling Consistency** - Both Switch and MultiSwitch now handle custom colors identically
+
+#### **Property Consistency**
+- **Border Color Rendering** - `thumbBorderColor` now properly renders on both Switch and MultiSwitch thumbs
+- **Type Safety** - Updated all TypeScript interfaces to reflect new property names
+- **Documentation Accuracy** - All code examples and property descriptions now match actual API
+
+### 📚 Documentation
+
+#### **Updated Examples**
+- **Property Names** - All demo pages updated to use `thumbBorderColor` instead of `borderColor`
+- **Code Samples** - Updated all code examples in documentation to reflect API changes
+- **SCSS Comments** - Clarified that border styling is specifically for thumb elements
+
 ## [1.1.0] - 2025-01-16
 
 ### ✨ Added

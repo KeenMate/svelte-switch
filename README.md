@@ -50,8 +50,8 @@ npm install @keenmate/svelte-switch
 
 ```svelte
 <Switch size={60}>
-  {#snippet children({ checked })}
-    <span>{checked ? '✓' : '✗'}</span>
+  {#snippet children({ currentIndex, item, isSelected })}
+    <span>{isSelected ? '✓' : '✗'}</span>
   {/snippet}
 </Switch>
 ```
@@ -67,11 +67,11 @@ npm install @keenmate/svelte-switch
 
 <MultiSwitch
   bind:selectedIndex
-  stepsCount={4}
+  itemsCount={4}
   size={80}
 >
-  {#snippet children({ selectedIndex })}
-    <span>{['Low', 'Med', 'High', 'Max'][selectedIndex]}</span>
+  {#snippet children({ currentIndex, item, isSelected })}
+    <span>{['Low', 'Med', 'High', 'Max'][currentIndex]}</span>
   {/snippet}
 </MultiSwitch>
 ```
@@ -81,21 +81,21 @@ npm install @keenmate/svelte-switch
 ```svelte
 <script>
   const temperatureStyles = [
-    { backgroundColor: '#3b82f6', thumbColor: '#1e40af', borderColor: '#2563eb' }, // Cold
-    { backgroundColor: '#10b981', thumbColor: '#047857', borderColor: '#059669' }, // Warm
-    { backgroundColor: '#f59e0b', thumbColor: '#d97706', borderColor: '#f59e0b' }, // Hot
-    { backgroundColor: '#ef4444', thumbColor: '#dc2626', borderColor: '#ef4444' }  // Very Hot
+    { backgroundColor: '#3b82f6', thumbColor: '#1e40af', thumbBorderColor: '#2563eb' }, // Cold
+    { backgroundColor: '#10b981', thumbColor: '#047857', thumbBorderColor: '#059669' }, // Warm
+    { backgroundColor: '#f59e0b', thumbColor: '#d97706', thumbBorderColor: '#f59e0b' }, // Hot
+    { backgroundColor: '#ef4444', thumbColor: '#dc2626', thumbBorderColor: '#ef4444' }  // Very Hot
   ];
 </script>
 
 <MultiSwitch
   bind:selectedIndex
-  stepsCount={4}
+  itemsCount={4}
   size={70}
-  stepStyles={temperatureStyles}
+  itemStyles={temperatureStyles}
 >
-  {#snippet children({ selectedIndex })}
-    <span>{['❄️', '🌡️', '🔥', '🌋'][selectedIndex]}</span>
+  {#snippet children({ currentIndex, item, isSelected })}
+    <span>{['❄️', '🌡️', '🔥', '🌋'][currentIndex]}</span>
   {/snippet}
 </MultiSwitch>
 ```
@@ -111,13 +111,13 @@ npm install @keenmate/svelte-switch
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
 | `size` | `number` | `50` | Switch size in pixels |
 | `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
-| `children` | `Snippet<[{ checked: boolean }]>` | - | Custom content for thumb |
+| `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 
 ### Switch Methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ checked?, isDisabled?, orientation?, size? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ checked?, isDisabled?, orientation?, size?, items?, itemStyles? }` | Updates component properties from external JavaScript/HTML |
 
 ### MultiSwitch Props
 
@@ -127,24 +127,25 @@ npm install @keenmate/svelte-switch
 | `isDisabled` | `boolean` | `false` | Disable the switch |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
 | `size` | `number` | `50` | Switch size in pixels |
-| `stepsCount` | `number` | `3` | Number of steps |
-| `stepStyles` | `StepStyle[]` | `[]` | Custom styling for each step |
+| `itemsCount` | `number` | `3` | Number of steps |
+| `items` | `any[]` | `null` | Array of data items (optional) |
+| `itemStyles` | `StepStyle[] \| StepStyle` | `[]` | Custom styling for each step (array) or all steps (object) |
 | `onStepChange` | `(index: number) => void` | - | Step change event handler |
-| `children` | `Snippet<[{ selectedIndex: number, stepIndex: number, isSelected: boolean }]>` | - | Custom content for thumb |
+| `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 
 ### MultiSwitch Methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, stepsCount?, stepStyles? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles? }` | Updates component properties from external JavaScript/HTML |
 
 ### StepStyle Interface
 
 ```typescript
 interface StepStyle {
-  backgroundColor?: string;
-  thumbColor?: string;
-  borderColor?: string;
+  backgroundColor?: string;    // Switch/MultiSwitch background color
+  thumbColor?: string;         // Thumb element color
+  thumbBorderColor?: string;   // Thumb border color
 }
 ```
 
@@ -169,17 +170,17 @@ switchInstance.update({
 // Create MultiSwitch instance
 const multiSwitchInstance = new MultiSwitch({
   target: document.getElementById('multiswitch-container'),
-  props: { selectedIndex: 0, stepsCount: 4 }
+  props: { selectedIndex: 0, itemsCount: 4 }
 });
 
 // Update properties externally
 multiSwitchInstance.update({
   selectedIndex: 2,
   size: 70,
-  stepsCount: 5,
-  stepStyles: [
-    { backgroundColor: '#ff0000', thumbColor: '#ffffff' },
-    { backgroundColor: '#00ff00', thumbColor: '#000000' }
+  itemsCount: 5,
+  itemStyles: [
+    { backgroundColor: '#ff0000', thumbColor: '#ffffff', thumbBorderColor: '#cc0000' },
+    { backgroundColor: '#00ff00', thumbColor: '#000000', thumbBorderColor: '#00cc00' }
   ]
 });
 ```
@@ -200,7 +201,7 @@ The component uses CSS custom properties for dynamic styling. All calculations a
 - `--steps`: Number of steps (MultiSwitch)
 - `--current-bg-color`: Dynamic background color
 - `--current-thumb-color`: Dynamic thumb color
-- `--current-border-color`: Dynamic border color
+- `--current-border-color`: Dynamic thumb border color
 
 ## Requirements
 

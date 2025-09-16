@@ -6,9 +6,9 @@
 
 	// Feature showcase styles
 	const featureStyles = [
-		{ backgroundColor: '#6366f1', thumbColor: '#4338ca', borderColor: '#5b21b6' }, // Purple
-		{ backgroundColor: '#10b981', thumbColor: '#047857', borderColor: '#059669' }, // Green
-		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', borderColor: '#f59e0b' }, // Orange
+		{ backgroundColor: '#6366f1', thumbColor: '#4338ca', thumbBorderColor: '#5b21b6' }, // Purple
+		{ backgroundColor: '#10b981', thumbColor: '#047857', thumbBorderColor: '#059669' }, // Green
+		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', thumbBorderColor: '#f59e0b' }, // Orange
 	];
 </script>
 

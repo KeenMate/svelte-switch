@@ -91,6 +91,31 @@ This mechanism addresses Svelte 5 reactivity issues when components are used dir
 ### Styling System
 Components use a scale-based sizing system where all dimensions are calculated from a base size (50px) using a scale factor. SCSS handles mathematical calculations with CSS custom properties for dynamic theming.
 
+#### itemStyles Flexibility
+The `itemStyles` prop accepts either:
+- **Array mode**: `StepStyle[]` - Each item gets its own style (e.g., `[style1, style2, style3]`)
+- **Object mode**: `StepStyle` - All items share the same style (e.g., `singleStyle`)
+
+Components automatically detect the type and apply styles accordingly using helper functions.
+
+#### CSS Custom Properties Pattern
+Both components use CSS custom property coalescing for consistent styling:
+```scss
+background-color: var(--current-bg-color, $switch-bg-off);
+```
+This allows `itemStyles` to override defaults while maintaining fallback values.
+
+#### StepStyle Interface
+```typescript
+interface StepStyle {
+  backgroundColor?: string;    // Switch/MultiSwitch background color
+  thumbColor?: string;         // Thumb element color
+  thumbBorderColor?: string;   // Thumb border color (renamed from borderColor)
+}
+```
+
+**Important**: `thumbBorderColor` specifically affects thumb borders only. This leaves room for a future `borderColor` property for switch container borders.
+
 ## Naming Conventions
 
 ### Property Naming Pattern
@@ -102,9 +127,10 @@ Follow the `[verb][Something]` convention for boolean properties and descriptive
 - `isEmpty` (not `empty`)
 
 **Descriptive Properties:**
-- `stepsCount` (not `steps` - unclear what "steps" means)
+- `itemsCount` (not `steps` - unclear what "steps" means)
 - `selectedIndex` (not `index` - unclear what index)
-- `stepStyles` (clear it's styles for steps)
+- `itemStyles` (clear it's styles for items)
+- `thumbBorderColor` (not `borderColor` - specifies what element gets the border)
 
 **Rationale:**
 - Avoid ambiguous single words that don't clearly communicate purpose

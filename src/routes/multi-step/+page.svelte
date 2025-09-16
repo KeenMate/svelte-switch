@@ -14,22 +14,22 @@
     {
       backgroundColor: "#3b82f6",
       thumbColor: "#1e40af",
-      borderColor: "#2563eb",
+      thumbBorderColor: "#2563eb",
     }, // Cold
     {
       backgroundColor: "#10b981",
       thumbColor: "#047857",
-      borderColor: "#059669",
+      thumbBorderColor: "#059669",
     }, // Warm
     {
       backgroundColor: "#f59e0b",
       thumbColor: "#d97706",
-      borderColor: "#f59e0b",
+      thumbBorderColor: "#f59e0b",
     }, // Hot
     {
       backgroundColor: "#ef4444",
       thumbColor: "#dc2626",
-      borderColor: "#ef4444",
+      thumbBorderColor: "#ef4444",
     }, // Very Hot
   ];
 
@@ -251,7 +251,7 @@
         <code>backgroundColor</code> - Background color for the step and switch
       </p>
       <p><code>thumbColor</code> - Color of the thumb when on this step</p>
-      <p><code>borderColor</code> - Border color for the thumb and step</p>
+      <p><code>thumbBorderColor</code> - Border color for the thumb</p>
 
       <h6>Dynamic Styling</h6>
       <p>

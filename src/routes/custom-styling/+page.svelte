@@ -25,18 +25,18 @@
 
 	// Multi-step gradient themes
 	const gradientStyles = [
-		{ backgroundColor: '#667eea', thumbColor: '#764ba2', borderColor: '#5a67d8' },
-		{ backgroundColor: '#f093fb', thumbColor: '#f5576c', borderColor: '#ed64a6' },
-		{ backgroundColor: '#4facfe', thumbColor: '#00f2fe', borderColor: '#4299e1' },
-		{ backgroundColor: '#43e97b', thumbColor: '#38f9d7', borderColor: '#48bb78' }
+		{ backgroundColor: '#667eea', thumbColor: '#764ba2', thumbBorderColor: '#5a67d8' },
+		{ backgroundColor: '#f093fb', thumbColor: '#f5576c', thumbBorderColor: '#ed64a6' },
+		{ backgroundColor: '#4facfe', thumbColor: '#00f2fe', thumbBorderColor: '#4299e1' },
+		{ backgroundColor: '#43e97b', thumbColor: '#38f9d7', thumbBorderColor: '#48bb78' }
 	];
 
 	const currentTheme = $derived(themes[selectedTheme as keyof typeof themes]);
-	const customStyle = $derived([{
+	const customStyle = $derived({
 		backgroundColor: customBg,
 		thumbColor: customThumb,
-		borderColor: customBorder
-	}]);
+		thumbBorderColor: customBorder
+	});
 
 	function onToggle(checked: boolean) {
 		console.log('Custom styled switch toggled:', checked);
@@ -64,7 +64,7 @@
 					<Switch
 						bind:checked
 						size={70}
-						itemStyles={[currentTheme]}
+						itemStyles={currentTheme}
 						onToggle={onToggle}
 					>
 						{#snippet children({ currentIndex, item, isSelected })}
@@ -222,7 +222,7 @@
 			<h6>Color Properties</h6>
 			<p><code>backgroundColor</code> - Switch background when active</p>
 			<p><code>thumbColor</code> - Color of the thumb element</p>
-			<p><code>borderColor</code> - Border color for thumb and segments</p>
+			<p><code>thumbBorderColor</code> - Border color for the thumb element</p>
 
 			<h6>Live Preview</h6>
 			<p>Colors update immediately as you adjust them, providing instant visual feedback</p>

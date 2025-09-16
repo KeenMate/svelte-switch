@@ -65,7 +65,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
 // Switch Component Styles
 .switch {
   position: relative;
-  background-color: $switch-bg-off;
+  background-color: var(--current-bg-color, $switch-bg-off);
   border-radius: $border-radius;
   cursor: pointer;
   @include transition(background-color);
@@ -98,7 +98,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
   @include focus-outline;
 
   &.checked {
-    background-color: $switch-bg-on;
+    // Background color is handled by --current-bg-color CSS custom property
   }
 
   @include disabled-state;
@@ -106,12 +106,15 @@ $focus-shadow: 0 0 0 3px $focus-color;
 
 .thumb {
   position: absolute;
-  background-color: $thumb-bg;
+  background-color: var(--current-thumb-color, $thumb-bg);
   border-radius: $border-radius;
   top: $margin;
   left: $margin;
   @include transition(transform);
   box-shadow: $shadow;
+
+  // Custom thumb border if provided
+  border: 1px solid var(--current-border-color, transparent);
 
   // Scaled dimensions using CSS calc()
   width: calc(var(--thumb-height) * var(--scale));
@@ -185,7 +188,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
     box-shadow: $shadow;
     z-index: 10; // Ensure thumb renders above step segments
 
-    // Custom border if provided
+    // Custom thumb border if provided
     border: 1px solid var(--current-border-color, transparent);
 
     // Scaled dimensions
