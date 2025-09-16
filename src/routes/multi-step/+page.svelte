@@ -38,7 +38,7 @@
   }
 
   // Dynamic labels
-  const stepLabels = $derived(() => {
+  const stepLabels = $derived((() => {
     switch (stepsCount) {
       case 3:
         return ["Low", "Med", "High"];
@@ -49,7 +49,7 @@
       default:
         return Array.from({ length: stepsCount }, (_, i) => (i + 1).toString());
     }
-  });
+  })());
 </script>
 
 <div class="container-fluid">

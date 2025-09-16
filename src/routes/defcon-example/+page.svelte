@@ -10,7 +10,7 @@
       title: "Exercise",
       description:
         "Lowest state of readiness. Normal peacetime conditions with regular training exercises.",
-      color: { backgroundColor: "#22c55e", thumbColor: "#16a34a" }, // Green
+      color: { backgroundColor: "#22c55e", thumbColor: "#16a34a", thumbBorderColor: "#15803d" }, // Green
       severity: "Low",
     },
     {
@@ -19,7 +19,7 @@
       title: "Increased Watch",
       description:
         "Increased intelligence watch and strengthened security measures. Above normal readiness.",
-      color: { backgroundColor: "#3b82f6", thumbColor: "#2563eb" }, // Blue
+      color: { backgroundColor: "#3b82f6", thumbColor: "#2563eb", thumbBorderColor: "#1e40af" }, // Blue
       severity: "Guarded",
     },
     {
@@ -28,7 +28,7 @@
       title: "Round House",
       description:
         "Increase in force readiness above normal readiness. Air Force ready to mobilize in 15 minutes.",
-      color: { backgroundColor: "#eab308", thumbColor: "#ca8a04" }, // Yellow
+      color: { backgroundColor: "#eab308", thumbColor: "#ca8a04", thumbBorderColor: "#a16207" }, // Yellow
       severity: "Elevated",
     },
     {
@@ -37,7 +37,7 @@
       title: "Fast Pace",
       description:
         "Next step to nuclear war. Armed forces ready to deploy and engage in less than 6 hours.",
-      color: { backgroundColor: "#f97316", thumbColor: "#ea580c" }, // Orange
+      color: { backgroundColor: "#f97316", thumbColor: "#ea580c", thumbBorderColor: "#c2410c" }, // Orange
       severity: "High",
     },
     {
@@ -46,7 +46,7 @@
       title: "Exercise Term",
       description:
         "Maximum readiness. Nuclear war is imminent or has already begun. Maximum force readiness.",
-      color: { backgroundColor: "#ef4444", thumbColor: "#dc2626" }, // Red
+      color: { backgroundColor: "#ef4444", thumbColor: "#dc2626", thumbBorderColor: "#b91c1c" }, // Red
       severity: "Severe",
     },
   ];

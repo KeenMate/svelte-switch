@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.2.0] - 2025-01-16
+
+### ✨ Added
+
+#### **Label Support for Switches**
+- **New `labels` Prop** - Both Switch and MultiSwitch components now support optional labels
+- **Flexible Configuration** - Pass labels as array of strings matching your steps/states
+- **Automatic Positioning** - Labels align appropriately based on switch orientation
+- **Responsive Styling** - Labels scale with component size and adapt to theme
+- **MultiSwitch Labels** - Support for multiple labels (e.g., `['Low', 'Medium', 'High']`)
+- **Switch Labels** - Binary state labels (e.g., `['OFF', 'ON']`)
 
 ### 🔄 Changed
 
@@ -190,5 +200,6 @@ This release establishes a solid foundation for a modern Svelte 5 component libr
 - Type-safe API with clear naming conventions
 - Production-ready build and deployment pipeline
 
+[1.2.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.2.0
 [1.1.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.1.0
 [1.0.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.0.0

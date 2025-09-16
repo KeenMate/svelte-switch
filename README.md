@@ -12,6 +12,7 @@ A modern, customizable switch component library for Svelte 5 with support for bo
 - **Custom Sizing**: Scalable to any size while maintaining proportions
 - **Custom Content**: Slot support for icons, text, or any content in the thumb
 - **Step Styling**: Individual styling for each step in multi-step switches
+- **Label Support**: Optional labels for both Switch and MultiSwitch components
 - **Accessibility**: Full keyboard navigation and ARIA support
 - **TypeScript**: Complete type safety with TypeScript interfaces
 - **No Dependencies**: Zero external dependencies, just peer dependency on Svelte 5
@@ -34,6 +35,15 @@ npm install @keenmate/svelte-switch
 </script>
 
 <Switch bind:checked />
+```
+
+### Switch with Labels
+
+```svelte
+<Switch
+  bind:checked
+  labels={['OFF', 'ON']}
+/>
 ```
 
 ### Vertical Switch
@@ -76,6 +86,17 @@ npm install @keenmate/svelte-switch
 </MultiSwitch>
 ```
 
+### Multi-Step Switch with Labels
+
+```svelte
+<MultiSwitch
+  bind:selectedIndex
+  itemsCount={3}
+  labels={['Small', 'Medium', 'Large']}
+  size={70}
+/>
+```
+
 ### Multi-Step Switch with Custom Styling
 
 ```svelte
@@ -110,6 +131,7 @@ npm install @keenmate/svelte-switch
 | `isDisabled` | `boolean` | `false` | Disable the switch |
 | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
 | `size` | `number` | `50` | Switch size in pixels |
+| `labels` | `string[]` | - | Optional labels for switch states (e.g., `['OFF', 'ON']`) |
 | `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 
@@ -117,7 +139,7 @@ npm install @keenmate/svelte-switch
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ checked?, isDisabled?, orientation?, size?, items?, itemStyles? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ checked?, isDisabled?, orientation?, size?, items?, itemStyles?, labels? }` | Updates component properties from external JavaScript/HTML |
 
 ### MultiSwitch Props
 
@@ -130,6 +152,7 @@ npm install @keenmate/svelte-switch
 | `itemsCount` | `number` | `3` | Number of steps |
 | `items` | `any[]` | `null` | Array of data items (optional) |
 | `itemStyles` | `StepStyle[] \| StepStyle` | `[]` | Custom styling for each step (array) or all steps (object) |
+| `labels` | `string[]` | - | Optional labels for each step (e.g., `['Low', 'Medium', 'High']`) |
 | `onStepChange` | `(index: number) => void` | - | Step change event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 
@@ -137,7 +160,7 @@ npm install @keenmate/svelte-switch
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles?, labels? }` | Updates component properties from external JavaScript/HTML |
 
 ### StepStyle Interface
 

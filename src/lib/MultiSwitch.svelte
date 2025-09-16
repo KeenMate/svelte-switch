@@ -1,5 +1,6 @@
 <script lang="ts">
   type Orientation = "horizontal" | "vertical";
+  type LabelPosition = "left" | "right" | "top" | "bottom";
 
   interface StepStyle {
     backgroundColor?: string;
@@ -15,8 +16,13 @@
     itemsCount?: number;
     items?: any[] | null;
     itemStyles?: StepStyle[] | StepStyle;
+    shouldDisplayLabels?: boolean;
+    labelPosition?: LabelPosition;
     onStepChange?: (index: number) => void;
     children?: import("svelte").Snippet<
+      [{ currentIndex: number; item: any; isSelected: boolean }]
+    >;
+    label?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
     >;
   }
@@ -29,8 +35,11 @@
     itemsCount = 3,
     items = null,
     itemStyles = [],
+    shouldDisplayLabels = false,
+    labelPosition = "bottom",
     onStepChange,
     children,
+    label,
   }: Props = $props();
 
   // Helper function to get style for a specific index
@@ -95,6 +104,8 @@
         | "itemsCount"
         | "itemStyles"
         | "items"
+        | "shouldDisplayLabels"
+        | "labelPosition"
       >
     >
   ) {
@@ -106,6 +117,8 @@
     if (updates.itemsCount !== undefined) itemsCount = updates.itemsCount;
     if (updates.itemStyles !== undefined) itemStyles = updates.itemStyles;
     if (updates.items !== undefined) items = updates.items;
+    if (updates.shouldDisplayLabels !== undefined) shouldDisplayLabels = updates.shouldDisplayLabels;
+    if (updates.labelPosition !== undefined) labelPosition = updates.labelPosition;
   }
 </script>
 
@@ -162,6 +175,42 @@
       })}
     </div>
   {/each}
+
+  <!-- Labels for vertical orientation (all items) -->
+  {#if shouldDisplayLabels && isVertical && label}
+    <div class="labels-container">
+      {#each Array(effectiveStepsCount) as _, index}
+        <div
+          class="label"
+          class:active={index === selectedIndex}
+          style:--label-index={index}
+        >
+          {@render label({
+            currentIndex: index,
+            item: items ? items[index] : undefined,
+            isSelected: index === selectedIndex,
+          })}
+        </div>
+      {/each}
+    </div>
+  {/if}
+
+  <!-- Single label for horizontal orientation (current item only) -->
+  {#if shouldDisplayLabels && !isVertical && label}
+    <div
+      class="label-single"
+      class:label-position-left={labelPosition === 'left'}
+      class:label-position-right={labelPosition === 'right'}
+      class:label-position-top={labelPosition === 'top'}
+      class:label-position-bottom={labelPosition === 'bottom'}
+    >
+      {@render label({
+        currentIndex: selectedIndex,
+        item: items ? items[selectedIndex] : undefined,
+        isSelected: true,
+      })}
+    </div>
+  {/if}
 </div>
 
 <style lang="scss">

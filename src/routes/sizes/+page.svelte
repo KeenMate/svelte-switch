@@ -40,14 +40,9 @@
 	}
 
 	// Calculate scaled dimensions for display
-	const scaledDimensions = $derived(() => {
-		const baseWidth = 60; // Base switch width at size 50
-		const baseHeight = 32; // Base switch height
-		const scale = selectedSize / 50;
-		return {
-			width: Math.round(baseWidth * scale),
-			height: Math.round(baseHeight * scale)
-		};
+	const scaledDimensions = $derived({
+		width: Math.round(60 * (selectedSize / 50)),
+		height: Math.round(32 * (selectedSize / 50))
 	});
 </script>
 

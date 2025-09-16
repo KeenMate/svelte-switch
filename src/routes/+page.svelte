@@ -15,7 +15,7 @@
 <div class="row">
 	<div class="col-12">
 		<div class="jumbotron bg-light p-5 rounded">
-			<h1 class="display-4">🔄 Svelte Switch v1.0</h1>
+			<h1 class="display-4">🔄 Svelte Switch v1.2.0</h1>
 			<p class="lead">
 				A modern, customizable switch component library for Svelte 5
 				with support for both binary and multi-step switches.
@@ -42,9 +42,9 @@
 						bind:checked={basicChecked}
 						size={60}
 					>
-						{#snippet children({ checked })}
+						{#snippet children({ isSelected })}
 							<span class="thumb-content">
-								{checked ? '✓' : '✗'}
+								{isSelected ? '✓' : '✗'}
 							</span>
 						{/snippet}
 					</Switch>
@@ -68,9 +68,9 @@
 						size={70}
 						stepStyles={featureStyles}
 					>
-						{#snippet children({ selectedIndex })}
+						{#snippet children({ currentIndex })}
 							<span class="thumb-content" style="color: white; font-weight: bold;">
-								{['🚀', '⭐', '🔥'][selectedIndex]}
+								{['🚀', '⭐', '🔥'][currentIndex]}
 							</span>
 						{/snippet}
 					</MultiSwitch>
@@ -114,6 +114,44 @@
 					Full keyboard navigation, ARIA support, and screen reader compatibility.
 				</p>
 				<a href="/basic" class="btn btn-outline-primary">Test</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row mt-4">
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">🏷️ Labels</h5>
+				<p class="card-text">
+					Display customizable labels next to vertical multi-step switches for better UX.
+				</p>
+				<a href="/with-labels" class="btn btn-outline-primary">View</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">🔴 DEFCON Example</h5>
+				<p class="card-text">
+					Real-world implementation example with DEFCON alert levels.
+				</p>
+				<a href="/defcon-example" class="btn btn-outline-primary">Example</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-4">
+		<div class="card">
+			<div class="card-body">
+				<h5 class="card-title">🔄 External Updates</h5>
+				<p class="card-text">
+					Update component properties externally for vanilla JS integration.
+				</p>
+				<a href="/external-updates" class="btn btn-outline-primary">Learn</a>
 			</div>
 		</div>
 	</div>

@@ -234,4 +234,61 @@ $focus-shadow: 0 0 0 3px $focus-color;
     left: calc(var(--margin) * var(--scale));
     top: calc((var(--margin) + (var(--thumb-height) + var(--step-spacing)) * var(--step-index)) * var(--scale));
   }
+
+  // Labels container for vertical orientation
+  .labels-container {
+    position: absolute;
+    left: calc((var(--switch-height) + 10px) * var(--scale)); // Position to the right of the switch
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: calc(var(--margin) * var(--scale)) 0;
+
+    .label {
+      height: calc(var(--thumb-height) * var(--scale));
+      display: flex;
+      align-items: center;
+      @include transition(opacity);
+      opacity: 0.6;
+
+      &.active {
+        opacity: 1;
+        font-weight: bold;
+      }
+    }
+  }
+
+  // Single label for horizontal orientation
+  .label-single {
+    position: absolute;
+    @include transition(all);
+    white-space: nowrap;
+
+    // Position variants
+    &.label-position-top {
+      bottom: calc(100% + 10px * var(--scale));
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.label-position-bottom {
+      top: calc(100% + 10px * var(--scale));
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    &.label-position-left {
+      right: calc(100% + 10px * var(--scale));
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &.label-position-right {
+      left: calc(100% + 10px * var(--scale));
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
 }
