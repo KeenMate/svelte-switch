@@ -42,7 +42,7 @@
 		console.log('Custom styled switch toggled:', checked);
 	}
 
-	function onStepChange(index: number) {
+	function onItemChange(index: number) {
 		console.log('Custom styled multi-step changed:', index);
 	}
 </script>
@@ -243,7 +243,7 @@
 						itemsCount={4}
 						size={80}
 						itemStyles={gradientStyles}
-						onStepChange={onStepChange}
+						onItemChange={onItemChange}
 					>
 						{#snippet children({ currentIndex, item, isSelected })}
 							<span class="thumb-content" style="color: white; font-weight: bold; font-size: 1rem;">

@@ -18,7 +18,7 @@
     itemStyles?: StepStyle[] | StepStyle;
     shouldDisplayLabels?: boolean;
     labelPosition?: LabelPosition;
-    onStepChange?: (index: number) => void;
+    onItemChange?: (index: number) => void;
     children?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
     >;
@@ -37,7 +37,7 @@
     itemStyles = [],
     shouldDisplayLabels = false,
     labelPosition = "bottom",
-    onStepChange,
+    onItemChange,
     children,
     label,
   }: Props = $props();
@@ -75,7 +75,7 @@
   function selectStep(index: number) {
     if (isDisabled) return;
     selectedIndex = index;
-    onStepChange?.(index);
+    onItemChange?.(index);
   }
 
   function handleKeydown(event: KeyboardEvent) {
@@ -84,11 +84,11 @@
     if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
       event.preventDefault();
       selectedIndex = Math.max(0, selectedIndex - 1);
-      onStepChange?.(selectedIndex);
+      onItemChange?.(selectedIndex);
     } else if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       event.preventDefault();
       selectedIndex = Math.min(effectiveStepsCount - 1, selectedIndex + 1);
-      onStepChange?.(selectedIndex);
+      onItemChange?.(selectedIndex);
     }
   }
 

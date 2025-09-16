@@ -59,7 +59,7 @@ Both components follow consistent prop patterns:
 - `orientation` as `'horizontal' | 'vertical'`
 - `size` number for scaling (default 50px)
 - `children` snippet for custom content
-- Optional callback props (`onToggle`, `onStepChange`)
+- Optional callback props (`onToggle`, `onItemChange`)
 
 ### External Update Mechanism
 Both components export an `update()` method for external property updates when used from HTML/JavaScript (not needed for Svelte-to-Svelte usage):

@@ -35,7 +35,7 @@
 		console.log('Size demo switch toggled:', checked);
 	}
 
-	function onStepChange(index: number) {
+	function onItemChange(index: number) {
 		console.log('Size demo multi-step changed:', index);
 	}
 

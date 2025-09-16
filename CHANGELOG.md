@@ -188,7 +188,7 @@ A modern, customizable switch component library for Svelte 5 with comprehensive 
 | `size` | `number` | `50` | Switch size in pixels |
 | `stepsCount` | `number` | `3` | Number of steps |
 | `stepStyles` | `StepStyle[]` | `[]` | Custom styling for each step |
-| `onStepChange` | `(index: number) => void` | `undefined` | Step change event handler |
+| `onItemChange` | `(index: number) => void` | `undefined` | Item change event handler |
 | `children` | `Snippet` | `undefined` | Custom thumb content |
 
 ### 🔧 Development Notes

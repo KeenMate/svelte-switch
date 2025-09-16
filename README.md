@@ -153,7 +153,7 @@ npm install @keenmate/svelte-switch
 | `items` | `any[]` | `null` | Array of data items (optional) |
 | `itemStyles` | `StepStyle[] \| StepStyle` | `[]` | Custom styling for each step (array) or all steps (object) |
 | `labels` | `string[]` | - | Optional labels for each step (e.g., `['Low', 'Medium', 'High']`) |
-| `onStepChange` | `(index: number) => void` | - | Step change event handler |
+| `onItemChange` | `(index: number) => void` | - | Item change event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 
 ### MultiSwitch Methods

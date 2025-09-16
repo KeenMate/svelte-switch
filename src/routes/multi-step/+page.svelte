@@ -33,8 +33,8 @@
     }, // Very Hot
   ];
 
-  function onStepChange(index: number) {
-    console.log("Step changed to:", index);
+  function onItemChange(index: number) {
+    console.log("Item changed to:", index);
   }
 
   // Dynamic labels
@@ -78,7 +78,7 @@
             {orientation}
             {size}
             itemsCount={stepsCount}
-            {onStepChange}
+            {onItemChange}
           >
             {#snippet children({ currentIndex, item, isSelected })}
               <span class="thumb-content">
@@ -170,7 +170,7 @@
         "horizontal")
       </p>
       <p><code>size</code> - Switch size in pixels (default: 50)</p>
-      <p><code>onStepChange</code> - Callback function when step changes</p>
+      <p><code>onItemChange</code> - Callback function when item changes</p>
       <p><code>stepStyles</code> - Array of style objects for each step</p>
 
       <h6>Usage Example</h6>
@@ -179,7 +179,7 @@
   bind:selectedIndex={"{currentStep}"}
   itemsCount={"{4}"}
   size={"{70}"}
-  onStepChange={"{handleStepChange}"}
+  onItemChange={"{handleItemChange}"}
 &gt;
   {"{#snippet children({ currentIndex, item, isSelected })"}
     &lt;span&gt;{"{stepLabels[currentIndex]}"}&lt;/span&gt;
