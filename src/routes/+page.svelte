@@ -64,9 +64,9 @@
 				<div class="text-center py-3">
 					<MultiSwitch
 						bind:selectedIndex={featureIndex}
-						stepsCount={3}
+						itemsCount={3}
 						size={70}
-						stepStyles={featureStyles}
+						itemStyles={featureStyles}
 					>
 						{#snippet children({ currentIndex })}
 							<span class="thumb-content" style="color: white; font-weight: bold;">

@@ -265,7 +265,7 @@
           labelPosition="right"
           size={50}
         >
-          {#snippet children({ currentIndex })}
+          {#snippet children({ currentIndex, item, isSelected })}
             <span style="font-size: 20px;">
               {#if currentIndex === 0}🐢
               {:else if currentIndex === 1}🚶

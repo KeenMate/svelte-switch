@@ -5,6 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0-rc01] - 2025-01-17
+
+### ✨ Added
+
+#### **thumbTemplate Snippet Support**
+- **New `thumbTemplate` Prop** - Enhanced snippet for thumb content with extended context
+- **Enhanced Context** - Provides `{ currentIndex, currentItem, itemsCount }` instead of `{ currentIndex, item, isSelected }`
+- **Dual Template Support** - Both `children` and `thumbTemplate` can be used simultaneously
+- **Priority System** - `thumbTemplate` takes precedence when both are provided
+- **Step Counter Support** - Perfect for displaying "Step 1/4" or progress indicators
+
+#### **Template Context Comparison**
+| Template | Context | Use Case |
+|----------|---------|----------|
+| `children` | `{ currentIndex, item, isSelected }` | Basic content rendering for all steps |
+| `thumbTemplate` | `{ currentIndex, currentItem, itemsCount }` | Enhanced thumb content with total count |
+
+#### **Usage Examples**
+```svelte
+<!-- Basic children template -->
+<Switch>
+  {#snippet children({ isSelected })}
+    {isSelected ? '✓' : '✗'}
+  {/snippet}
+</Switch>
+
+<!-- Enhanced thumbTemplate -->
+<Switch items={['Off', 'On']}>
+  {#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
+    <div>Step {currentIndex + 1}/{itemsCount}</div>
+    <div>{currentItem}</div>
+  {/snippet}
+</Switch>
+```
+
+### 🔄 Changed
+
+#### **Template Rendering Logic**
+- **Fallback Behavior** - Components now check for `thumbTemplate` first, then fall back to `children`
+- **Backward Compatibility** - Existing `children` usage remains unchanged
+- **Selective Rendering** - MultiSwitch uses `children` for step segments, `thumbTemplate` for active thumb
+
+### 📚 Documentation
+
+#### **New Demo Section**
+- **Custom Styling Page** - Added "thumbTemplate vs children" demonstration
+- **Interactive Examples** - Live examples showing both Switch and MultiSwitch with step counters
+- **Context Comparison** - Clear documentation of when to use each template type
+- **Code Examples** - Copy-paste ready examples for both template patterns
+
 ## [1.2.0] - 2025-01-16
 
 ### ✨ Added
@@ -200,6 +250,7 @@ This release establishes a solid foundation for a modern Svelte 5 component libr
 - Type-safe API with clear naming conventions
 - Production-ready build and deployment pipeline
 
+[1.3.0-rc01]: https://github.com/keenmate/svelte-switch/releases/tag/v1.3.0-rc01
 [1.2.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.2.0
 [1.1.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.1.0
 [1.0.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.0.0

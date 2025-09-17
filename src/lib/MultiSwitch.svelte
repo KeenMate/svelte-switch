@@ -22,6 +22,9 @@
     children?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
     >;
+    thumbTemplate?: import("svelte").Snippet<
+      [{ currentIndex: number; currentItem: any; itemsCount: number }]
+    >;
     label?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
     >;
@@ -39,6 +42,7 @@
     labelPosition = "bottom",
     onItemChange,
     children,
+    thumbTemplate,
     label,
   }: Props = $props();
 
@@ -67,7 +71,7 @@
     return itemsCount;
   });
 
-  // Derived values for children snippet
+  // Derived values for snippets
   const currentIndex = $derived(selectedIndex);
   const currentItem = $derived(items ? items[selectedIndex] : undefined);
   const isSelected = $derived(true); // Always true for the current thumb
@@ -156,7 +160,11 @@
       ? `translateY(calc(var(--step-offset) * ${selectedIndex})) translateX(-50%)`
       : `translateX(calc(var(--step-offset) * ${selectedIndex}))`}
   >
-    {@render children?.({ currentIndex, item: currentItem, isSelected: true })}
+    {#if thumbTemplate}
+      {@render thumbTemplate({ currentIndex, currentItem, itemsCount: effectiveStepsCount })}
+    {:else if children}
+      {@render children({ currentIndex, item: currentItem, isSelected: true })}
+    {/if}
   </div>
 
   <!-- Step indicators/background segments -->

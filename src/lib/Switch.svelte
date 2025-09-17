@@ -18,6 +18,9 @@
     children?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
     >;
+    thumbTemplate?: import("svelte").Snippet<
+      [{ currentIndex: number; currentItem: any; itemsCount: number }]
+    >;
   }
 
   let {
@@ -29,6 +32,7 @@
     itemStyles = [],
     onToggle,
     children,
+    thumbTemplate,
   }: Props = $props();
 
   // Helper function to get style for a specific index
@@ -55,9 +59,10 @@
     }
   });
 
-  // Derived values for children snippet
+  // Derived values for snippets
   const currentIndex = $derived(checked ? 1 : 0);
   const currentItem = $derived(items ? items[currentIndex] : undefined);
+  const itemsCount = $derived(items ? items.length : 2);
   const isSelected = $derived(checked);
 
   function toggle() {
@@ -107,8 +112,8 @@
   style:--current-bg-color={getStyleForIndex(currentIndex).backgroundColor ||
     ""}
   style:--current-thumb-color={getStyleForIndex(currentIndex).thumbColor || ""}
-  style:--current-thumb-border-color={getStyleForIndex(currentIndex).thumbBorderColor ||
-    ""}
+  style:--current-thumb-border-color={getStyleForIndex(currentIndex)
+    .thumbBorderColor || ""}
   onclick={toggle}
   onkeydown={handleKeydown}
   role="switch"
@@ -122,7 +127,11 @@
       ? `translateY(${checked ? "calc(var(--thumb-offset) * var(--scale))" : "0px"}) translateX(-50%)`
       : `translateX(${checked ? "calc(var(--thumb-offset) * var(--scale))" : "0px"})`}
   >
-    {@render children?.({ currentIndex, item: currentItem, isSelected })}
+    {#if thumbTemplate}
+      {@render thumbTemplate({ currentIndex, currentItem, itemsCount })}
+    {:else if children}
+      {@render children({ currentIndex, item: currentItem, isSelected })}
+    {/if}
   </div>
 </div>
 

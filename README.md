@@ -66,6 +66,35 @@ npm install @keenmate/svelte-switch
 </Switch>
 ```
 
+### Enhanced Thumb Template (v1.3.0+)
+
+The `thumbTemplate` snippet provides enhanced context for more sophisticated thumb content:
+
+```svelte
+<!-- Step counter example -->
+<Switch items={['Off', 'On']}>
+  {#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
+    <div style="font-size: 0.8rem; text-align: center;">
+      <div>Step {currentIndex + 1}/{itemsCount}</div>
+      <div>{currentItem}</div>
+    </div>
+  {/snippet}
+</Switch>
+
+<!-- MultiSwitch with progress indicator -->
+<MultiSwitch bind:selectedIndex itemsCount={4}>
+  {#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
+    <span style="font-size: 0.7rem;">
+      {currentIndex + 1}/{itemsCount}
+    </span>
+  {/snippet}
+</MultiSwitch>
+```
+
+**Template Comparison:**
+- `children`: `{ currentIndex, item, isSelected }` - Basic content for all steps
+- `thumbTemplate`: `{ currentIndex, currentItem, itemsCount }` - Enhanced context with total count
+
 ### Multi-Step Switch
 
 ```svelte
@@ -134,6 +163,7 @@ npm install @keenmate/svelte-switch
 | `labels` | `string[]` | - | Optional labels for switch states (e.g., `['OFF', 'ON']`) |
 | `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
+| `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
 
 ### Switch Methods
 
@@ -155,6 +185,7 @@ npm install @keenmate/svelte-switch
 | `labels` | `string[]` | - | Optional labels for each step (e.g., `['Low', 'Medium', 'High']`) |
 | `onItemChange` | `(index: number) => void` | - | Item change event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
+| `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
 
 ### MultiSwitch Methods
 

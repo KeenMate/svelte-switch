@@ -310,6 +310,94 @@
 			<p>Colors transition smoothly as users navigate between steps, creating engaging interactions</p>
 		{/snippet}
 	</ShowcaseSection>
+
+	<!-- thumbTemplate vs children example -->
+	<ShowcaseSection title="thumbTemplate vs children">
+		{#snippet demo()}
+			<Switch
+				bind:checked={checked}
+				size={70}
+				itemStyles={[
+					{ backgroundColor: '#e74c3c', thumbColor: '#fff' },
+					{ backgroundColor: '#27ae60', thumbColor: '#fff' }
+				]}
+			>
+				{#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
+					<div class="text-center" style="color: #333; font-weight: bold; font-size: 0.8rem;">
+						Step {currentIndex + 1}/{itemsCount}
+					</div>
+				{/snippet}
+			</Switch>
+
+			<div class="mt-4">
+				<MultiSwitch
+					bind:selectedIndex={selectedIndex}
+					itemsCount={4}
+					size={60}
+					itemStyles={[
+						{ backgroundColor: '#3b82f6', thumbColor: '#fff' },
+						{ backgroundColor: '#10b981', thumbColor: '#fff' },
+						{ backgroundColor: '#f59e0b', thumbColor: '#fff' },
+						{ backgroundColor: '#ef4444', thumbColor: '#fff' }
+					]}
+				>
+					{#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
+						<div class="text-center" style="color: #333; font-weight: bold; font-size: 0.7rem;">
+							{currentIndex + 1}/{itemsCount}
+						</div>
+					{/snippet}
+				</MultiSwitch>
+			</div>
+		{/snippet}
+
+		{#snippet controls()}
+			<div class="form-group mb-3">
+				<label class="form-label">Switch State</label>
+				<div class="form-check">
+					<input
+						type="checkbox"
+						class="form-check-input"
+						bind:checked={checked}
+						id="thumbTemplateChecked"
+					/>
+					<label class="form-check-label" for="thumbTemplateChecked">
+						Toggle Switch
+					</label>
+				</div>
+			</div>
+
+			<div class="form-group mb-3">
+				<label class="form-label">MultiSwitch Step</label>
+				<select class="form-select" bind:value={selectedIndex}>
+					<option value={0}>Step 1</option>
+					<option value={1}>Step 2</option>
+					<option value={2}>Step 3</option>
+					<option value={3}>Step 4</option>
+				</select>
+			</div>
+		{/snippet}
+
+		{#snippet description()}
+			<h6>thumbTemplate Feature</h6>
+			<p>Use <code>thumbTemplate</code> when you need access to additional context like step count and current item data.</p>
+
+			<h6>thumbTemplate vs children</h6>
+			<ul>
+				<li><strong>children:</strong> Basic content rendering with <code>{'{ currentIndex, item, isSelected }'}</code></li>
+				<li><strong>thumbTemplate:</strong> Enhanced context with <code>{'{ currentIndex, currentItem, itemsCount }'}</code></li>
+			</ul>
+
+			<h6>When to use thumbTemplate</h6>
+			<p>Perfect for displaying step counters, progress indicators, or when you need to know the total number of items.</p>
+
+			<h6>Example Usage</h6>
+			<pre><code>&lt;Switch&gt;
+  {'{#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })'}
+    &lt;div&gt;Step {'{ currentIndex + 1 }'}/{'{ itemsCount }'}&lt;/div&gt;
+  {'{/snippet}'}
+&lt;/Switch&gt;</code></pre>
+		{/snippet}
+	</ShowcaseSection>
 </div>
 
 <style>
