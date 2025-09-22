@@ -21,6 +21,7 @@
     thumbTemplate?: import("svelte").Snippet<
       [{ currentIndex: number; currentItem: any; itemsCount: number }]
     >;
+    disableThumbRender?: boolean;
   }
 
   let {
@@ -33,6 +34,7 @@
     onToggle,
     children,
     thumbTemplate,
+    disableThumbRender = false,
   }: Props = $props();
 
   // Helper function to get style for a specific index
@@ -64,6 +66,7 @@
   const currentItem = $derived(items ? items[currentIndex] : undefined);
   const itemsCount = $derived(items ? items.length : 2);
   const isSelected = $derived(checked);
+  let currentStepContext = $derived({ currentIndex, currentItem, itemsCount });
 
   function toggle() {
     if (isDisabled) return;
@@ -89,6 +92,8 @@
         | "size"
         | "items"
         | "itemStyles"
+        | "onToggle"
+        | "disableThumbRender"
       >
     >
   ) {
@@ -98,6 +103,8 @@
     if (updates.size !== undefined) size = updates.size;
     if (updates.items !== undefined) items = updates.items;
     if (updates.itemStyles !== undefined) itemStyles = updates.itemStyles;
+    if (updates.onToggle !== undefined) onToggle = updates.onToggle;
+    if (updates.disableThumbRender !== undefined) disableThumbRender = updates.disableThumbRender;
   }
 </script>
 
@@ -128,8 +135,8 @@
       : `translateX(${checked ? "calc(var(--thumb-offset) * var(--scale))" : "0px"})`}
   >
     {#if thumbTemplate}
-      {@render thumbTemplate({ currentIndex, currentItem, itemsCount })}
-    {:else if children}
+      {@render thumbTemplate(currentStepContext)}
+    {:else if children && !disableThumbRender}
       {@render children({ currentIndex, item: currentItem, isSelected })}
     {/if}
   </div>

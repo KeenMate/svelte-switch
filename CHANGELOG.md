@@ -5,6 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-01-22
+
+### ✨ Added
+
+#### **Default Label Support**
+- **No Template Required** - Labels now display automatically when `shouldDisplayLabels={true}` without needing `labelTemplate`
+- **Smart Content Detection** - Uses `items` array content when available, falls back to "Item 1", "Item 2", etc.
+- **SCSS Customization** - Added `$default-label-*` variables for styling default labels
+- **Active Label Highlighting** - Bold font-weight for selected labels with smooth transitions
+
+#### **Enhanced Vertical Label Positioning**
+- **Left/Right Positioning** - Vertical switches now respect `labelPosition="left"` and `labelPosition="right"`
+- **Logical Positioning** - Horizontal: all positions (top/bottom/left/right), Vertical: only left/right positions
+- **Consistent API** - Same `labelPosition` prop works for both orientations with appropriate logic
+
+#### **SCSS Variables for Default Labels**
+```scss
+$default-label-color: #666;                    // Normal label color
+$default-label-active-color: #333;             // Active label color
+$default-label-font-size: 14px;                // Base font size
+$default-label-font-weight: normal;            // Normal font weight
+$default-label-active-font-weight: bold;       // Active label font weight
+```
+
+### 🔄 Changed
+
+#### **Label Display Logic**
+- **Simplified Usage** - `shouldDisplayLabels={true}` now works without requiring custom `labelTemplate`
+- **Template Priority** - When `labelTemplate` is provided, it takes precedence over default rendering
+- **Position-Aware Rendering** - Vertical labels only render for left/right positions (not top/bottom)
+
+### 📚 Documentation
+
+#### **Updated Demo Pages**
+- **Default Labels Section** - New showcase demonstrating label usage without templates
+- **Position Examples** - Clear examples of left/right positioning for vertical switches
+- **SCSS Customization Guide** - Documentation of all customizable label variables
+
+## [1.3.0-rc02] - 2025-01-17
+
+### 🔄 Changed
+
+#### **Template Naming Consistency (BREAKING)**
+- **Renamed `label` to `labelTemplate`** - All template props now follow consistent `xxxTemplate` naming
+- **Updated Demo Pages** - All examples now use `labelTemplate` instead of `label`
+- **Better Developer Experience** - Clear distinction between data props and template props
+
+#### **Performance Optimizations**
+- **Context Object Caching** - Added `currentStepContext` derived object to reduce template re-renders
+- **Optimized Template Passing** - More efficient context passing to template snippets
+
+#### **API Enhancements**
+- **Enhanced Update Methods** - Added `onToggle` and `onItemChange` callback support
+- **Complete Property Coverage** - Update methods now support all component properties
+- **Web Component Support** - Added `disableThumbRender` prop to prevent stale template rendering
+
+### 📚 Documentation
+
+#### **Updated Examples**
+- **Migration Guide** - Clear instructions for `label` → `labelTemplate` change
+- **Enhanced API Tables** - Updated to include `labelTemplate`, `disableThumbRender`, and callback properties
+- **Method Documentation** - Complete update method parameter coverage
+- **Web Component Guide** - Added documentation for using `disableThumbRender` in non-reactive environments
+
 ## [1.3.0-rc01] - 2025-01-17
 
 ### ✨ Added
@@ -15,6 +79,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dual Template Support** - Both `children` and `thumbTemplate` can be used simultaneously
 - **Priority System** - `thumbTemplate` takes precedence when both are provided
 - **Step Counter Support** - Perfect for displaying "Step 1/4" or progress indicators
+
+#### **Template Naming Consistency**
+- **BREAKING**: Renamed `label` to `labelTemplate` in MultiSwitch component
+- **Consistent Naming** - All snippet props now follow the `xxxTemplate` pattern
+- **Better Developer Experience** - Clear distinction between data props and template props
 
 #### **Template Context Comparison**
 | Template | Context | Use Case |
@@ -47,6 +116,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Backward Compatibility** - Existing `children` usage remains unchanged
 - **Selective Rendering** - MultiSwitch uses `children` for step segments, `thumbTemplate` for active thumb
 
+#### **Performance Optimizations**
+- **Context Object Caching** - Added `currentStepContext` derived object to reduce template re-renders
+- **Consistent Template Passing** - Optimized how context is passed to template snippets
+
+#### **API Enhancements**
+- **Enhanced Update Methods** - Added `onToggle` and `onItemChange` callback support in external update methods
+- **Complete Property Coverage** - Update methods now support all component properties
+
+### 🚨 Breaking Changes
+
+#### **Template Prop Naming**
+- **MultiSwitch `label` → `labelTemplate`** - Renamed for consistency with other template props
+- **Migration**: Replace `{#snippet label(...)}` with `{#snippet labelTemplate(...)}`
+- **Automatic**: IDEs with find/replace can easily update existing code
+
 ### 📚 Documentation
 
 #### **New Demo Section**
@@ -54,6 +138,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Interactive Examples** - Live examples showing both Switch and MultiSwitch with step counters
 - **Context Comparison** - Clear documentation of when to use each template type
 - **Code Examples** - Copy-paste ready examples for both template patterns
+
+#### **Updated API Documentation**
+- **labelTemplate Property** - Added documentation for renamed label template prop
+- **Enhanced Update Methods** - Updated method signatures to include callback support
+- **Template Context Examples** - Clear examples showing different template usage patterns
 
 ## [1.2.0] - 2025-01-16
 
@@ -250,6 +339,7 @@ This release establishes a solid foundation for a modern Svelte 5 component libr
 - Type-safe API with clear naming conventions
 - Production-ready build and deployment pipeline
 
+[1.3.0-rc02]: https://github.com/keenmate/svelte-switch/releases/tag/v1.3.0-rc02
 [1.3.0-rc01]: https://github.com/keenmate/svelte-switch/releases/tag/v1.3.0-rc01
 [1.2.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.2.0
 [1.1.0]: https://github.com/keenmate/svelte-switch/releases/tag/v1.1.0

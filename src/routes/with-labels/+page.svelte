@@ -44,7 +44,7 @@
         shouldDisplayLabels={true}
         size={50}
       >
-        {#snippet label({ currentIndex, item })}
+        {#snippet labelTemplate({ currentIndex, item })}
           <span style="min-width: 40px; margin-left: 10px;">
             {item}
           </span>
@@ -95,7 +95,7 @@
           thumbBorderColor: '#2563eb'
         }}
       >
-        {#snippet label({ currentIndex, item, isSelected })}
+        {#snippet labelTemplate({ currentIndex, item, isSelected })}
           <span style="min-width: 40px; margin-left: 10px; color: {isSelected ? '#3b82f6' : '#6b7280'};">
             {item}
           </span>
@@ -145,7 +145,7 @@
         labelPosition="bottom"
         size={50}
       >
-        {#snippet label({ item })}
+        {#snippet labelTemplate({ item })}
           <span style="font-weight: bold; color: #3b82f6;">{item}</span>
         {/snippet}
       </MultiSwitch>
@@ -194,7 +194,7 @@
           thumbColor: '#fff'
         }}
       >
-        {#snippet label({ item, currentIndex })}
+        {#snippet labelTemplate({ item, currentIndex })}
           <span style="color: #10b981; font-size: 18px;">
             {currentIndex + 1}. {item}
           </span>
@@ -247,7 +247,7 @@
             thumbColor: '#fff'
           }))}
         >
-          {#snippet label({ item })}
+          {#snippet labelTemplate({ item })}
             <span style="color: {item.color}; font-weight: bold;">
               {item.name}
             </span>
@@ -274,7 +274,7 @@
               {/if}
             </span>
           {/snippet}
-          {#snippet label({ item })}
+          {#snippet labelTemplate({ item })}
             <span style="font-weight: bold;">
               {item} Mode
             </span>
@@ -319,6 +319,89 @@
       <li>Inline form controls</li>
       <li>Toolbar settings</li>
       <li>Compact UI layouts</li>
+    </ul>
+  {/snippet}
+</ShowcaseSection>
+
+<ShowcaseSection
+  title="Default Labels (No Template Required)"
+  subtitle="Automatic label rendering without custom labelTemplate">
+  {#snippet demo()}
+    <div class="d-flex justify-content-around align-items-center h-100 flex-wrap gap-4">
+      <div class="text-center">
+        <h6 class="mb-3">Vertical Left Labels</h6>
+        <MultiSwitch
+          bind:selectedIndex={selectedDay}
+          items={daysOfWeek}
+          orientation="vertical"
+          shouldDisplayLabels={true}
+          labelPosition="left"
+          size={45}
+        />
+      </div>
+
+      <div class="text-center">
+        <h6 class="mb-3">Vertical Right Labels</h6>
+        <MultiSwitch
+          bind:selectedIndex={selectedSpeed}
+          items={speeds}
+          orientation="vertical"
+          shouldDisplayLabels={true}
+          labelPosition="right"
+          size={45}
+        />
+      </div>
+
+      <div class="text-center">
+        <h6 class="mb-3">Horizontal with Items</h6>
+        <MultiSwitch
+          bind:selectedIndex={horizontalMonth}
+          items={months}
+          orientation="horizontal"
+          shouldDisplayLabels={true}
+          labelPosition="bottom"
+          size={45}
+        />
+      </div>
+
+      <div class="text-center">
+        <h6 class="mb-3">Vertical without Items</h6>
+        <MultiSwitch
+          bind:selectedIndex={selectedPriority}
+          itemsCount={4}
+          orientation="vertical"
+          shouldDisplayLabels={true}
+          size={45}
+        />
+      </div>
+    </div>
+  {/snippet}
+
+  {#snippet controls()}
+    <div class="alert alert-info">
+      <strong>Tip:</strong> When no <code>labelTemplate</code> is provided, the component automatically
+      generates default gray labels that highlight the active item with bold text.
+    </div>
+  {/snippet}
+
+  {#snippet description()}
+    <p>
+      Now you can enable labels without defining a custom <code>labelTemplate</code>.
+      The component will automatically display appropriate labels:
+    </p>
+    <h6>Default Label Behavior:</h6>
+    <ul>
+      <li><strong>With items array:</strong> Shows the item content directly</li>
+      <li><strong>Without items:</strong> Shows "Item 1", "Item 2", etc.</li>
+      <li><strong>Active highlighting:</strong> Bold font-weight for selected item</li>
+      <li><strong>SCSS customizable:</strong> Override <code>$default-label-*</code> variables</li>
+    </ul>
+    <h6>SCSS Variables for Customization:</h6>
+    <ul>
+      <li><code>$default-label-color</code> - Normal label color (default: #666)</li>
+      <li><code>$default-label-active-color</code> - Active label color (default: #333)</li>
+      <li><code>$default-label-font-weight</code> - Normal font-weight (default: normal)</li>
+      <li><code>$default-label-active-font-weight</code> - Active font-weight (default: bold)</li>
     </ul>
   {/snippet}
 </ShowcaseSection>

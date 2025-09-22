@@ -95,6 +95,19 @@ The `thumbTemplate` snippet provides enhanced context for more sophisticated thu
 - `children`: `{ currentIndex, item, isSelected }` - Basic content for all steps
 - `thumbTemplate`: `{ currentIndex, currentItem, itemsCount }` - Enhanced context with total count
 
+### Web Component Integration
+
+When using switches in non-reactive environments (web components, plain JavaScript, or any context where Svelte's reactivity system isn't available), the `disableThumbRender` property prevents stale template content:
+
+```javascript
+// Disable thumb template rendering in non-reactive environments
+switchInstance.update({
+  disableThumbRender: true
+});
+```
+
+This property is primarily designed for non-reactive environments where template functions are called only once and won't update with state changes. It ensures only static styling is rendered, avoiding stale dynamic content.
+
 ### Multi-Step Switch
 
 ```svelte
@@ -115,15 +128,46 @@ The `thumbTemplate` snippet provides enhanced context for more sophisticated thu
 </MultiSwitch>
 ```
 
-### Multi-Step Switch with Labels
+### Multi-Step Switch with Default Labels (v1.3.0+)
+
+```svelte
+<!-- Automatic labels without template -->
+<MultiSwitch
+  bind:selectedIndex
+  items={['Small', 'Medium', 'Large']}
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
+  size={70}
+/>
+
+<!-- Or with just itemsCount (shows "Item 1", "Item 2", etc.) -->
+<MultiSwitch
+  bind:selectedIndex
+  itemsCount={3}
+  shouldDisplayLabels={true}
+  labelPosition="bottom"
+  size={70}
+/>
+```
+
+### Multi-Step Switch with Custom Label Template
 
 ```svelte
 <MultiSwitch
   bind:selectedIndex
-  itemsCount={3}
-  labels={['Small', 'Medium', 'Large']}
+  items={['Small', 'Medium', 'Large']}
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
   size={70}
-/>
+>
+  {#snippet labelTemplate({ item, isSelected })}
+    <span style="color: {isSelected ? '#333' : '#666'}; font-weight: {isSelected ? 'bold' : 'normal'}">
+      {item} Size
+    </span>
+  {/snippet}
+</MultiSwitch>
 ```
 
 ### Multi-Step Switch with Custom Styling
@@ -164,12 +208,13 @@ The `thumbTemplate` snippet provides enhanced context for more sophisticated thu
 | `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 | `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
+| `disableThumbRender` | `boolean` | `false` | Disable rendering children template in thumb (primarily for non-reactive environments) |
 
 ### Switch Methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ checked?, isDisabled?, orientation?, size?, items?, itemStyles?, labels? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ checked?, isDisabled?, orientation?, size?, items?, itemStyles?, onToggle?, disableThumbRender? }` | Updates component properties from external JavaScript/HTML |
 
 ### MultiSwitch Props
 
@@ -182,16 +227,19 @@ The `thumbTemplate` snippet provides enhanced context for more sophisticated thu
 | `itemsCount` | `number` | `3` | Number of steps |
 | `items` | `any[]` | `null` | Array of data items (optional) |
 | `itemStyles` | `StepStyle[] \| StepStyle` | `[]` | Custom styling for each step (array) or all steps (object) |
-| `labels` | `string[]` | - | Optional labels for each step (e.g., `['Low', 'Medium', 'High']`) |
+| `shouldDisplayLabels` | `boolean` | `false` | Enable automatic label display (v1.3.0+) |
+| `labelPosition` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | Label position (horizontal: all positions, vertical: left/right only) |
 | `onItemChange` | `(index: number) => void` | - | Item change event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 | `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
+| `labelTemplate` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom label content template (optional, uses default if not provided) |
+| `disableThumbRender` | `boolean` | `false` | Disable rendering children template in thumb (primarily for non-reactive environments) |
 
 ### MultiSwitch Methods
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles?, labels? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles?, shouldDisplayLabels?, labelPosition?, onItemChange?, disableThumbRender? }` | Updates component properties from external JavaScript/HTML |
 
 ### StepStyle Interface
 
@@ -256,6 +304,26 @@ The component uses CSS custom properties for dynamic styling. All calculations a
 - `--current-bg-color`: Dynamic background color
 - `--current-thumb-color`: Dynamic thumb color
 - `--current-thumb-border-color`: Dynamic thumb border color
+
+### Default Label Styling (v1.3.0+)
+
+When using `shouldDisplayLabels={true}` without `labelTemplate`, you can customize the default label appearance using SCSS variables:
+
+```scss
+// Override default label variables
+$default-label-color: #666;                    // Normal label color
+$default-label-active-color: #333;             // Active label color
+$default-label-font-size: 14px;                // Base font size
+$default-label-font-weight: normal;            // Normal font weight
+$default-label-active-font-weight: bold;       // Active label font weight
+```
+
+Default labels automatically:
+- Display `items` array content when available
+- Fallback to "Item 1", "Item 2", etc. when using `itemsCount`
+- Apply bold font-weight to the active/selected label
+- Scale font-size with the component's `size` prop
+- Respect `labelPosition` for positioning logic
 
 ## Requirements
 

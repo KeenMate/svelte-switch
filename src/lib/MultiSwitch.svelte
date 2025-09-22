@@ -25,9 +25,10 @@
     thumbTemplate?: import("svelte").Snippet<
       [{ currentIndex: number; currentItem: any; itemsCount: number }]
     >;
-    label?: import("svelte").Snippet<
+    labelTemplate?: import("svelte").Snippet<
       [{ currentIndex: number; item: any; isSelected: boolean }]
     >;
+    disableThumbRender?: boolean;
   }
 
   let {
@@ -43,14 +44,15 @@
     onItemChange,
     children,
     thumbTemplate,
-    label,
+    labelTemplate,
+    disableThumbRender = false,
   }: Props = $props();
 
   // Helper function to get style for a specific index
   const getStyleForIndex = (index: number): StepStyle => {
     if (Array.isArray(itemStyles)) {
       return itemStyles[index] || {};
-    } else if (itemStyles && typeof itemStyles === 'object') {
+    } else if (itemStyles && typeof itemStyles === "object") {
       return itemStyles;
     }
     return {};
@@ -74,7 +76,7 @@
   // Derived values for snippets
   const currentIndex = $derived(selectedIndex);
   const currentItem = $derived(items ? items[selectedIndex] : undefined);
-  const isSelected = $derived(true); // Always true for the current thumb
+  let currentStepContext = $derived({ currentIndex, currentItem, itemsCount });
 
   function selectStep(index: number) {
     if (isDisabled) return;
@@ -110,6 +112,8 @@
         | "items"
         | "shouldDisplayLabels"
         | "labelPosition"
+        | "onItemChange"
+        | "disableThumbRender"
       >
     >
   ) {
@@ -121,8 +125,12 @@
     if (updates.itemsCount !== undefined) itemsCount = updates.itemsCount;
     if (updates.itemStyles !== undefined) itemStyles = updates.itemStyles;
     if (updates.items !== undefined) items = updates.items;
-    if (updates.shouldDisplayLabels !== undefined) shouldDisplayLabels = updates.shouldDisplayLabels;
-    if (updates.labelPosition !== undefined) labelPosition = updates.labelPosition;
+    if (updates.shouldDisplayLabels !== undefined)
+      shouldDisplayLabels = updates.shouldDisplayLabels;
+    if (updates.labelPosition !== undefined)
+      labelPosition = updates.labelPosition;
+    if (updates.onItemChange !== undefined) onItemChange = updates.onItemChange;
+    if (updates.disableThumbRender !== undefined) disableThumbRender = updates.disableThumbRender;
   }
 </script>
 
@@ -134,9 +142,11 @@
   class:vertical={isVertical}
   style:--scale={scale}
   style:--steps={effectiveStepsCount}
-  style:--current-bg-color={getStyleForIndex(selectedIndex).backgroundColor || ""}
+  style:--current-bg-color={getStyleForIndex(selectedIndex).backgroundColor ||
+    ""}
   style:--current-thumb-color={getStyleForIndex(selectedIndex).thumbColor || ""}
-  style:--current-thumb-border-color={getStyleForIndex(selectedIndex).thumbBorderColor || ""}
+  style:--current-thumb-border-color={getStyleForIndex(selectedIndex)
+    .thumbBorderColor || ""}
   onclick={(e) => {
     if (isDisabled) return;
     const rect = e.currentTarget.getBoundingClientRect();
@@ -161,8 +171,8 @@
       : `translateX(calc(var(--step-offset) * ${selectedIndex}))`}
   >
     {#if thumbTemplate}
-      {@render thumbTemplate({ currentIndex, currentItem, itemsCount: effectiveStepsCount })}
-    {:else if children}
+      {@render thumbTemplate(currentStepContext)}
+    {:else if children && !disableThumbRender}
       {@render children({ currentIndex, item: currentItem, isSelected: true })}
     {/if}
   </div>
@@ -185,38 +195,54 @@
   {/each}
 
   <!-- Labels for vertical orientation (all items) -->
-  {#if shouldDisplayLabels && isVertical && label}
-    <div class="labels-container">
+  {#if shouldDisplayLabels && isVertical && (labelPosition === "left" || labelPosition === "right")}
+    <div
+      class="labels-container"
+      class:label-position-left={labelPosition === "left"}
+      class:label-position-right={labelPosition === "right"}
+    >
       {#each Array(effectiveStepsCount) as _, index}
         <div
           class="label"
           class:active={index === selectedIndex}
           style:--label-index={index}
         >
-          {@render label({
-            currentIndex: index,
-            item: items ? items[index] : undefined,
-            isSelected: index === selectedIndex,
-          })}
+          {#if labelTemplate}
+            {@render labelTemplate({
+              currentIndex: index,
+              item: items ? items[index] : undefined,
+              isSelected: index === selectedIndex,
+            })}
+          {:else}
+            <span class="default-label" class:active={index === selectedIndex}>
+              {items && items[index] ? items[index] : `Item ${index + 1}`}
+            </span>
+          {/if}
         </div>
       {/each}
     </div>
   {/if}
 
   <!-- Single label for horizontal orientation (current item only) -->
-  {#if shouldDisplayLabels && !isVertical && label}
+  {#if shouldDisplayLabels && !isVertical}
     <div
       class="label-single"
-      class:label-position-left={labelPosition === 'left'}
-      class:label-position-right={labelPosition === 'right'}
-      class:label-position-top={labelPosition === 'top'}
-      class:label-position-bottom={labelPosition === 'bottom'}
+      class:label-position-left={labelPosition === "left"}
+      class:label-position-right={labelPosition === "right"}
+      class:label-position-top={labelPosition === "top"}
+      class:label-position-bottom={labelPosition === "bottom"}
     >
-      {@render label({
-        currentIndex: selectedIndex,
-        item: items ? items[selectedIndex] : undefined,
-        isSelected: true,
-      })}
+      {#if labelTemplate}
+        {@render labelTemplate({
+          currentIndex: selectedIndex,
+          item: items ? items[selectedIndex] : undefined,
+          isSelected: true,
+        })}
+      {:else}
+        <span class="default-label active">
+          {items && items[selectedIndex] ? items[selectedIndex] : `Item ${selectedIndex + 1}`}
+        </span>
+      {/if}
     </div>
   {/if}
 </div>

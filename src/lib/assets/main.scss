@@ -13,6 +13,13 @@ $switch-bg-on: #4299e1;
 $thumb-bg: white;
 $focus-color: rgba(66, 153, 225, 0.5);
 
+// Default label colors
+$default-label-color: #666;
+$default-label-active-color: #333;
+$default-label-font-size: 14px;
+$default-label-font-weight: normal;
+$default-label-active-font-weight: bold;
+
 // Animations
 $transition-duration: 0.3s;
 $transition-easing: ease;
@@ -238,13 +245,26 @@ $focus-shadow: 0 0 0 3px $focus-color;
   // Labels container for vertical orientation
   .labels-container {
     position: absolute;
-    left: calc((var(--switch-height) + 10px) * var(--scale)); // Position to the right of the switch
     top: 0;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     padding: calc(var(--margin) * var(--scale)) 0;
+
+    // Default position: right of the switch
+    left: calc((var(--switch-height) + 10px) * var(--scale));
+
+    // Left positioning
+    &.label-position-left {
+      right: calc((var(--switch-height) + 10px) * var(--scale));
+      left: auto;
+    }
+
+    // Right positioning (explicit, same as default)
+    &.label-position-right {
+      left: calc((var(--switch-height) + 10px) * var(--scale));
+    }
 
     .label {
       height: calc(var(--thumb-height) * var(--scale));
@@ -289,6 +309,19 @@ $focus-shadow: 0 0 0 3px $focus-color;
       left: calc(100% + 10px * var(--scale));
       top: 50%;
       transform: translateY(-50%);
+    }
+  }
+
+  // Default label styling
+  .default-label {
+    color: $default-label-color;
+    font-size: calc(#{$default-label-font-size} * var(--scale, 1) * 1px);
+    font-weight: $default-label-font-weight;
+    @include transition(color);
+
+    &.active {
+      color: $default-label-active-color;
+      font-weight: $default-label-active-font-weight;
     }
   }
 }
