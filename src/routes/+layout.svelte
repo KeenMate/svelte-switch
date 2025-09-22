@@ -6,13 +6,7 @@
 	// Navigation items
 	const navItems = [
 		{ href: '/', label: 'Home', icon: '🏠' },
-		{ href: '/basic', label: 'Basic Switch', icon: '🔘' },
-		{ href: '/multi-step', label: 'Multi-Step', icon: '🎚️' },
-		{ href: '/custom-styling', label: 'Custom Styling', icon: '🎨' },
-		{ href: '/sizes', label: 'Sizes & Orientations', icon: '📏' },
-		{ href: '/with-labels', label: 'With Labels', icon: '🏷️' },
-		{ href: '/defcon-example', label: 'DEFCON Example', icon: '🚨' },
-		{ href: '/external-updates', label: 'External Updates', icon: '⚡' }
+		{ href: '/dev', label: 'Development', icon: '🛠️' }
 	];
 </script>
 
@@ -28,7 +22,7 @@
 	<nav class="bg-dark text-white p-0" style="width: 250px;">
 		<div class="p-3 border-bottom border-secondary">
 			<h5 class="mb-0">🔄 Svelte Switch</h5>
-			<small class="text-muted">Feature Showcase</small>
+			<small class="text-muted">Development Library</small>
 		</div>
 
 		<div class="nav nav-pills flex-column p-3">

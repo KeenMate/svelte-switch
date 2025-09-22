@@ -15,15 +15,15 @@
 <div class="row">
 	<div class="col-12">
 		<div class="jumbotron bg-light p-5 rounded">
-			<h1 class="display-4">🔄 Svelte Switch v1.2.0</h1>
+			<h1 class="display-4">🔄 Svelte Switch v1.3.0</h1>
 			<p class="lead">
 				A modern, customizable switch component library for Svelte 5
 				with support for both binary and multi-step switches.
 			</p>
 			<hr class="my-4">
 			<p>
-				This showcase demonstrates all the key features and capabilities of the library.
-				Use the navigation menu to explore different aspects of the components.
+				This is the development version of the library.
+				Use the <a href="/dev">Development</a> page for testing components.
 			</p>
 		</div>
 	</div>
@@ -49,7 +49,7 @@
 						{/snippet}
 					</Switch>
 				</div>
-				<a href="/basic" class="btn btn-primary">Learn More</a>
+				<a href="/dev" class="btn btn-primary">Test Component</a>
 			</div>
 		</div>
 	</div>
@@ -75,87 +75,12 @@
 						{/snippet}
 					</MultiSwitch>
 				</div>
-				<a href="/multi-step" class="btn btn-outline-primary">Explore</a>
+				<a href="/dev" class="btn btn-outline-primary">Test Component</a>
 			</div>
 		</div>
 	</div>
 </div>
 
-<div class="row mt-4">
-	<div class="col-md-4">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">🎨 Custom Styling</h5>
-				<p class="card-text">
-					Visual customization options, color theming, and CSS class configurations.
-				</p>
-				<a href="/custom-styling" class="btn btn-outline-primary">Customize</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-md-4">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">📏 Sizes & Orientations</h5>
-				<p class="card-text">
-					Flexible sizing and both horizontal and vertical orientation support.
-				</p>
-				<a href="/sizes" class="btn btn-outline-primary">Resize</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-md-4">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">⌨️ Accessibility</h5>
-				<p class="card-text">
-					Full keyboard navigation, ARIA support, and screen reader compatibility.
-				</p>
-				<a href="/basic" class="btn btn-outline-primary">Test</a>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="row mt-4">
-	<div class="col-md-4">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">🏷️ Labels</h5>
-				<p class="card-text">
-					Display customizable labels next to vertical multi-step switches for better UX.
-				</p>
-				<a href="/with-labels" class="btn btn-outline-primary">View</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-md-4">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">🔴 DEFCON Example</h5>
-				<p class="card-text">
-					Real-world implementation example with DEFCON alert levels.
-				</p>
-				<a href="/defcon-example" class="btn btn-outline-primary">Example</a>
-			</div>
-		</div>
-	</div>
-
-	<div class="col-md-4">
-		<div class="card">
-			<div class="card-body">
-				<h5 class="card-title">🔄 External Updates</h5>
-				<p class="card-text">
-					Update component properties externally for vanilla JS integration.
-				</p>
-				<a href="/external-updates" class="btn btn-outline-primary">Learn</a>
-			</div>
-		</div>
-	</div>
-</div>
 
 <div class="row mt-5">
 	<div class="col-12">

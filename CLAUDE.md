@@ -47,10 +47,11 @@ npm run preview
 - Snippet-based slot system for custom thumb content
 - SCSS-based calculations for optimal performance
 
-### Demo Site Structure
-- `src/routes/`: SvelteKit demo pages showcasing component features
+### Development Site Structure
+- `src/routes/`: Minimal development routes for testing
+- `src/routes/dev/`: Development testing page with interactive controls
 - Uses `@sveltejs/adapter-static` for deployment
-- Contains example usage patterns in route components
+- Showcase pages have been moved to separate `svelte-switch-showcase` project
 
 ### Component Props Pattern
 Both components follow consistent prop patterns:
@@ -59,7 +60,14 @@ Both components follow consistent prop patterns:
 - `orientation` as `'horizontal' | 'vertical'`
 - `size` number for scaling (default 50px)
 - `children` snippet for custom content
+- `thumbTemplate` snippet for enhanced thumb content (v1.3.0+)
 - Optional callback props (`onToggle`, `onItemChange`)
+
+**MultiSwitch Label Features (v1.3.0+):**
+- `shouldDisplayLabels` boolean to enable automatic label display
+- `labelPosition` for positioning (`'top' | 'bottom' | 'left' | 'right'`)
+- `labelTemplate` snippet for custom label content (optional)
+- `items` array for label content (when no custom template provided)
 
 ### External Update Mechanism
 Both components export an `update()` method for external property updates when used from HTML/JavaScript (not needed for Svelte-to-Svelte usage):
@@ -79,8 +87,10 @@ switchInstance.update({
 multiSwitchInstance.update({
   selectedIndex: 2,
   size: 70,
-  stepsCount: 5,
-  stepStyles: [/* style objects */],
+  itemsCount: 5,
+  itemStyles: [/* style objects */],
+  shouldDisplayLabels: true,
+  labelPosition: 'right',
   isDisabled: true,
   orientation: 'horizontal'
 });
@@ -116,6 +126,57 @@ interface StepStyle {
 
 **Important**: `thumbBorderColor` specifically affects thumb borders only. This leaves room for a future `borderColor` property for switch container borders.
 
+### Default Label System (v1.3.0+)
+MultiSwitch components support automatic label rendering without requiring custom `labelTemplate`:
+
+#### Label Display Logic
+- **Horizontal orientation**: Only active/selected label shown at specified position (top/bottom/left/right)
+- **Vertical orientation**: All labels shown, but only for left/right positions (top/bottom ignored)
+
+#### Content Priority
+1. When `items` array provided: Uses array content directly
+2. When no `items`: Falls back to "Item 1", "Item 2", etc.
+3. When `labelTemplate` provided: Takes precedence over default rendering
+
+#### SCSS Customization
+```scss
+$default-label-color: #666;                    // Normal label color
+$default-label-active-color: #333;             // Active label color
+$default-label-font-size: 14px;                // Base font size
+$default-label-font-weight: normal;            // Normal font weight
+$default-label-active-font-weight: bold;       // Active label font weight
+```
+
+#### Usage Examples
+```svelte
+<!-- Automatic labels with items -->
+<MultiSwitch
+  items={['Small', 'Medium', 'Large']}
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
+/>
+
+<!-- Automatic labels without items -->
+<MultiSwitch
+  itemsCount={3}
+  shouldDisplayLabels={true}
+  labelPosition="bottom"
+/>
+
+<!-- Custom labels with template -->
+<MultiSwitch
+  items={['Small', 'Medium', 'Large']}
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
+>
+  {#snippet labelTemplate({ item, isSelected })}
+    <span style="color: {isSelected ? '#333' : '#666'}">{item} Size</span>
+  {/snippet}
+</MultiSwitch>
+```
+
 ## Naming Conventions
 
 ### Property Naming Pattern
@@ -131,6 +192,9 @@ Follow the `[verb][Something]` convention for boolean properties and descriptive
 - `selectedIndex` (not `index` - unclear what index)
 - `itemStyles` (clear it's styles for items)
 - `thumbBorderColor` (not `borderColor` - specifies what element gets the border)
+- `shouldDisplayLabels` (not `labels` - clearly indicates boolean behavior)
+- `labelPosition` (not `position` - specifies what is being positioned)
+- `labelTemplate` (not `label` - follows template naming convention)
 
 **Rationale:**
 - Avoid ambiguous single words that don't clearly communicate purpose
