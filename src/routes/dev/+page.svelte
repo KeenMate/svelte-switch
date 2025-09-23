@@ -8,6 +8,7 @@
   let orientation: 'horizontal' | 'vertical' = $state('horizontal');
   let shouldDisplayLabels = $state(true);
   let labelPosition: 'top' | 'bottom' | 'left' | 'right' = $state('right');
+  let labelRenderMode: 'absolute' | 'block' = $state('absolute');
 
   const testItems = ['Option A', 'Option B', 'Option C', 'Option D'];
 </script>
@@ -51,7 +52,7 @@
           <h5 class="mb-0">MultiSwitch with Default Labels</h5>
         </div>
         <div class="card-body">
-          <div class="text-center py-4">
+          <div class="py-4">
             <MultiSwitch
               bind:selectedIndex
               items={testItems}
@@ -59,6 +60,7 @@
               {orientation}
               {shouldDisplayLabels}
               {labelPosition}
+              {labelRenderMode}
             />
           </div>
           <div class="form-group mb-3">
@@ -121,6 +123,18 @@
               <option value="bottom">Bottom</option>
               <option value="left">Left</option>
               <option value="right">Right</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group mb-3">
+            <label class="form-label">Label Render Mode</label>
+            <select class="form-select" bind:value={labelRenderMode}>
+              <option value="absolute">Absolute (overlaps)</option>
+              <option value="block">Block (takes space)</option>
             </select>
           </div>
         </div>

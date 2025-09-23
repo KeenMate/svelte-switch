@@ -69,6 +69,13 @@ Both components follow consistent prop patterns:
 - `labelTemplate` snippet for custom label content (optional)
 - `items` array for label content (when no custom template provided)
 
+**MultiSwitch Label Rendering (v1.4.0+):**
+- `labelRenderMode` for rendering mode (`'absolute' | 'block'`) - default is 'absolute'
+  - `'absolute'`: Labels use absolute positioning (may overlap container borders)
+  - `'block'`: Labels take up actual space in document flow (stays within container)
+- **Clickable Labels**: In vertical orientation with left/right positions, labels become clickable when no `thumbTemplate` is defined, allowing users to jump to any step by clicking the label
+- **Enhanced Layout**: Block mode uses proper flexbox layout ensuring labels appear in correct positions (top/left before switch, bottom/right after switch)
+
 ### External Update Mechanism
 Both components export an `update()` method for external property updates when used from HTML/JavaScript (not needed for Svelte-to-Svelte usage):
 
@@ -91,6 +98,7 @@ multiSwitchInstance.update({
   itemStyles: [/* style objects */],
   shouldDisplayLabels: true,
   labelPosition: 'right',
+  labelRenderMode: 'block',
   isDisabled: true,
   orientation: 'horizontal'
 });
@@ -133,10 +141,11 @@ MultiSwitch components support automatic label rendering without requiring custo
 - **Horizontal orientation**: Only active/selected label shown at specified position (top/bottom/left/right)
 - **Vertical orientation**: All labels shown, but only for left/right positions (top/bottom ignored)
 
-#### Content Priority
-1. When `items` array provided: Uses array content directly
-2. When no `items`: Falls back to "Item 1", "Item 2", etc.
-3. When `labelTemplate` provided: Takes precedence over default rendering
+#### Content Priority (v1.4.0+ Updated)
+1. When `labelMember` provided: Reads property from object items (e.g., `labelMember="name"` reads `item.name`)
+2. When `labelCallback` provided: Custom function with access to item and index: `(item: any, index: number) => string`
+3. When `labelTemplate` provided: Takes precedence over all automatic rendering
+4. Default fallback: "Option 1", "Option 2", etc.
 
 #### SCSS Customization
 ```scss
@@ -149,7 +158,32 @@ $default-label-active-font-weight: bold;       // Active label font weight
 
 #### Usage Examples
 ```svelte
-<!-- Automatic labels with items -->
+<!-- Object items with labelMember -->
+<MultiSwitch
+  items={[
+    { name: 'Small', value: 'S' },
+    { name: 'Medium', value: 'M' },
+    { name: 'Large', value: 'L' }
+  ]}
+  labelMember="name"
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
+/>
+
+<!-- labelCallback for computed labels -->
+<MultiSwitch
+  items={[
+    { name: 'Basic', price: 10 },
+    { name: 'Pro', price: 25 }
+  ]}
+  labelCallback={(item, index) => `${item.name} - $${item.price}`}
+  shouldDisplayLabels={true}
+  labelPosition="bottom"
+  labelRenderMode="block"
+/>
+
+<!-- Simple string array labels -->
 <MultiSwitch
   items={['Small', 'Medium', 'Large']}
   shouldDisplayLabels={true}
@@ -157,18 +191,12 @@ $default-label-active-font-weight: bold;       // Active label font weight
   orientation="vertical"
 />
 
-<!-- Automatic labels without items -->
-<MultiSwitch
-  itemsCount={3}
-  shouldDisplayLabels={true}
-  labelPosition="bottom"
-/>
-
-<!-- Custom labels with template -->
+<!-- Custom labels with template (takes precedence) -->
 <MultiSwitch
   items={['Small', 'Medium', 'Large']}
   shouldDisplayLabels={true}
   labelPosition="right"
+  labelRenderMode="block"
   orientation="vertical"
 >
   {#snippet labelTemplate({ item, isSelected })}
@@ -194,6 +222,7 @@ Follow the `[verb][Something]` convention for boolean properties and descriptive
 - `thumbBorderColor` (not `borderColor` - specifies what element gets the border)
 - `shouldDisplayLabels` (not `labels` - clearly indicates boolean behavior)
 - `labelPosition` (not `position` - specifies what is being positioned)
+- `labelRenderMode` (not `renderMode` - specifies it's for label rendering)
 - `labelTemplate` (not `label` - follows template naming convention)
 
 **Rationale:**

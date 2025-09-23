@@ -12,7 +12,8 @@ A modern, customizable switch component library for Svelte 5 with support for bo
 - **Custom Sizing**: Scalable to any size while maintaining proportions
 - **Custom Content**: Slot support for icons, text, or any content in the thumb
 - **Step Styling**: Individual styling for each step in multi-step switches
-- **Label Support**: Optional labels for both Switch and MultiSwitch components
+- **Label Support**: Optional labels with flexible rendering modes (absolute/block positioning)
+- **Interactive Labels**: Clickable labels for enhanced user experience in vertical multi-step switches
 - **Accessibility**: Full keyboard navigation and ARIA support
 - **TypeScript**: Complete type safety with TypeScript interfaces
 - **No Dependencies**: Zero external dependencies, just peer dependency on Svelte 5
@@ -131,7 +132,7 @@ This property is primarily designed for non-reactive environments where template
 ### Multi-Step Switch with Default Labels (v1.3.0+)
 
 ```svelte
-<!-- Automatic labels without template -->
+<!-- Automatic labels with absolute positioning (default) -->
 <MultiSwitch
   bind:selectedIndex
   items={['Small', 'Medium', 'Large']}
@@ -141,12 +142,67 @@ This property is primarily designed for non-reactive environments where template
   size={70}
 />
 
-<!-- Or with just itemsCount (shows "Item 1", "Item 2", etc.) -->
+<!-- Block positioning - labels take up actual space in layout -->
 <MultiSwitch
   bind:selectedIndex
-  itemsCount={3}
+  items={['Small', 'Medium', 'Large']}
   shouldDisplayLabels={true}
   labelPosition="bottom"
+  labelRenderMode="block"
+  size={70}
+/>
+
+<!-- Labels are clickable in vertical orientation (left/right positions) -->
+<MultiSwitch
+  bind:selectedIndex
+  itemsCount={4}
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
+  size={70}
+/>
+```
+
+### Multi-Step Switch with Object Items and labelMember
+
+```svelte
+<script>
+  const productSizes = [
+    { name: 'Small', value: 'S', stock: 10 },
+    { name: 'Medium', value: 'M', stock: 5 },
+    { name: 'Large', value: 'L', stock: 2 }
+  ];
+</script>
+
+<MultiSwitch
+  bind:selectedIndex
+  items={productSizes}
+  labelMember="name"
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
+  size={70}
+/>
+```
+
+### Multi-Step Switch with labelCallback
+
+```svelte
+<script>
+  const products = [
+    { name: 'Basic', price: 10 },
+    { name: 'Pro', price: 25 },
+    { name: 'Enterprise', price: 50 }
+  ];
+</script>
+
+<MultiSwitch
+  bind:selectedIndex
+  items={products}
+  labelCallback={(item, index) => `${item.name} - $${item.price}`}
+  shouldDisplayLabels={true}
+  labelPosition="right"
+  orientation="vertical"
   size={70}
 />
 ```
@@ -229,6 +285,9 @@ This property is primarily designed for non-reactive environments where template
 | `itemStyles` | `StepStyle[] \| StepStyle` | `[]` | Custom styling for each step (array) or all steps (object) |
 | `shouldDisplayLabels` | `boolean` | `false` | Enable automatic label display (v1.3.0+) |
 | `labelPosition` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | Label position (horizontal: all positions, vertical: left/right only) |
+| `labelRenderMode` | `'absolute' \| 'block'` | `'absolute'` | Label rendering mode - absolute (may overlap) or block (takes space) (v1.4.0+) |
+| `labelMember` | `string` | - | Property name to extract label text from items (e.g., `"name"` reads `item.name`) (v1.4.0+) |
+| `labelCallback` | `(item: any, index: number) => string` | - | Custom function to generate label text with item and index access (v1.4.0+) |
 | `onItemChange` | `(index: number) => void` | - | Item change event handler |
 | `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
 | `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
@@ -239,7 +298,7 @@ This property is primarily designed for non-reactive environments where template
 
 | Method | Parameters | Description |
 |--------|------------|-------------|
-| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles?, shouldDisplayLabels?, labelPosition?, onItemChange?, disableThumbRender? }` | Updates component properties from external JavaScript/HTML |
+| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles?, shouldDisplayLabels?, labelPosition?, labelRenderMode?, labelMember?, labelCallback?, onItemChange?, disableThumbRender? }` | Updates component properties from external JavaScript/HTML |
 
 ### StepStyle Interface
 

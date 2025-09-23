@@ -142,21 +142,12 @@ $focus-shadow: 0 0 0 3px $focus-color;
 }
 
 // MultiSwitch Component Styles
-.multi-switch {
+// Container for block mode to handle layout
+.multi-switch-container {
+  display: inline-block;
   position: relative;
-  background-color: $switch-bg-off;
-  border-radius: $border-radius;
-  cursor: pointer;
-  @include transition(background-color);
-  outline: none;
-  user-select: none;
 
-  // Apply custom background color if provided
-  &:has(.step-segment.active) {
-    background-color: var(--current-bg-color, $switch-bg-off);
-  }
-
-  // Expose calculations as CSS custom properties
+  // Expose calculations as CSS custom properties (moved here so labels can access them)
   --multi-switch-width: #{multi-switch-width(3)}; // Default 3 steps
   --step-offset: #{step-offset(3)}; // Default step offset
   --margin: #{$margin};
@@ -167,6 +158,155 @@ $focus-shadow: 0 0 0 3px $focus-color;
   // Scale factor (default 1, overridden by component)
   --scale: 1;
   --steps: 3; // Default steps
+
+  // In absolute mode, label positioning is relative to the container
+  &:not(.block-labels) {
+    .label-single {
+      &.label-position-top {
+        bottom: calc(100% + 10px * var(--scale));
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      &.label-position-bottom {
+        top: calc(100% + 10px * var(--scale));
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      &.label-position-left {
+        right: calc(100% + 10px * var(--scale));
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      &.label-position-right {
+        left: calc(100% + 10px * var(--scale));
+        top: 50%;
+        transform: translateY(-50%);
+      }
+    }
+
+    .labels-container {
+      &.label-position-left {
+        right: calc(100% + 10px * var(--scale));
+        left: auto;
+      }
+
+      &.label-position-right {
+        left: calc(100% + 10px * var(--scale));
+      }
+    }
+  }
+
+  &.block-labels {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(10px * var(--scale, 1));
+
+    // Top/bottom labels need column direction (both horizontal and vertical switches)
+    &:has(.label-single.label-position-top),
+    &:has(.label-single.label-position-bottom) {
+      flex-direction: column;
+    }
+
+    // Left/right labels need row direction (both horizontal and vertical switches)
+    &:has(.label-single.label-position-left),
+    &:has(.label-single.label-position-right),
+    &:has(.labels-container.label-position-left),
+    &:has(.labels-container.label-position-right) {
+      flex-direction: row;
+    }
+  }
+}
+
+// Labels container styles (moved to container level since labels are now siblings to switch)
+.labels-container {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--margin) * var(--scale)) 0;
+  gap: calc(var(--step-spacing) * var(--scale)); // Use same gap as switch steps
+  white-space: nowrap; // Prevent text wrapping in absolute mode
+
+  // Block mode - use static positioning with proper spacing
+  &.block-mode {
+    position: static;
+    padding: 0;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--step-spacing) * var(--scale));
+    white-space: normal; // Allow wrapping in block mode
+
+    // Align each label with its corresponding step
+    .label {
+      height: calc(var(--thumb-height) * var(--scale));
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .label {
+    height: calc(var(--thumb-height) * var(--scale));
+    display: flex;
+    align-items: center;
+    @include transition(opacity);
+    opacity: 0.6;
+
+    &.active {
+      opacity: 1;
+      font-weight: bold;
+    }
+
+    &.clickable {
+      cursor: pointer;
+      transition: opacity 0.3s ease, background-color 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 4px;
+      }
+
+      &.active:hover {
+        opacity: 1;
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+}
+
+// Single label styles (moved to container level)
+.label-single {
+  position: absolute;
+  @include transition(all);
+  white-space: nowrap;
+
+  // Block mode - use static positioning
+  &.block-mode {
+    position: static;
+    transform: none;
+  }
+}
+
+.multi-switch {
+  position: relative;
+  background-color: $switch-bg-off;
+  border-radius: $border-radius;
+  cursor: pointer;
+  @include transition(background-color);
+  outline: none;
+  user-select: none;
+  display: inline-block;
+
+  // Apply custom background color if provided
+  &:has(.step-segment.active) {
+    background-color: var(--current-bg-color, $switch-bg-off);
+  }
+
+  // CSS custom properties moved to container level
 
   // Dynamic calculations using CSS with spacing
   width: calc((var(--thumb-height) * var(--steps) + var(--margin) * 2 + var(--step-spacing) * (var(--steps) - 1)) * var(--scale));
@@ -242,75 +382,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
     top: calc((var(--margin) + (var(--thumb-height) + var(--step-spacing)) * var(--step-index)) * var(--scale));
   }
 
-  // Labels container for vertical orientation
-  .labels-container {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: calc(var(--margin) * var(--scale)) 0;
-
-    // Default position: right of the switch
-    left: calc((var(--switch-height) + 10px) * var(--scale));
-
-    // Left positioning
-    &.label-position-left {
-      right: calc((var(--switch-height) + 10px) * var(--scale));
-      left: auto;
-    }
-
-    // Right positioning (explicit, same as default)
-    &.label-position-right {
-      left: calc((var(--switch-height) + 10px) * var(--scale));
-    }
-
-    .label {
-      height: calc(var(--thumb-height) * var(--scale));
-      display: flex;
-      align-items: center;
-      @include transition(opacity);
-      opacity: 0.6;
-
-      &.active {
-        opacity: 1;
-        font-weight: bold;
-      }
-    }
-  }
-
-  // Single label for horizontal orientation
-  .label-single {
-    position: absolute;
-    @include transition(all);
-    white-space: nowrap;
-
-    // Position variants
-    &.label-position-top {
-      bottom: calc(100% + 10px * var(--scale));
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    &.label-position-bottom {
-      top: calc(100% + 10px * var(--scale));
-      left: 50%;
-      transform: translateX(-50%);
-    }
-
-    &.label-position-left {
-      right: calc(100% + 10px * var(--scale));
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    &.label-position-right {
-      left: calc(100% + 10px * var(--scale));
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
+  // Labels styles moved to container level since labels are now siblings to switch
 
   // Default label styling
   .default-label {

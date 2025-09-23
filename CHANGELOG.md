@@ -5,6 +5,87 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-01-23
+
+### ✨ Added
+
+#### **Label Rendering Modes**
+- **New `labelRenderMode` Property** - Choose between `'absolute'` (default) and `'block'` rendering modes
+- **Absolute Mode** - Labels use absolute positioning (existing behavior, may overlap container borders)
+- **Block Mode** - Labels take up actual space in document flow, staying within container boundaries
+- **Flexible Layout** - Block mode uses proper flexbox layout ensuring labels appear in correct positions
+
+#### **Interactive Labels**
+- **Clickable Labels** - In vertical orientation with left/right positions, labels become clickable when no `thumbTemplate` is defined
+- **Instant Navigation** - Click any label to jump directly to that step
+- **Visual Feedback** - Hover effects and cursor changes indicate interactive labels
+- **Smart Conditions** - Only active when switch is enabled and no custom thumb template is used
+
+#### **Label Content System**
+- **New `labelMember` Property** - Extract labels from object property: `labelMember="name"` reads `item.name`
+- **Enhanced `labelCallback`** - Custom function with item access: `(item: any, index: number) => string`
+- **Priority-Based Logic** - Text resolution follows priority: `labelMember` → `labelCallback` → default
+- **Clean Defaults** - When no member or callback provided, defaults to "Option 1", "Option 2", etc.
+- **Object Support** - Perfect for arrays of objects with structured data
+
+#### **Enhanced Label Positioning**
+- **Unified Logic** - Consistent label positioning for both horizontal and vertical switches
+- **DOM Order Optimization** - Top/left labels render before switch, bottom/right labels render after switch
+- **Proper Spacing** - Block mode labels align perfectly with switch steps using correct gap calculations
+- **All Position Support** - Vertical switches now support all label positions (top, bottom, left, right)
+
+### 🔄 Changed
+
+#### **CSS Architecture Improvements**
+- **Container-Level Properties** - CSS custom properties moved to container level for label access
+- **Gap-Based Spacing** - Labels use same spacing as switch steps for perfect alignment
+- **Flexbox Layout** - Block mode uses appropriate flex-direction based on label position
+- **Transition Optimization** - Removed font-weight from transitions for crisp label selection changes
+
+#### **Component Structure**
+- **Template Restructure** - Labels now render as siblings to switch for proper block layout
+- **Conditional Rendering** - Smart logic determines label placement based on position and render mode
+- **Enhanced Props** - Added `labelRenderMode` to external update methods and type interfaces
+
+### 🐛 Fixed
+
+#### **Label Alignment Issues**
+- **Vertical Label Spacing** - Fixed gap mismatch between labels and switch steps in absolute mode
+- **Text Wrapping** - Added `white-space: nowrap` to prevent label text wrapping in absolute mode
+- **Position Accuracy** - Labels now align perfectly with their corresponding switch steps
+- **Missing Positions** - Added support for vertical switches with top/bottom labels in absolute mode
+
+#### **Layout Improvements**
+- **Block Mode Positioning** - Labels now appear in correct visual positions based on DOM order
+- **Container Boundaries** - Block mode labels stay within parent container instead of overlapping borders
+- **Responsive Scaling** - All label positioning scales correctly with component size
+
+### 📚 Documentation
+
+#### **Updated Examples**
+- **Render Mode Examples** - New examples showcasing both absolute and block rendering modes
+- **Interactive Labels Demo** - Documentation of clickable label functionality
+- **API Reference Updates** - Added `labelRenderMode` property to all relevant documentation
+- **Usage Patterns** - Clear guidance on when to use each rendering mode
+
+#### **Enhanced API Documentation**
+- **Method Signatures** - Updated external update methods to include `labelRenderMode`
+- **Property Tables** - Added new property documentation with types and descriptions
+- **Code Examples** - Real-world usage examples for different label configurations
+
+### 🎯 Use Cases
+
+#### **Block Mode Benefits**
+- **Form Layouts** - Labels stay within form boundaries and don't overlap other elements
+- **Card Components** - Switch with labels fits properly within card containers
+- **Responsive Design** - Labels contribute to natural document flow for better responsive behavior
+- **Accessibility** - Screen readers get more predictable layout structure
+
+#### **Interactive Labels**
+- **Enhanced UX** - Users can click labels for faster navigation in multi-step switches
+- **Mobile Friendly** - Larger tap targets improve mobile usability
+- **Visual Feedback** - Clear indication of interactive elements with hover states
+
 ## [1.3.0] - 2025-01-22
 
 ### ✨ Added
