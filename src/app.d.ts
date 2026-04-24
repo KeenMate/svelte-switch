@@ -8,6 +8,11 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
+
+	const __VERSION__: string;
+	const __PACKAGE_NAME__: string;
+	const __HOMEPAGE__: string;
+	const __REPOSITORY__: string;
 }
 
 export {};

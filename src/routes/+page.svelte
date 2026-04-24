@@ -15,7 +15,7 @@
 <div class="row">
 	<div class="col-12">
 		<div class="jumbotron bg-light p-5 rounded">
-			<h1 class="display-4">🔄 Svelte Switch</h1>
+			<h1 class="display-4">🔄 Svelte Switch <small class="text-muted fs-4">v{__VERSION__}</small></h1>
 			<p class="lead">
 				A modern, customizable switch component library for Svelte 5
 				with support for both binary and multi-step switches.

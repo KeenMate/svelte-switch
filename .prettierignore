@@ -1,0 +1,21 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# Build output
+/build/
+/dist/
+/.svelte-kit/
+
+# Miscellaneous
+/static/
+/.claude/
+
+# Planning docs — let authors control wrapping
+consolidation-v1.5.0.md
+
+# Orphan test file — scheduled for deletion (T36)
+test-label-modes.html

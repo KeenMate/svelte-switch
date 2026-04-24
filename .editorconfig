@@ -1,0 +1,15 @@
+root = true
+
+[*.{cs,ts,js,css,scss,cshtml,json,svelte,vue,md}]
+indent_style = tab
+indent_size = 2
+trim_trailing_whitespace = true
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+
+[*.{xaml,cshtml,html,xml,yaml,yml}]
+indent_style = tab
+indent_size = 2
+trim_trailing_whitespace = true
+charset = utf-8
