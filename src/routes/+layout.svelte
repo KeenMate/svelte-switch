@@ -10,10 +10,20 @@
 </script>
 
 <svelte:head>
-	<title>Svelte Switch - {page.route.id === '/' ? 'Modern Switch Components for Svelte 5' : navItems.find(item => item.href === page.url.pathname)?.label || 'Demo'}</title>
-	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-	<meta name="description" content="A modern, customizable switch component library for Svelte 5 with binary and multi-step switches, custom styling, and full accessibility support.">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title
+		>Svelte Switch - {page.route.id === '/'
+			? 'Modern Switch Components for Svelte 5'
+			: navItems.find((item) => item.href === page.url.pathname)?.label || 'Demo'}</title
+	>
+	<link
+		href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+		rel="stylesheet"
+	/>
+	<meta
+		name="description"
+		content="A modern, customizable switch component library for Svelte 5 with binary and multi-step switches, custom styling, and full accessibility support."
+	/>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 </svelte:head>
 
 <div class="d-flex vh-100">
@@ -28,7 +38,9 @@
 			{#each navItems as item}
 				<a
 					href={item.href}
-					class="nav-link text-white mb-2 {page.url.pathname === item.href ? 'active bg-primary' : ''}"
+					class="nav-link text-white mb-2 {page.url.pathname === item.href
+						? 'active bg-primary'
+						: ''}"
 					style="border-radius: 0.5rem;"
 				>
 					<span class="me-2">{item.icon}</span>
@@ -39,10 +51,18 @@
 
 		<div class="p-3 border-top border-secondary mt-auto">
 			<div class="d-flex flex-column gap-2">
-				<a href="https://github.com/keenmate/svelte-switch" target="_blank" class="btn btn-outline-light btn-sm">
+				<a
+					href="https://github.com/keenmate/svelte-switch"
+					target="_blank"
+					class="btn btn-outline-light btn-sm"
+				>
 					📦 GitHub
 				</a>
-				<a href="https://www.npmjs.com/package/@keenmate/svelte-switch" target="_blank" class="btn btn-outline-light btn-sm">
+				<a
+					href="https://www.npmjs.com/package/@keenmate/svelte-switch"
+					target="_blank"
+					class="btn btn-outline-light btn-sm"
+				>
 					📥 NPM
 				</a>
 			</div>

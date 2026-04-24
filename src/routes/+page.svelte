@@ -8,22 +8,24 @@
 	const featureStyles = [
 		{ backgroundColor: '#6366f1', thumbColor: '#4338ca', thumbBorderColor: '#5b21b6' }, // Purple
 		{ backgroundColor: '#10b981', thumbColor: '#047857', thumbBorderColor: '#059669' }, // Green
-		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', thumbBorderColor: '#f59e0b' }, // Orange
+		{ backgroundColor: '#f59e0b', thumbColor: '#d97706', thumbBorderColor: '#f59e0b' } // Orange
 	];
 </script>
 
 <div class="row">
 	<div class="col-12">
 		<div class="jumbotron bg-light p-5 rounded">
-			<h1 class="display-4">🔄 Svelte Switch <small class="text-muted fs-4">v{__VERSION__}</small></h1>
+			<h1 class="display-4">
+				🔄 Svelte Switch <small class="text-muted fs-4">v{__VERSION__}</small>
+			</h1>
 			<p class="lead">
-				A modern, customizable switch component library for Svelte 5
-				with support for both binary and multi-step switches.
+				A modern, customizable switch component library for Svelte 5 with support for both binary
+				and multi-step switches.
 			</p>
-			<hr class="my-4">
+			<hr class="my-4" />
 			<p>
-				This is the development version of the library.
-				Use the <a href="/dev">Development</a> page for testing components.
+				This is the development version of the library. Use the <a href="/dev">Development</a> page for
+				testing components.
 			</p>
 		</div>
 	</div>
@@ -35,13 +37,11 @@
 			<div class="card-body">
 				<h5 class="card-title">🔘 Binary Switch</h5>
 				<p class="card-text">
-					Classic on/off toggle functionality with customizable sizing, orientation, and styling options.
+					Classic on/off toggle functionality with customizable sizing, orientation, and styling
+					options.
 				</p>
 				<div class="text-center py-3">
-					<Switch
-						bind:checked={basicChecked}
-						size={60}
-					>
+					<Switch bind:checked={basicChecked} size={60}>
 						{#snippet children({ isSelected })}
 							<span class="thumb-content">
 								{isSelected ? '✓' : '✗'}
@@ -59,7 +59,8 @@
 			<div class="card-body">
 				<h5 class="card-title">🎚️ Multi-Step Switch</h5>
 				<p class="card-text">
-					Variable step switches perfect for volume controls, temperature settings, and multi-option selections.
+					Variable step switches perfect for volume controls, temperature settings, and multi-option
+					selections.
 				</p>
 				<div class="text-center py-3">
 					<MultiSwitch
@@ -81,7 +82,6 @@
 	</div>
 </div>
 
-
 <div class="row mt-5">
 	<div class="col-12">
 		<div class="alert alert-info">
@@ -89,11 +89,15 @@
 			<div class="row">
 				<div class="col-md-6">
 					<strong>Installation:</strong>
-					<pre class="bg-dark text-light p-2 rounded mt-2"><code>npm install @keenmate/svelte-switch</code></pre>
+					<pre class="bg-dark text-light p-2 rounded mt-2"><code
+							>npm install @keenmate/svelte-switch</code
+						></pre>
 				</div>
 				<div class="col-md-6">
 					<strong>Basic Usage:</strong>
-					<pre class="bg-dark text-light p-2 rounded mt-2"><code>&lt;Switch bind:checked={'{myValue}'} /&gt;</code></pre>
+					<pre class="bg-dark text-light p-2 rounded mt-2"><code
+							>&lt;Switch bind:checked={'{myValue}'} /&gt;</code
+						></pre>
 				</div>
 			</div>
 		</div>
@@ -117,7 +121,9 @@
 						<li><strong>Custom Content</strong> - Slot support for icons and text</li>
 						<li><strong>Flexible Styling</strong> - SCSS variables and CSS custom properties</li>
 						<li><strong>Modern Svelte 5</strong> - Built with latest Svelte features</li>
-						<li><strong>External Updates</strong> - Unified update() method for vanilla JS integration</li>
+						<li>
+							<strong>External Updates</strong> - Unified update() method for vanilla JS integration
+						</li>
 					</ul>
 				</div>
 			</div>

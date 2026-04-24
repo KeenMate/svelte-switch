@@ -14,8 +14,14 @@ bun.lockb
 /static/
 /.claude/
 
-# Planning docs — let authors control wrapping
+# Docs — hand-written, prettier's markdown rewrap is noise
+CLAUDE.md
+CHANGELOG.md
+README.md
 consolidation-v1.5.0.md
+
+# Infra
+docker-compose.yml
 
 # Orphan test file — scheduled for deletion (T36)
 test-label-modes.html
