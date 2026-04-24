@@ -28,7 +28,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [ ] **D17** — Replace `style:--x={... || ""}` with `... ?? null`
 - [x] **D18** — Tighten SCSS `:has()` selectors so future label combos don't silently break — *labels-container top/bottom now covered by column-direction rule*
 - [x] **D19** — Replace clickable `<div class="label">` with `<button>` — *keyboard activation free, all `svelte-ignore a11y_*` on labels dropped, disabled state via button's `:disabled`*
-- [ ] **D20** — Make `aria-valuemin/max/now` typing consistent
+- [x] **D20** — Make `aria-valuemin/max/now` typing consistent — *side effect of C1 template rewrite; all three now numeric*
 - [x] **D21** — Replace `$effect(console.warn)` on items length with type-level constraint
 
 ### Parity with `svelte-treeview` (sibling project)
@@ -49,7 +49,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [ ] **P24** — Extract repeated `items ? items[i] : undefined` pattern
 - [ ] **P25** — Hoist `import type { Snippet } from 'svelte'` once per file
 - [ ] **P26** — Replace `transition: all` with pinned properties
-- [ ] **P27** — Unify `items && items[i]` vs `items ? items[i] : undefined`
+- [x] **P27** — Unify `items && items[i]` vs `items ? items[i] : undefined` — *replaced with `items?.[i]` during C1 collapse*
 - [ ] **P28** — Clean up dead/redundant `$derived` values in Switch
 - [ ] **P29** — Extract `$label-gap: 10px` SCSS variable
 - [ ] **P30** — Scope root-level `.thumb` selector under its component
