@@ -7,7 +7,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 ## Progress tracker
 
 ### Critical
-- [ ] **C1** — Collapse MultiSwitch label template duplication (~320 lines → ~80)
+- [x] **C1** — Collapse MultiSwitch label template duplication — *320-line label block → ~70-line snippet-based dispatch; net −140 lines in the component*
 - [x] **C2** — Fix / delete `test-update.html` (uses Svelte 4 API + renamed `stepsCount`) — *deleted*
 - [ ] **C3** — Include `labelTemplate` (and other snippets) in `MultiSwitch.update()` OR delete `update()` entirely
 - [ ] **C4** — Replace `update()` anti-pattern with a reactive-state idiom (or drop it)
@@ -26,8 +26,8 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [ ] **D15** — Remove / rename `disableThumbRender` after D14
 - [x] **D16** — Fix click-to-select hit-testing (respect margins + step-spacing) — *extracted `hitTestStep()` using proper stride; constants mirror main.scss*
 - [ ] **D17** — Replace `style:--x={... || ""}` with `... ?? null`
-- [ ] **D18** — Tighten SCSS `:has()` selectors so future label combos don't silently break
-- [ ] **D19** — Replace clickable `<div class="label">` with `<button>` (proper a11y, drop `svelte-ignore`)
+- [x] **D18** — Tighten SCSS `:has()` selectors so future label combos don't silently break — *labels-container top/bottom now covered by column-direction rule*
+- [x] **D19** — Replace clickable `<div class="label">` with `<button>` — *keyboard activation free, all `svelte-ignore a11y_*` on labels dropped, disabled state via button's `:disabled`*
 - [ ] **D20** — Make `aria-valuemin/max/now` typing consistent
 - [x] **D21** — Replace `$effect(console.warn)` on items length with type-level constraint
 

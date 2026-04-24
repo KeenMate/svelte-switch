@@ -204,13 +204,16 @@ $focus-shadow: 0 0 0 3px $focus-color;
 		align-items: center;
 		gap: calc(10px * var(--scale, 1));
 
-		// Top/bottom labels need column direction (both horizontal and vertical switches)
+		// Top/bottom labels → column direction. Cover both single and per-step containers
+		// so the layout is correct regardless of which variant the template picks.
 		&:has(.label-single.label-position-top),
-		&:has(.label-single.label-position-bottom) {
+		&:has(.label-single.label-position-bottom),
+		&:has(.labels-container.label-position-top),
+		&:has(.labels-container.label-position-bottom) {
 			flex-direction: column;
 		}
 
-		// Left/right labels need row direction (both horizontal and vertical switches)
+		// Left/right labels → row direction.
 		&:has(.label-single.label-position-left),
 		&:has(.label-single.label-position-right),
 		&:has(.labels-container.label-position-left),
@@ -255,6 +258,14 @@ $focus-shadow: 0 0 0 3px $focus-color;
 		@include transition(opacity);
 		opacity: 0.6;
 
+		// Reset <button> defaults so clickable labels look identical to their div cousins.
+		background: none;
+		border: 0;
+		padding: 0;
+		font: inherit;
+		color: inherit;
+		text-align: inherit;
+
 		&.active {
 			opacity: 1;
 			font-weight: bold;
@@ -266,15 +277,19 @@ $focus-shadow: 0 0 0 3px $focus-color;
 				opacity 0.3s ease,
 				background-color 0.3s ease;
 
-			&:hover {
+			&:hover:not(:disabled) {
 				opacity: 0.8;
 				background-color: rgba(0, 0, 0, 0.05);
 				border-radius: 4px;
 			}
 
-			&.active:hover {
+			&.active:hover:not(:disabled) {
 				opacity: 1;
 				background-color: rgba(0, 0, 0, 0.1);
+			}
+
+			&:disabled {
+				cursor: not-allowed;
 			}
 		}
 	}

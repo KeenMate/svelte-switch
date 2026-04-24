@@ -95,6 +95,18 @@
 		itemsCount: effectiveStepsCount
 	});
 
+	// Per-step labels are stacked (one per step) only when the switch is vertical
+	// and labels sit on its side. Every other position uses a single label tied to
+	// the current selection.
+	const showsPerStepLabels = $derived(
+		isVertical && (labelPosition === 'left' || labelPosition === 'right')
+	);
+	// In block mode, top/left labels precede the switch in document flow; bottom/right
+	// come after. Absolute mode doesn't care about DOM order — render once, after.
+	const labelsGoBefore = $derived(
+		labelRenderMode === 'block' && (labelPosition === 'top' || labelPosition === 'left')
+	);
+
 	// Must match values in src/lib/assets/main.scss ($thumb-height, $margin, $step-spacing).
 	const THUMB_PX = 28;
 	const MARGIN_PX = 2;
@@ -171,89 +183,82 @@
 	}
 </script>
 
-<!-- Container div for block mode -->
+{#snippet labelContent(index: number, isSelected: boolean)}
+	{#if labelTemplate}
+		{@render labelTemplate({
+			currentIndex: index,
+			item: items ? items[index] : undefined,
+			isSelected
+		})}
+	{:else}
+		<span class="default-label" class:active={isSelected}>
+			{getLabelText(index)}
+		</span>
+	{/if}
+{/snippet}
+
+{#snippet singleLabel()}
+	<div
+		class="label-single"
+		class:label-position-top={labelPosition === 'top'}
+		class:label-position-bottom={labelPosition === 'bottom'}
+		class:label-position-left={labelPosition === 'left'}
+		class:label-position-right={labelPosition === 'right'}
+		class:block-mode={labelRenderMode === 'block'}
+	>
+		{@render labelContent(selectedIndex, true)}
+	</div>
+{/snippet}
+
+{#snippet perStepLabels()}
+	<div
+		class="labels-container"
+		class:label-position-left={labelPosition === 'left'}
+		class:label-position-right={labelPosition === 'right'}
+		class:label-position-top={labelPosition === 'top'}
+		class:label-position-bottom={labelPosition === 'bottom'}
+		class:block-mode={labelRenderMode === 'block'}
+	>
+		{#each Array(effectiveStepsCount) as _, index}
+			{@const isSelected = index === selectedIndex}
+			{#if !thumbTemplate}
+				<button
+					type="button"
+					class="label clickable"
+					class:active={isSelected}
+					style:--label-index={index}
+					disabled={isDisabled}
+					onclick={() => selectStep(index)}
+				>
+					{@render labelContent(index, isSelected)}
+				</button>
+			{:else}
+				<div class="label" class:active={isSelected} style:--label-index={index}>
+					{@render labelContent(index, isSelected)}
+				</div>
+			{/if}
+		{/each}
+	</div>
+{/snippet}
+
+{#snippet labels()}
+	{#if showsPerStepLabels}
+		{@render perStepLabels()}
+	{:else}
+		{@render singleLabel()}
+	{/if}
+{/snippet}
+
 <div
 	class="multi-switch-container"
 	class:block-labels={labelRenderMode === 'block' && shouldDisplayLabels}
 	style:--scale={scale}
 	style:--steps={effectiveStepsCount}
 >
-	<!-- Labels BEFORE switch (for top/left positions) -->
-	{#if shouldDisplayLabels && labelRenderMode === 'block'}
-		<!-- Vertical switch left labels -->
-		{#if isVertical && labelPosition === 'left'}
-			<div class="labels-container" class:label-position-left={true} class:block-mode={true}>
-				{#each Array(effectiveStepsCount) as _, index}
-					<!-- svelte-ignore a11y_click_events_have_key_events -->
-					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div
-						class="label"
-						class:active={index === selectedIndex}
-						class:clickable={!thumbTemplate}
-						style:--label-index={index}
-						onclick={() => {
-							if (!isDisabled && !thumbTemplate) {
-								selectStep(index);
-							}
-						}}
-					>
-						{#if labelTemplate}
-							{@render labelTemplate({
-								currentIndex: index,
-								item: items ? items[index] : undefined,
-								isSelected: index === selectedIndex
-							})}
-						{:else}
-							<span class="default-label" class:active={index === selectedIndex}>
-								{getLabelText(index)}
-							</span>
-						{/if}
-					</div>
-				{/each}
-			</div>
-		{/if}
-
-		<!-- Horizontal switch top/left labels -->
-		{#if !isVertical && (labelPosition === 'top' || labelPosition === 'left')}
-			<div
-				class="label-single"
-				class:label-position-top={labelPosition === 'top'}
-				class:label-position-left={labelPosition === 'left'}
-				class:block-mode={true}
-			>
-				{#if labelTemplate}
-					{@render labelTemplate({
-						currentIndex: selectedIndex,
-						item: items ? items[selectedIndex] : undefined,
-						isSelected: true
-					})}
-				{:else}
-					<span class="default-label active">
-						{getLabelText(selectedIndex)}
-					</span>
-				{/if}
-			</div>
-		{/if}
-
-		<!-- Vertical switch top labels -->
-		{#if isVertical && labelPosition === 'top'}
-			<div class="label-single" class:label-position-top={true} class:block-mode={true}>
-				{#if labelTemplate}
-					{@render labelTemplate({
-						currentIndex: selectedIndex,
-						item: items ? items[selectedIndex] : undefined,
-						isSelected: true
-					})}
-				{:else}
-					<span class="default-label active">
-						{getLabelText(selectedIndex)}
-					</span>
-				{/if}
-			</div>
-		{/if}
+	{#if shouldDisplayLabels && labelsGoBefore}
+		{@render labels()}
 	{/if}
 
-	<!-- THE SWITCH -->
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
@@ -270,7 +275,7 @@
 		}}
 		onkeydown={handleKeydown}
 		role="slider"
-		aria-valuemin="0"
+		aria-valuemin={0}
 		aria-valuemax={effectiveStepsCount - 1}
 		aria-valuenow={selectedIndex}
 		aria-disabled={isDisabled}
@@ -289,7 +294,6 @@
 			{/if}
 		</div>
 
-		<!-- Step indicators/background segments -->
 		{#each Array(effectiveStepsCount) as _, index}
 			<div
 				class="step-segment"
@@ -300,174 +304,15 @@
 			>
 				{@render children?.({
 					currentIndex: index,
-					item: items && items[index],
+					item: items?.[index],
 					isSelected: false
 				})}
 			</div>
 		{/each}
 	</div>
 
-	<!-- Labels AFTER switch (for bottom/right positions OR absolute mode) -->
-	{#if shouldDisplayLabels}
-		<!-- Absolute mode labels (all positions) -->
-		{#if labelRenderMode === 'absolute'}
-			<!-- Vertical switch labels -->
-			{#if isVertical && (labelPosition === 'left' || labelPosition === 'right')}
-				<div
-					class="labels-container"
-					class:label-position-left={labelPosition === 'left'}
-					class:label-position-right={labelPosition === 'right'}
-					class:block-mode={false}
-				>
-					{#each Array(effectiveStepsCount) as _, index}
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							class="label"
-							class:active={index === selectedIndex}
-							class:clickable={!thumbTemplate}
-							style:--label-index={index}
-							onclick={() => {
-								if (!isDisabled && !thumbTemplate) {
-									selectStep(index);
-								}
-							}}
-						>
-							{#if labelTemplate}
-								{@render labelTemplate({
-									currentIndex: index,
-									item: items ? items[index] : undefined,
-									isSelected: index === selectedIndex
-								})}
-							{:else}
-								<span class="default-label" class:active={index === selectedIndex}>
-									{getLabelText(index)}
-								</span>
-							{/if}
-						</div>
-					{/each}
-				</div>
-			{/if}
-
-			<!-- Vertical switch top/bottom labels (single label) -->
-			{#if isVertical && (labelPosition === 'top' || labelPosition === 'bottom')}
-				<div
-					class="label-single"
-					class:label-position-top={labelPosition === 'top'}
-					class:label-position-bottom={labelPosition === 'bottom'}
-					class:block-mode={false}
-				>
-					{#if labelTemplate}
-						{@render labelTemplate({
-							currentIndex: selectedIndex,
-							item: items ? items[selectedIndex] : undefined,
-							isSelected: true
-						})}
-					{:else}
-						<span class="default-label active">
-							{getLabelText(selectedIndex)}
-						</span>
-					{/if}
-				</div>
-			{/if}
-
-			<!-- Horizontal switch labels -->
-			{#if !isVertical}
-				<div
-					class="label-single"
-					class:label-position-left={labelPosition === 'left'}
-					class:label-position-right={labelPosition === 'right'}
-					class:label-position-top={labelPosition === 'top'}
-					class:label-position-bottom={labelPosition === 'bottom'}
-					class:block-mode={false}
-				>
-					{#if labelTemplate}
-						{@render labelTemplate({
-							currentIndex: selectedIndex,
-							item: items ? items[selectedIndex] : undefined,
-							isSelected: true
-						})}
-					{:else}
-						<span class="default-label active">
-							{getLabelText(selectedIndex)}
-						</span>
-					{/if}
-				</div>
-			{/if}
-		{:else}
-			<!-- Block mode labels AFTER switch (for bottom/right positions) -->
-			<!-- Vertical switch right labels -->
-			{#if isVertical && labelPosition === 'right'}
-				<div class="labels-container" class:label-position-right={true} class:block-mode={true}>
-					{#each Array(effectiveStepsCount) as _, index}
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							class="label"
-							class:active={index === selectedIndex}
-							class:clickable={!thumbTemplate}
-							style:--label-index={index}
-							onclick={() => {
-								if (!isDisabled && !thumbTemplate) {
-									selectStep(index);
-								}
-							}}
-						>
-							{#if labelTemplate}
-								{@render labelTemplate({
-									currentIndex: index,
-									item: items ? items[index] : undefined,
-									isSelected: index === selectedIndex
-								})}
-							{:else}
-								<span class="default-label" class:active={index === selectedIndex}>
-									{getLabelText(index)}
-								</span>
-							{/if}
-						</div>
-					{/each}
-				</div>
-			{/if}
-
-			<!-- Horizontal switch bottom/right labels -->
-			{#if !isVertical && (labelPosition === 'bottom' || labelPosition === 'right')}
-				<div
-					class="label-single"
-					class:label-position-bottom={labelPosition === 'bottom'}
-					class:label-position-right={labelPosition === 'right'}
-					class:block-mode={true}
-				>
-					{#if labelTemplate}
-						{@render labelTemplate({
-							currentIndex: selectedIndex,
-							item: items ? items[selectedIndex] : undefined,
-							isSelected: true
-						})}
-					{:else}
-						<span class="default-label active">
-							{getLabelText(selectedIndex)}
-						</span>
-					{/if}
-				</div>
-			{/if}
-
-			<!-- Vertical switch bottom labels -->
-			{#if isVertical && labelPosition === 'bottom'}
-				<div class="label-single" class:label-position-bottom={true} class:block-mode={true}>
-					{#if labelTemplate}
-						{@render labelTemplate({
-							currentIndex: selectedIndex,
-							item: items ? items[selectedIndex] : undefined,
-							isSelected: true
-						})}
-					{:else}
-						<span class="default-label active">
-							{getLabelText(selectedIndex)}
-						</span>
-					{/if}
-				</div>
-			{/if}
-		{/if}
+	{#if shouldDisplayLabels && !labelsGoBefore}
+		{@render labels()}
 	{/if}
 </div>
 
