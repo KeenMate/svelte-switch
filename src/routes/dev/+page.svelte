@@ -1,134 +1,47 @@
 <script lang="ts">
-	import { Switch, MultiSwitch } from '$lib';
-
-	// Development testing variables
-	let checked = $state(false);
-	let selectedIndex = $state(0);
-	let size = $state(50);
-	let orientation: 'horizontal' | 'vertical' = $state('horizontal');
-	let shouldDisplayLabels = $state(true);
-	let labelPosition: 'top' | 'bottom' | 'left' | 'right' = $state('right');
-	let labelRenderMode: 'absolute' | 'block' = $state('absolute');
-
-	const testItems = ['Option A', 'Option B', 'Option C', 'Option D'];
+	const pages = [
+		{
+			href: '/dev/binary',
+			icon: '🔘',
+			title: 'Binary Switch',
+			description: 'Switch component with size, orientation, and disabled controls.'
+		},
+		{
+			href: '/dev/multi',
+			icon: '🎚️',
+			title: 'Multi Switch',
+			description: 'MultiSwitch variants: step counts, orientation, disabled, keyboard.'
+		},
+		{
+			href: '/dev/labels',
+			icon: '🏷️',
+			title: 'Labels',
+			description: 'Label positions × render modes × orientations (absolute vs block).'
+		},
+		{
+			href: '/dev/styled',
+			icon: '🎨',
+			title: 'Item Styles',
+			description: 'Per-index itemStyles (array) vs shared itemStyles (object).'
+		}
+	];
 </script>
 
 <div class="container py-4">
-	<h1>🔄 Development Testing</h1>
-	<p class="text-muted">Quick testing area for Switch components during development</p>
+	<h1>🛠️ Dev Index</h1>
+	<p class="text-muted">Test pages for Switch / MultiSwitch scenarios during development.</p>
 
-	<div class="row">
-		<div class="col-lg-6">
-			<div class="card mb-4">
-				<div class="card-header">
-					<h5 class="mb-0">Binary Switch</h5>
-				</div>
-				<div class="card-body">
-					<div class="text-center py-4">
-						<Switch bind:checked {size} {orientation}>
-							{#snippet children({ isSelected })}
-								<span>{isSelected ? '✓' : '✗'}</span>
-							{/snippet}
-						</Switch>
+	<div class="row g-3 mt-2">
+		{#each pages as page}
+			<div class="col-md-6 col-lg-4">
+				<a href={page.href} class="card h-100 text-decoration-none text-dark">
+					<div class="card-body">
+						<div class="fs-3 mb-2">{page.icon}</div>
+						<h5 class="card-title">{page.title}</h5>
+						<p class="card-text text-muted">{page.description}</p>
 					</div>
-					<div class="form-group mb-3">
-						<label class="form-label">Checked: {checked}</label>
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" bind:checked />
-							<label class="form-check-label">Toggle state</label>
-						</div>
-					</div>
-				</div>
+				</a>
 			</div>
-		</div>
-
-		<div class="col-lg-6">
-			<div class="card mb-4">
-				<div class="card-header">
-					<h5 class="mb-0">MultiSwitch with Default Labels</h5>
-				</div>
-				<div class="card-body">
-					<div class="py-4">
-						<MultiSwitch
-							bind:selectedIndex
-							items={testItems}
-							{size}
-							{orientation}
-							{shouldDisplayLabels}
-							{labelPosition}
-							{labelRenderMode}
-						/>
-					</div>
-					<div class="form-group mb-3">
-						<label class="form-label">Selected: {selectedIndex} ({testItems[selectedIndex]})</label>
-						<select class="form-select" bind:value={selectedIndex}>
-							{#each testItems as item, i}
-								<option value={i}>{item}</option>
-							{/each}
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="card">
-		<div class="card-header">
-			<h5 class="mb-0">Controls</h5>
-		</div>
-		<div class="card-body">
-			<div class="row">
-				<div class="col-md-3">
-					<div class="form-group mb-3">
-						<label class="form-label">Size: {size}px</label>
-						<input type="range" class="form-range" min="30" max="120" bind:value={size} />
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="form-group mb-3">
-						<label class="form-label">Orientation</label>
-						<select class="form-select" bind:value={orientation}>
-							<option value="horizontal">Horizontal</option>
-							<option value="vertical">Vertical</option>
-						</select>
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="form-group mb-3">
-						<label class="form-label">Show Labels</label>
-						<div class="form-check">
-							<input class="form-check-input" type="checkbox" bind:checked={shouldDisplayLabels} />
-							<label class="form-check-label">Display labels</label>
-						</div>
-					</div>
-				</div>
-
-				<div class="col-md-3">
-					<div class="form-group mb-3">
-						<label class="form-label">Label Position</label>
-						<select class="form-select" bind:value={labelPosition}>
-							<option value="top">Top</option>
-							<option value="bottom">Bottom</option>
-							<option value="left">Left</option>
-							<option value="right">Right</option>
-						</select>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-md-3">
-					<div class="form-group mb-3">
-						<label class="form-label">Label Render Mode</label>
-						<select class="form-select" bind:value={labelRenderMode}>
-							<option value="absolute">Absolute (overlaps)</option>
-							<option value="block">Block (takes space)</option>
-						</select>
-					</div>
-				</div>
-			</div>
-		</div>
+		{/each}
 	</div>
 </div>

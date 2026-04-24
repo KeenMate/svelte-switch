@@ -22,6 +22,3 @@ consolidation-v1.5.0.md
 
 # Infra
 docker-compose.yml
-
-# Orphan test file — scheduled for deletion (T36)
-test-label-modes.html
