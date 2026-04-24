@@ -79,23 +79,37 @@
 
 	const isVertical = $derived(orientation === 'vertical');
 
-	// Calculate scale factor based on default size (50px)
 	const scale = $derived(size / 50);
 
-	// Use items.length if stepsCount not explicitly provided and items exists
-	const effectiveStepsCount: number = $derived.by(() => {
-		// Check if stepsCount was explicitly set or is default (3)
-		// If items exists and stepsCount is default, use items.length
-		if (items && items.length > 0) {
-			return items.length;
-		}
-		return itemsCount;
-	});
+	// When `items` is provided, its length is authoritative and `itemsCount` is ignored.
+	// Falls through to `itemsCount` only when `items` is null/empty.
+	const effectiveStepsCount: number = $derived(
+		items && items.length > 0 ? items.length : itemsCount
+	);
 
-	// Derived values for snippets
 	const currentIndex = $derived(selectedIndex);
 	const currentItem = $derived(items ? items[selectedIndex] : undefined);
-	let currentStepContext = $derived({ currentIndex, currentItem, itemsCount });
+	let currentStepContext = $derived({
+		currentIndex,
+		currentItem,
+		itemsCount: effectiveStepsCount
+	});
+
+	// Must match values in src/lib/assets/main.scss ($thumb-height, $margin, $step-spacing).
+	const THUMB_PX = 28;
+	const MARGIN_PX = 2;
+	const SPACING_PX = 2;
+
+	// Map a pointer event on the switch container to a step index.
+	// Accounts for outer margin and inter-step spacing — a naive `pos * N` misplaces
+	// clicks near segment boundaries at small sizes / high step counts.
+	function hitTestStep(e: MouseEvent): number {
+		const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+		const localPos = isVertical ? e.clientY - rect.top : e.clientX - rect.left;
+		const stepStride = (THUMB_PX + SPACING_PX) * scale;
+		const rawStep = Math.floor((localPos - MARGIN_PX * scale) / stepStride);
+		return Math.max(0, Math.min(effectiveStepsCount - 1, rawStep));
+	}
 
 	function selectStep(index: number) {
 		if (isDisabled) return;
@@ -252,12 +266,7 @@
 		style:--current-thumb-border-color={getStyleForIndex(selectedIndex).thumbBorderColor || ''}
 		onclick={(e) => {
 			if (isDisabled) return;
-			const rect = e.currentTarget.getBoundingClientRect();
-			const pos = isVertical
-				? (e.clientY - rect.top) / rect.height
-				: (e.clientX - rect.left) / rect.width;
-			const step = Math.floor(pos * effectiveStepsCount);
-			selectStep(Math.max(0, Math.min(effectiveStepsCount - 1, step)));
+			selectStep(hitTestStep(e));
 		}}
 		onkeydown={handleKeydown}
 		role="slider"

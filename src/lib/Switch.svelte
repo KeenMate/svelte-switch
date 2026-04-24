@@ -12,12 +12,14 @@
 		isDisabled?: boolean;
 		orientation?: Orientation;
 		size?: number;
-		items?: any[] | null;
+		items?: readonly [unknown, unknown] | null;
 		itemStyles?: StepStyle[] | StepStyle;
 		onToggle?: (checked: boolean) => void;
-		children?: import('svelte').Snippet<[{ currentIndex: number; item: any; isSelected: boolean }]>;
+		children?: import('svelte').Snippet<
+			[{ currentIndex: number; item: unknown; isSelected: boolean }]
+		>;
 		thumbTemplate?: import('svelte').Snippet<
-			[{ currentIndex: number; currentItem: any; itemsCount: number }]
+			[{ currentIndex: number; currentItem: unknown; itemsCount: number }]
 		>;
 		disableThumbRender?: boolean;
 	}
@@ -47,22 +49,12 @@
 
 	const isVertical = $derived(orientation === 'vertical');
 
-	// Calculate scale factor based on default size (50px)
 	const scale = $derived(size / 50);
 
-	// Validate items array - must be exactly 2 items if provided
-	$effect(() => {
-		if (items !== null && items.length !== 2) {
-			console.warn('Switch component: items array must contain exactly 2 items');
-		}
-	});
-
-	// Derived values for snippets
 	const currentIndex = $derived(checked ? 1 : 0);
 	const currentItem = $derived(items ? items[currentIndex] : undefined);
-	const itemsCount = $derived(items ? items.length : 2);
 	const isSelected = $derived(checked);
-	let currentStepContext = $derived({ currentIndex, currentItem, itemsCount });
+	let currentStepContext = $derived({ currentIndex, currentItem, itemsCount: 2 });
 
 	function toggle() {
 		if (isDisabled) return;
