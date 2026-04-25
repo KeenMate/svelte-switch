@@ -344,8 +344,8 @@ $label-font-size-chain: var(
 
 .multi-switch {
 	position: relative;
-	background-color: var(--sw-bg-off);
-	border-radius: var(--sw-border-radius);
+	background-color: #{$bg-off-chain};
+	border-radius: #{$border-radius-chain};
 	cursor: pointer;
 	@include transition(background-color);
 	outline: none;
@@ -354,7 +354,7 @@ $label-font-size-chain: var(
 
 	// Apply custom background color if provided
 	&:has(.step-segment.active) {
-		background-color: var(--current-bg-color, var(--sw-bg-off));
+		background-color: var(--current-bg-color, #{$bg-off-chain});
 	}
 
 	// CSS custom properties moved to container level
@@ -390,19 +390,19 @@ $label-font-size-chain: var(
 
 	.thumb {
 		position: absolute;
-		background-color: var(--current-thumb-color, var(--sw-thumb-bg));
-		border-radius: var(--sw-border-radius);
+		background-color: var(--current-thumb-color, #{$thumb-bg-chain});
+		border-radius: #{$border-radius-chain};
 		top: calc(var(--margin) * var(--scale));
 		left: calc(var(--margin) * var(--scale));
 		transition:
 			transform $transition-duration $transition-easing,
 			background-color $transition-duration $transition-easing,
 			border-color $transition-duration $transition-easing;
-		box-shadow: var(--sw-shadow);
+		box-shadow: #{$shadow-chain};
 		z-index: 10; // render above step segments
 
 		// Custom thumb border if provided
-		border: 1px solid var(--current-thumb-border-color, var(--sw-thumb-border-color));
+		border: 1px solid var(--current-thumb-border-color, #{$thumb-border-chain});
 
 		// Scaled dimensions
 		width: calc(var(--thumb-height) * var(--scale));
@@ -422,8 +422,11 @@ $label-font-size-chain: var(
 
 	.step-segment {
 		position: absolute;
-		background-color: var(--step-bg-color, rgba(0, 0, 0, 0.1));
-		border-radius: var(--sw-border-radius);
+		// Inactive segments: subtle so step boundaries are hinted under the surface.
+		// `--step-bg-color` is set inline by itemStyles[index].backgroundColor and
+		// wins when consumers want explicit per-step colors.
+		background-color: var(--step-bg-color, rgba(0, 0, 0, 0.05));
+		border-radius: #{$border-radius-chain};
 		@include transition(background-color);
 		z-index: 1; // Step segments render below thumb
 
@@ -440,7 +443,9 @@ $label-font-size-chain: var(
 		);
 
 		&.active {
-			background-color: var(--step-bg-color, rgba(0, 0, 0, 0.2));
+			// Active segment defaults to accent so the multi-switch flips visually
+			// the same way the binary Switch does. itemStyles overrides via --step-bg-color.
+			background-color: var(--step-bg-color, #{$bg-on-chain});
 		}
 	}
 
@@ -458,14 +463,14 @@ $label-font-size-chain: var(
 
 	// Default label styling
 	.default-label {
-		color: var(--sw-label-color);
-		font-family: var(--sw-label-font-family);
-		font-size: calc(var(--sw-label-font-size) * var(--scale, 1));
+		color: #{$label-color-chain};
+		font-family: #{$label-font-family-chain};
+		font-size: calc(#{$label-font-size-chain} * var(--scale, 1));
 		font-weight: $default-label-font-weight;
 		@include transition(color);
 
 		&.active {
-			color: var(--sw-label-active-color);
+			color: #{$label-active-color-chain};
 			font-weight: $default-label-active-font-weight;
 		}
 	}
