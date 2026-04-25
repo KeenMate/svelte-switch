@@ -1,0 +1,113 @@
+// Shared theming foundation — used by both _switch.scss and _multi-switch.scss.
+//
+// Theming model (parity with sibling KeenMate web components):
+//   1. Consumer sets `--base-*` on a parent element (or :root).
+//   2. `--sw-*` resolve through `var(--base-*, fallback)` so themes cascade.
+//   3. Every `--sw-*` is also overridable directly for per-instance styling.
+//
+// Chains (the SCSS strings below) are inlined at property declarations so the
+// override cascade works without the same-element-shadowing bug a `theme-vars`
+// mixin approach hit.
+
+// Sizing constants
+$border-radius: 4px;
+$margin: 2px;
+$switch-height: 32px;
+$thumb-height: 28px;
+$step-spacing: 2px;
+$label-gap: 10px;
+
+// Color fallbacks — used only when neither --sw-* nor --base-* is set
+$fallback-bg-off: #ccc;
+$fallback-accent: #4299e1;
+$fallback-thumb-bg: #fff;
+$fallback-focus-color: rgba(66, 153, 225, 0.5);
+$fallback-label-color: #666;
+$fallback-label-active-color: #333;
+
+$default-label-font-size: 14px;
+$default-label-font-weight: normal;
+$default-label-active-font-weight: bold;
+
+// Animations
+$transition-duration: 0.3s;
+$transition-easing: ease;
+
+// Effects
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+// Theme resolution chains (highest priority first):
+//   1. --current-* / --step-* (set inline by itemStyles)
+//   2. --sw-*                 (per-instance / per-theme override)
+//   3. --base-*               (cross-library theme tokens)
+//   4. Hardcoded fallback
+$bg-off-chain: var(--sw-bg-off, var(--base-primary-bg, #{$fallback-bg-off}));
+$bg-on-chain: var(--sw-bg-on, var(--base-accent-color, #{$fallback-accent}));
+$thumb-bg-chain: var(--sw-thumb-bg, var(--base-text-color-on-accent, #{$fallback-thumb-bg}));
+$thumb-border-chain: var(--sw-thumb-border-color, transparent);
+$focus-color-chain: var(--sw-focus-color, var(--base-accent-color, #{$fallback-focus-color}));
+$border-radius-chain: var(--sw-border-radius, var(--base-border-radius-sm, #{$border-radius}));
+$shadow-chain: var(--sw-shadow, var(--base-shadow-sm, #{$shadow}));
+$label-color-chain: var(--sw-label-color, var(--base-text-color-3, #{$fallback-label-color}));
+$label-active-color-chain: var(
+	--sw-label-active-color,
+	var(--base-text-color-1, #{$fallback-label-active-color})
+);
+$label-font-family-chain: var(--sw-label-font-family, var(--base-font-family, inherit));
+$label-font-size-chain: var(
+	--sw-label-font-size,
+	var(--base-font-size-sm, #{$default-label-font-size})
+);
+
+// Step segment surface — chains through theme-designer's accent-light tokens.
+// Conceptually the segments are the track the accent-tinted thumb moves along,
+// so a faint accent tint stays in palette across themes. The -light variants
+// are auto-generated as ~10% accent opacity by generateBaseTheme(), so they
+// adapt to any surface without per-theme tuning.
+//
+// Override priority:
+//   1. --step-bg-color (set inline by itemStyles[index].backgroundColor) — DATA wins
+//   2. --sw-step-bg / --sw-step-bg-active                                 — per-theme / per-instance
+//   3. --base-accent-color-light / --base-accent-color-light-hover        — cross-library theme cascade
+//   4. Hardcoded light-theme-friendly fallback
+$step-bg-chain: var(--sw-step-bg, var(--base-accent-color-light, rgba(0, 0, 0, 0.06)));
+$step-bg-active-chain: var(
+	--sw-step-bg-active,
+	var(--base-accent-color-light-hover, rgba(0, 0, 0, 0.12))
+);
+
+// Clickable label hover bg — themes can override per-instance.
+$label-hover-bg-chain: var(--sw-label-hover-bg, rgba(0, 0, 0, 0.06));
+$label-hover-bg-active-chain: var(--sw-label-hover-bg-active, rgba(0, 0, 0, 0.12));
+
+// Calculation Functions
+@function switch-width() {
+	@return ($thumb-height * 2) + ($margin * 2); // (28px * 2) + (2px * 2) = 60px
+}
+
+@function thumb-offset() {
+	@return switch-width() - $thumb-height - ($margin * 2); // 60px - 28px - 6px = 26px
+}
+
+@function step-offset($steps: 3) {
+	@return ($thumb-height + $step-spacing); // Distance between steps: thumb width + spacing
+}
+
+// Mixins
+@mixin transition($property: all) {
+	transition: $property $transition-duration $transition-easing;
+}
+
+@mixin focus-outline {
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 3px #{$focus-color-chain};
+	}
+}
+
+@mixin disabled-state {
+	&.disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+}

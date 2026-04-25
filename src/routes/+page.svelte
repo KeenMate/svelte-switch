@@ -34,6 +34,12 @@
 			title: 'Theming',
 			description:
 				'Customize via --base-* variables (cascade from a parent) or per-instance --sw-*.'
+		},
+		{
+			href: '/examples/base-variables',
+			icon: '🎛️',
+			title: 'Variables Playground',
+			description: 'Twiddle every --base-* variable interactively and watch the switches react.'
 		}
 	];
 

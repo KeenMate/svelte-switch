@@ -2,49 +2,120 @@
 	import { Switch, MultiSwitch } from '$lib';
 	import ExampleHeader from '../ExampleHeader.svelte';
 
-	const themes = [
+	type StepStyle = { backgroundColor?: string; thumbColor?: string; thumbBorderColor?: string };
+	type Theme = {
+		id: string;
+		class: string;
+		name: string;
+		description: string;
+		items: string[];
+		itemStyles: StepStyle[];
+	};
+
+	const themes: Theme[] = [
 		{
 			id: 'default',
 			class: '',
 			name: 'Default',
-			description: 'Hardcoded fallbacks — no --base-* set.'
+			description: 'Hardcoded fallbacks — no --base-* set. Multi has no itemStyles.',
+			items: ['Small', 'Medium', 'Large'],
+			itemStyles: []
 		},
-		{ id: 'dark', class: 'dark-theme', name: 'Dark', description: 'Dark surfaces, blue accent.' },
+		{
+			id: 'dark',
+			class: 'dark-theme',
+			name: 'Dark',
+			description: 'Dark surfaces, blue accent. Multi steps follow blue intensity.',
+			items: ['Low', 'Med', 'High'],
+			itemStyles: [
+				{ backgroundColor: '#3a3a3a', thumbColor: '#cbd5ff', thumbBorderColor: '#667eea' },
+				{ backgroundColor: '#3949ab', thumbColor: '#e8eaf6', thumbBorderColor: '#5c6bc0' },
+				{ backgroundColor: '#667eea', thumbColor: '#ffffff', thumbBorderColor: '#1a237e' }
+			]
+		},
 		{
 			id: 'neon',
 			class: 'neon-theme',
 			name: 'Neon / Cyberpunk',
-			description: 'Magenta + cyan on near-black.'
+			description: 'Magenta + cyan on near-black. Multi steps cycle the palette.',
+			items: ['Off', 'Pulse', 'Strobe'],
+			itemStyles: [
+				{ backgroundColor: '#1a0a1a', thumbColor: '#00ffff', thumbBorderColor: '#00aaaa' },
+				{ backgroundColor: '#660066', thumbColor: '#00ffff', thumbBorderColor: '#ff00ff' },
+				{ backgroundColor: '#ff00ff', thumbColor: '#00ffff', thumbBorderColor: '#ffffff' }
+			]
 		},
 		{
 			id: 'audi',
 			class: 'audi-theme',
 			name: 'Audi Sport',
-			description: 'Sharp corners, dark red accent on light gray.'
+			description: 'Brand red on light gray. Multi steps escalate from eco to dynamic.',
+			items: ['Eco', 'Comfort', 'Dynamic'],
+			itemStyles: [
+				{ backgroundColor: '#e8f5e9', thumbColor: '#ffffff', thumbBorderColor: '#bbbbbb' },
+				{ backgroundColor: '#f5f5f5', thumbColor: '#ffffff', thumbBorderColor: '#bbbbbb' },
+				{ backgroundColor: '#bb0a30', thumbColor: '#ffffff', thumbBorderColor: '#7a071f' }
+			]
 		},
 		{
 			id: 'rounded',
 			class: 'rounded-theme',
 			name: 'Rounded Pink',
-			description: 'Pillow corners, soft pink palette.'
+			description: 'Pillow corners, soft pink palette. Multi steps walk pink shades.',
+			items: ['Soft', 'Cozy', 'Hugs'],
+			itemStyles: [
+				{ backgroundColor: '#fff5f0', thumbColor: '#ffd6e3', thumbBorderColor: '#f8bbd0' },
+				{ backgroundColor: '#ffd6e3', thumbColor: '#ff6b9d', thumbBorderColor: '#ff4081' },
+				{ backgroundColor: '#ff6b9d', thumbColor: '#ffffff', thumbBorderColor: '#c2185b' }
+			]
 		},
 		{
 			id: 'sharp',
 			class: 'sharp-theme',
 			name: 'Sharp Brutalist',
-			description: 'Pure black/white, no shadows, zero radius.'
+			description: 'Pure black/white, no shadows, zero radius. Multi steps invert.',
+			items: ['Mute', 'Soft', 'Loud'],
+			itemStyles: [
+				{ backgroundColor: '#ffffff', thumbColor: '#ffffff', thumbBorderColor: '#000000' },
+				{ backgroundColor: '#888888', thumbColor: '#ffffff', thumbBorderColor: '#000000' },
+				{ backgroundColor: '#000000', thumbColor: '#ffffff', thumbBorderColor: '#000000' }
+			]
 		},
 		{
 			id: 'material',
 			class: 'material-theme',
 			name: 'Material',
-			description: 'Google Material Design blues.'
+			description: 'Google Material Design blues. Multi steps escalate elevation.',
+			items: ['100', '300', '500'],
+			itemStyles: [
+				{ backgroundColor: '#bbdefb', thumbColor: '#ffffff', thumbBorderColor: '#90caf9' },
+				{ backgroundColor: '#64b5f6', thumbColor: '#ffffff', thumbBorderColor: '#42a5f5' },
+				{ backgroundColor: '#1976d2', thumbColor: '#ffffff', thumbBorderColor: '#0d47a1' }
+			]
 		},
 		{
 			id: 'glass',
 			class: 'glass-theme',
 			name: 'Glassmorphism',
-			description: 'Translucent surfaces over a gradient.'
+			description: 'Translucent surfaces over a gradient. Multi steps stack opacity.',
+			items: ['Mist', 'Veil', 'Pane'],
+			itemStyles: [
+				{
+					backgroundColor: 'rgba(255,255,255,0.15)',
+					thumbColor: '#ffffff',
+					thumbBorderColor: 'rgba(255,255,255,0.4)'
+				},
+				{
+					backgroundColor: 'rgba(255,255,255,0.3)',
+					thumbColor: '#ffffff',
+					thumbBorderColor: 'rgba(255,255,255,0.6)'
+				},
+				{
+					backgroundColor: 'rgba(255,255,255,0.55)',
+					thumbColor: '#667eea',
+					thumbBorderColor: '#ffffff'
+				}
+			]
 		}
 	];
 
@@ -96,7 +167,8 @@
 					<Switch bind:checked={swStates[i].checked} size={60} />
 					<MultiSwitch
 						bind:selectedIndex={swStates[i].multi}
-						items={['Small', 'Medium', 'Large']}
+						items={theme.items}
+						itemStyles={theme.itemStyles.length ? theme.itemStyles : undefined}
 						size={60}
 						shouldDisplayLabels={true}
 						labelPosition="bottom"
@@ -173,6 +245,9 @@
 		--base-border-color: #404040;
 		--base-input-bg: #2a2a2a;
 		--base-primary-bg: #3a3a3a;
+		/* Segment hints — lighten on dark surface */
+		--sw-step-bg: rgba(255, 255, 255, 0.06);
+		--sw-step-bg-active: rgba(255, 255, 255, 0.12);
 	}
 	.dark-theme h3,
 	.dark-theme p {
@@ -193,6 +268,9 @@
 		--base-primary-bg: rgba(255, 0, 255, 0.3);
 		--sw-thumb-bg: #00ffff;
 		--sw-thumb-border-color: #ff00ff;
+		/* Segment hints — cyan-tinted on the magenta surface */
+		--sw-step-bg: rgba(0, 255, 255, 0.12);
+		--sw-step-bg-active: rgba(0, 255, 255, 0.22);
 	}
 	.neon-theme::before {
 		content: '';
@@ -285,6 +363,9 @@
 		--base-input-bg: rgba(255, 255, 255, 0.15);
 		--base-primary-bg: rgba(255, 255, 255, 0.25);
 		--base-border-radius-sm: 12px;
+		/* Segment hints — white-tinted on the translucent gradient */
+		--sw-step-bg: rgba(255, 255, 255, 0.15);
+		--sw-step-bg-active: rgba(255, 255, 255, 0.3);
 	}
 	.glass-theme::before {
 		content: '';

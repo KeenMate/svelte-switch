@@ -1,0 +1,291 @@
+// Styles for <MultiSwitch> only. Imported into MultiSwitch.svelte's <style>
+// block; Switch.svelte does NOT import this so its compiled output stays slim.
+
+@use './theme' as *;
+
+// Container for block mode to handle layout
+.multi-switch-container {
+	display: inline-block;
+	position: relative;
+
+	// Sizing constants exposed as CSS custom properties
+	--step-offset: #{step-offset(3)};
+	--margin: #{$margin};
+	--thumb-height: #{$thumb-height};
+	--sw-height: #{$switch-height};
+	--step-spacing: #{$step-spacing};
+
+	--scale: 1;
+	--steps: 3;
+
+	// In absolute mode, label positioning is relative to the container
+	&:not(.block-labels) {
+		.label-single {
+			&.label-position-top {
+				bottom: calc(100% + #{$label-gap} * var(--scale));
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&.label-position-bottom {
+				top: calc(100% + #{$label-gap} * var(--scale));
+				left: 50%;
+				transform: translateX(-50%);
+			}
+
+			&.label-position-left {
+				right: calc(100% + #{$label-gap} * var(--scale));
+				top: 50%;
+				transform: translateY(-50%);
+			}
+
+			&.label-position-right {
+				left: calc(100% + #{$label-gap} * var(--scale));
+				top: 50%;
+				transform: translateY(-50%);
+			}
+		}
+
+		.labels-container {
+			&.label-position-left {
+				right: calc(100% + #{$label-gap} * var(--scale));
+				left: auto;
+			}
+
+			&.label-position-right {
+				left: calc(100% + #{$label-gap} * var(--scale));
+			}
+		}
+	}
+
+	&.block-labels {
+		display: inline-flex;
+		align-items: center;
+		gap: calc(#{$label-gap} * var(--scale, 1));
+
+		// Top/bottom labels → column direction. Cover both single and per-step containers
+		// so the layout is correct regardless of which variant the template picks.
+		&:has(.label-single.label-position-top),
+		&:has(.label-single.label-position-bottom),
+		&:has(.labels-container.label-position-top),
+		&:has(.labels-container.label-position-bottom) {
+			flex-direction: column;
+		}
+
+		// Left/right labels → row direction.
+		&:has(.label-single.label-position-left),
+		&:has(.label-single.label-position-right),
+		&:has(.labels-container.label-position-left),
+		&:has(.labels-container.label-position-right) {
+			flex-direction: row;
+		}
+	}
+}
+
+.labels-container {
+	position: absolute;
+	top: 0;
+	display: flex;
+	flex-direction: column;
+	padding: calc(var(--margin) * var(--scale)) 0;
+	gap: calc(var(--step-spacing) * var(--scale));
+	white-space: nowrap;
+
+	&.block-mode {
+		position: static;
+		padding: 0;
+		height: auto;
+		display: flex;
+		flex-direction: column;
+		gap: calc(var(--step-spacing) * var(--scale));
+		white-space: normal;
+
+		.label {
+			height: calc(var(--thumb-height) * var(--scale));
+			display: flex;
+			align-items: center;
+		}
+	}
+
+	.label {
+		height: calc(var(--thumb-height) * var(--scale));
+		display: flex;
+		align-items: center;
+		@include transition(opacity);
+		opacity: 0.6;
+
+		// Reset <button> defaults so clickable labels look identical to their div cousins.
+		background: none;
+		border: 0;
+		padding: 0;
+		font: inherit;
+		color: inherit;
+		text-align: inherit;
+
+		&.active {
+			opacity: 1;
+			font-weight: bold;
+		}
+
+		&.clickable {
+			cursor: pointer;
+			transition:
+				opacity 0.3s ease,
+				background-color 0.3s ease;
+
+			&:hover:not(:disabled) {
+				opacity: 0.8;
+				background-color: #{$label-hover-bg-chain};
+				border-radius: 4px;
+			}
+
+			&.active:hover:not(:disabled) {
+				opacity: 1;
+				background-color: #{$label-hover-bg-active-chain};
+			}
+
+			&:disabled {
+				cursor: not-allowed;
+			}
+		}
+	}
+}
+
+.label-single {
+	position: absolute;
+	transition:
+		transform $transition-duration $transition-easing,
+		opacity $transition-duration $transition-easing,
+		color $transition-duration $transition-easing;
+	white-space: nowrap;
+
+	&.block-mode {
+		position: static;
+		transform: none;
+	}
+}
+
+.multi-switch {
+	position: relative;
+	background-color: #{$bg-off-chain};
+	border-radius: #{$border-radius-chain};
+	cursor: pointer;
+	@include transition(background-color);
+	outline: none;
+	user-select: none;
+	display: inline-block;
+
+	// itemStyles[selectedIndex].backgroundColor → flips the WHOLE multi-switch
+	// surface to the selected step's color. Always-true selector (one step is
+	// always active) so this is effectively the bg rule when itemStyles is set.
+	&:has(.step-segment.active) {
+		background-color: var(--current-bg-color, #{$bg-off-chain});
+	}
+
+	// Dynamic calculations using CSS with spacing
+	width: calc(
+		(
+				var(--thumb-height) * var(--steps) + var(--margin) * 2 + var(--step-spacing) *
+					(var(--steps) - 1)
+			) *
+			var(--scale)
+	);
+	height: calc(var(--sw-height) * var(--scale));
+
+	--step-offset: calc((var(--thumb-height) + var(--step-spacing)) * var(--scale));
+
+	@include focus-outline;
+	@include disabled-state;
+
+	&.vertical {
+		width: calc(var(--sw-height) * var(--scale));
+		height: calc(
+			(
+					var(--thumb-height) * var(--steps) + var(--margin) * 2 + var(--step-spacing) *
+						(var(--steps) - 1)
+				) *
+				var(--scale)
+		);
+	}
+
+	.thumb {
+		position: absolute;
+		background-color: var(--current-thumb-color, #{$thumb-bg-chain});
+		border-radius: #{$border-radius-chain};
+		top: calc(var(--margin) * var(--scale));
+		left: calc(var(--margin) * var(--scale));
+		transition:
+			transform $transition-duration $transition-easing,
+			background-color $transition-duration $transition-easing,
+			border-color $transition-duration $transition-easing;
+		box-shadow: #{$shadow-chain};
+		z-index: 10; // render above step segments
+
+		border: 1px solid var(--current-thumb-border-color, #{$thumb-border-chain});
+
+		width: calc(var(--thumb-height) * var(--scale));
+		height: calc(var(--thumb-height) * var(--scale));
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&.vertical .thumb {
+		left: 50%;
+		transform: translateX(-50%);
+		top: calc(var(--margin) * var(--scale));
+	}
+
+	.step-segment {
+		position: absolute;
+		// `--step-bg-color` (set inline by itemStyles[index].backgroundColor) wins
+		// when consumers want explicit per-step colors. Default uses currentColor
+		// via color-mix so segments stay visible on BOTH light and dark themes
+		// (themes set text color appropriately).
+		background-color: var(--step-bg-color, #{$step-bg-chain});
+		border-radius: #{$border-radius-chain};
+		@include transition(background-color);
+		z-index: 1;
+
+		border: 1px solid var(--step-border-color, transparent);
+
+		width: calc(var(--thumb-height) * var(--scale));
+		height: calc((var(--sw-height) - (var(--margin) * 2)) * var(--scale));
+		top: calc(var(--margin) * var(--scale));
+		left: calc(
+			(var(--margin) + (var(--thumb-height) + var(--step-spacing)) * var(--step-index)) *
+				var(--scale)
+		);
+
+		&.active {
+			background-color: var(--step-bg-color, #{$step-bg-active-chain});
+		}
+	}
+
+	&.vertical .step-segment {
+		width: calc((var(--sw-height) - (var(--margin) * 2)) * var(--scale));
+		height: calc(var(--thumb-height) * var(--scale));
+		left: calc(var(--margin) * var(--scale));
+		top: calc(
+			(var(--margin) + (var(--thumb-height) + var(--step-spacing)) * var(--step-index)) *
+				var(--scale)
+		);
+	}
+}
+
+// Default label rendering — lives inside .labels-container .label and
+// .label-single, NOT inside .multi-switch (it's a sibling), so it's hoisted
+// out of the .multi-switch nesting.
+.default-label {
+	color: #{$label-color-chain};
+	font-family: #{$label-font-family-chain};
+	font-size: calc(#{$label-font-size-chain} * var(--scale, 1));
+	font-weight: $default-label-font-weight;
+	@include transition(color);
+
+	&.active {
+		color: #{$label-active-color-chain};
+		font-weight: $default-label-active-font-weight;
+	}
+}

@@ -259,5 +259,5 @@
 </div>
 
 <style lang="scss">
-	@use './assets/main.scss' as *;
+	@use './assets/multi-switch' as *;
 </style>

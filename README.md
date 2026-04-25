@@ -261,6 +261,36 @@ interface StepStyle {
 }
 ```
 
+## Theming
+
+Two layers of CSS custom properties drive the visuals — set whichever fits your scope:
+
+- **`--base-*`** — cross-library theme tokens shared with `@keenmate/web-multiselect`,
+  `@keenmate/web-daterangepicker`, and the rest of the KeenMate ecosystem. Set once
+  on a parent (or `:root`), every nested KeenMate component picks them up.
+- **`--sw-*`** — switch-specific overrides for per-instance / per-theme tweaks
+  without affecting other components.
+
+Resolution order at every property: **`itemStyles` data** → **`--sw-*`** → **`--base-*`** → hardcoded fallback.
+
+```svelte
+<div style="--base-accent-color: #8b5cf6; --base-primary-bg: #1f2937;">
+  <Switch bind:checked />
+  <!-- focus ring + on-state turn purple, off surface turns dark gray -->
+</div>
+
+<!-- Or per-instance: -->
+<Switch
+  bind:checked
+  style="--sw-bg-on: #ef4444; --sw-border-radius: 999px"
+/>
+```
+
+Variables the library consumes are catalogued in `component-variables.manifest.json`
+at the package root (compatible with `@keenmate/theme-designer`). The interactive
+playground at `/examples/base-variables` lets you twiddle every `--base-*` and
+watch the switches react live.
+
 ## Vanilla JavaScript usage
 
 Use Svelte 5's `mount()` with a reactive props object — the components have no `update()` method (it was removed in 2.0; props are reactive in Svelte 5):

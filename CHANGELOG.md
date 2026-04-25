@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-04-25
+
+Theming polish + a fix for a real cascade bug introduced in 2.1.0. Non-breaking; per-instance `--switch-*` overrides from 2.1.0 are renamed to `--sw-*` for parity with sibling KeenMate libs (`--ms-*`, `--drp-*`).
+
+### 💥 Variable rename
+
+- `--switch-*` → `--sw-*` (every component-level CSS custom property). Matches the abbreviation convention of `--ms-*` (multiselect) and `--drp-*` (daterangepicker), and what `@keenmate/theme-designer` expects when generating per-component overrides.
+
+### 🐛 Fixed
+
+- **Theme cascade was being shadowed.** 2.1.0 set `--switch-*` on the `.switch` / `.multi-switch-container` roots via a `theme-vars` mixin. CSS gives priority to a same-element declaration over an inherited one, so `.my-theme { --switch-thumb-bg: cyan }` on a parent was silently beaten by the component's own `--switch-thumb-bg: var(...)`. Replaced with SCSS `var()` chain strings that expand inline at the property declarations — every layer is now externally overridable.
+- **MultiSwitch invisible in dark themes.** The `.multi-switch` block kept bare `var(--sw-bg-off)` references after the rename instead of using the new chain. Without an explicit `--sw-*` override, the surface and thumb resolved to nothing. Fixed.
+- **Unused-CSS warning wall (50 → 0).** Switch.svelte and MultiSwelte both did `@use './assets/main.scss'`, inlining the entire stylesheet into both components. Each component carried the other's CSS as "unused" and consumers' bundles paid for the duplication. Split into per-component partials (see Internal below).
+
+### ✨ Added
+
+#### `--sw-bg-on` (binary on-state surface)
+
+Binary `Switch` had no separate "on" surface color in 2.1.0 — it stayed gray in both states with only the thumb position signaling on/off. Added `--sw-bg-on`, defaulting to `--base-accent-color`. `.switch.checked` now uses it via the same `--current-bg-color || $bg-on-chain` pattern that the off state uses for `--sw-bg-off`. Standard iOS/Material toggle behavior. Themes that want the surface to stay neutral can override `--sw-bg-on` directly.
+
+#### Step segment surface chains
+
+Added `--sw-step-bg` and `--sw-step-bg-active` for the MultiSwitch step segments ("placeholder" indicators behind each step). They chain through `--base-accent-color-light` and `--base-accent-color-light-hover` (theme-designer's auto-generated accent-light tokens), so segments stay in palette across themes without per-component tuning. `itemStyles[i].backgroundColor` still wins via `--step-bg-color` as before.
+
+Also added `--sw-label-hover-bg` / `--sw-label-hover-bg-active` for the clickable per-step label hover background.
+
+#### `/examples/base-variables` — interactive playground
+
+New demo route with one row per `--base-*` variable the library consumes. Color picker + text input + clear button per row; live preview reacts in real time. CSS export block produces a copy-pasteable `.my-app { ... }` that recreates whatever you've configured.
+
+#### Theming presets enriched
+
+Each theme card on `/examples/theming` now passes a per-theme `itemStyles` array using brand-appropriate colors (Audi: eco-green → comfort-gray → dynamic-red, Neon: deep purple → mid magenta → full magenta with cyan thumb, etc.). The MultiSwitch surface flips through the palette as you click between steps, instead of sitting as a static gray rectangle.
+
+### 🧹 Internal
+
+- **SCSS split into per-component partials.** New structure:
+    - `src/lib/assets/_theme.scss` — variables, fallback constants, chain SCSS strings, mixins, calc functions. NO style rules.
+    - `src/lib/assets/_switch.scss` — `.switch { ... }` rules only. `@use 'theme'`.
+    - `src/lib/assets/_multi-switch.scss` — `.multi-switch-container`, `.labels-container`, `.label-single`, `.multi-switch`, `.default-label`. `@use 'theme'`.
+    - `src/lib/assets/main.scss` — `@forward` aggregator for consumers wanting both bundles via the package's `./styles.scss` export.
+
+  `Switch.svelte` imports `./assets/switch`; `MultiSwitch.svelte` imports `./assets/multi-switch`. Each compiled component contains only its own selectors.
+
+- Hoisted `.default-label` out of the `.multi-switch` nesting where it never matched anything (it lives inside `.labels-container .label`, a sibling of `.multi-switch`).
+
+- `--base-disabled-bg` removed from the variable manifest. It was documented as a fallback for `--base-primary-bg` in 2.1.0, briefly repurposed for segment color, and ultimately replaced by `--base-accent-color-light` once we cross-checked theme-designer's canonical base-variable list.
+
 ## [2.1.0] - 2026-04-25
 
 Ecosystem-parity release. Adds the same global API surface, theme variable cascade, and categorized logging system used by sibling KeenMate libraries (`@keenmate/web-multiselect`, `@keenmate/web-daterangepicker`). Non-breaking — pure additions.

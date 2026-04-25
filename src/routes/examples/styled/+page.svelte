@@ -15,8 +15,17 @@
 		thumbBorderColor: '#0284c7'
 	};
 
+	const priorityLevels = ['Low', 'Medium', 'High', 'Critical'];
+	const priorityStyles = [
+		{ backgroundColor: '#e8f5e8', thumbColor: '#4caf50', thumbBorderColor: '#388e3c' },
+		{ backgroundColor: '#e3f2fd', thumbColor: '#2196f3', thumbBorderColor: '#1976d2' },
+		{ backgroundColor: '#fff3e0', thumbColor: '#ff9800', thumbBorderColor: '#f57c00' },
+		{ backgroundColor: '#ffebee', thumbColor: '#f44336', thumbBorderColor: '#d32f2f' }
+	];
+
 	let arrayIndex = $state(0);
 	let objectIndex = $state(0);
+	let priorityIndex = $state(1);
 </script>
 
 <svelte:head>
@@ -26,8 +35,50 @@
 <div class="container">
 	<ExampleHeader
 		title="🎨 Item Styles"
-		subtitle="itemStyles accepts either an array (per-index) or a single object (shared across steps)."
+		subtitle="itemStyles accepts either an array (per-index) or a single object (shared across steps). The whole switch surface follows the selected step's backgroundColor — that's how you make the multi-switch reflect the active selection."
 	/>
+
+	<section class="card">
+		<h2>Whole-switch background follows selected step</h2>
+		<p class="description">
+			Priority levels with semantic colors. Move the thumb — notice the entire switch background
+			tints to match the selected step. Each step still keeps its own thumb color via
+			<code>thumbColor</code>. This is the canonical pattern for "the switch should reflect what's
+			selected".
+		</p>
+		<div
+			class="demo-area"
+			style="display: flex; justify-content: center; align-items: center; min-height: 200px;"
+		>
+			<MultiSwitch
+				bind:selectedIndex={priorityIndex}
+				items={priorityLevels}
+				itemStyles={priorityStyles}
+				shouldDisplayLabels={true}
+				labelPosition="bottom"
+				labelRenderMode="block"
+				size={60}
+			/>
+		</div>
+		<div class="code-block">
+			<pre>{`const priorityLevels = ['Low', 'Medium', 'High', 'Critical'];
+
+const priorityStyles = [
+  { backgroundColor: '#e8f5e8', thumbColor: '#4caf50', thumbBorderColor: '#388e3c' },
+  { backgroundColor: '#e3f2fd', thumbColor: '#2196f3', thumbBorderColor: '#1976d2' },
+  { backgroundColor: '#fff3e0', thumbColor: '#ff9800', thumbBorderColor: '#f57c00' },
+  { backgroundColor: '#ffebee', thumbColor: '#f44336', thumbBorderColor: '#d32f2f' }
+];
+
+<MultiSwitch
+  bind:selectedIndex
+  items={priorityLevels}
+  itemStyles={priorityStyles}
+  shouldDisplayLabels={true}
+  labelPosition="bottom"
+/>`}</pre>
+		</div>
+	</section>
 
 	<div class="grid-2">
 		<section class="card">

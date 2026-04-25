@@ -1,0 +1,62 @@
+// Styles for <Switch> only. Imported into Switch.svelte's <style> block;
+// MultiSwitch.svelte does NOT import this so its compiled output stays slim.
+
+@use './theme' as *;
+
+.switch {
+	position: relative;
+	background-color: var(--current-bg-color, #{$bg-off-chain});
+	border-radius: #{$border-radius-chain};
+	cursor: pointer;
+	@include transition(background-color);
+	outline: none;
+	user-select: none;
+
+	&.checked {
+		background-color: var(--current-bg-color, #{$bg-on-chain});
+	}
+
+	// Sizing constants exposed as CSS custom properties
+	--thumb-offset: #{thumb-offset()};
+	--margin: #{$margin};
+	--sw-width: #{switch-width()};
+	--sw-height: #{$switch-height};
+	--thumb-height: #{$thumb-height};
+	--scale: 1;
+
+	width: calc(var(--sw-width) * var(--scale));
+	height: calc(var(--sw-height) * var(--scale));
+
+	&.vertical {
+		width: calc(var(--sw-height) * var(--scale));
+		height: calc(var(--sw-width) * var(--scale));
+	}
+
+	@include focus-outline;
+	@include disabled-state;
+
+	.thumb {
+		position: absolute;
+		background-color: var(--current-thumb-color, #{$thumb-bg-chain});
+		border-radius: #{$border-radius-chain};
+		@include transition(transform);
+		box-shadow: #{$shadow-chain};
+
+		border: 1px solid var(--current-thumb-border-color, #{$thumb-border-chain});
+
+		width: calc(var(--thumb-height) * var(--scale));
+		height: calc(var(--thumb-height) * var(--scale));
+		top: calc(var(--margin) * var(--scale));
+		left: calc(var(--margin) * var(--scale));
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	&.vertical .thumb {
+		left: 50%;
+		transform: translateX(-50%);
+		top: calc(var(--margin) * var(--scale));
+	}
+}
