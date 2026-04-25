@@ -40,7 +40,7 @@ Default level is `silent`. Toggle via `window.components['svelte-switch'].loggin
 
 Component CSS now resolves through `var(--base-*, fallback)`. Set `--base-accent-color`, `--base-disabled-bg`, `--base-input-bg`, `--base-border-color`, `--base-border-radius-sm`, `--base-text-color-1`, `--base-text-color-3`, `--base-font-family`, `--base-font-size-sm` on a parent element and every nested switch picks up the theme — same convention as the other KeenMate web components.
 
-The full intermediate variable layer (`--switch-accent-color`, `--switch-bg-off`, `--switch-thumb-bg`, etc.) is also overridable for per-instance styling. See `component-variables.manifest.json` at the package root for the complete list.
+The full intermediate variable layer (`--sw-accent-color`, `--sw-bg-off`, `--sw-thumb-bg`, etc.) is also overridable for per-instance styling. See `component-variables.manifest.json` at the package root for the complete list.
 
 #### `getInstances()` instance tracking
 

@@ -64,7 +64,7 @@
 	<section class="card">
 		<h2>How it works</h2>
 		<p>
-			Component-level <code>--switch-*</code> variables resolve through
+			Component-level <code>--sw-*</code> variables resolve through
 			<code>var(--base-*, fallback)</code>. Wrap one or more switch components in an element that
 			sets <code>--base-accent-color</code>, <code>--base-primary-bg</code>, etc. — every nested
 			switch picks up the theme.
@@ -116,7 +116,7 @@
 		<div class="code-block">
 			<pre>{`<Switch
   size={80}
-  style="--switch-accent-color: #f43f5e; --switch-border-radius: 999px"
+  style="--sw-accent-color: #f43f5e; --sw-border-radius: 999px"
 />`}</pre>
 		</div>
 		<p class="description" style="margin-top: 1rem;">
@@ -179,7 +179,8 @@
 		color: #e5e5e5;
 	}
 
-	/* Neon / Cyberpunk */
+	/* Neon / Cyberpunk — magenta surface with cyan thumb to honor the
+	   "magenta + cyan on near-black" identity */
 	.neon-theme {
 		background: #0a0a0a;
 		position: relative;
@@ -190,6 +191,8 @@
 		--base-border-color: #ff00ff;
 		--base-input-bg: #1a0a1a;
 		--base-primary-bg: rgba(255, 0, 255, 0.3);
+		--sw-thumb-bg: #00ffff;
+		--sw-thumb-border-color: #ff00ff;
 	}
 	.neon-theme::before {
 		content: '';
@@ -251,7 +254,7 @@
 		--base-accent-color: #000000;
 		--base-border-radius-sm: 0;
 		--base-shadow-sm: none;
-		--switch-thumb-border-color: #000000;
+		--sw-thumb-border-color: #000000;
 	}
 	.sharp-theme h3 {
 		color: #000;

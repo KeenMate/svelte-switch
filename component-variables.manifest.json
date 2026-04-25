@@ -1,7 +1,7 @@
 {
 	"$schema": "https://raw.githubusercontent.com/keenmate/schemas/main/component-variables.schema.json",
 	"component": "@keenmate/svelte-switch",
-	"prefix": "switch",
+	"prefix": "sw",
 	"baseVariables": [
 		{
 			"name": "base-accent-color",
@@ -56,42 +56,47 @@
 	],
 	"componentVariables": [
 		{
-			"name": "switch-accent-color",
+			"name": "sw-accent-color",
 			"category": "accent",
 			"usage": "Accent color (focus ring, active state)"
 		},
 		{
-			"name": "switch-bg-off",
+			"name": "sw-bg-off",
 			"category": "surface",
 			"usage": "Switch background when off / not on selected step"
 		},
-		{ "name": "switch-thumb-bg", "category": "surface", "usage": "Thumb fill color" },
 		{
-			"name": "switch-thumb-border-color",
+			"name": "sw-bg-on",
+			"category": "surface",
+			"usage": "Switch background when checked (binary Switch). Defaults to --base-accent-color so the toggle flips to accent on activation"
+		},
+		{ "name": "sw-thumb-bg", "category": "surface", "usage": "Thumb fill color" },
+		{
+			"name": "sw-thumb-border-color",
 			"category": "border",
 			"usage": "Thumb border color (defaults to transparent — set per-theme/per-instance when a visible outline is wanted)"
 		},
-		{ "name": "switch-focus-color", "category": "focus", "usage": "Focus ring color" },
+		{ "name": "sw-focus-color", "category": "focus", "usage": "Focus ring color" },
 		{
-			"name": "switch-focus-ring",
+			"name": "sw-focus-ring",
 			"category": "focus",
 			"usage": "Full focus ring shorthand (box-shadow)"
 		},
 		{
-			"name": "switch-border-radius",
+			"name": "sw-border-radius",
 			"category": "radius",
 			"usage": "Corner radius for switch, thumb, and step segments"
 		},
-		{ "name": "switch-shadow", "category": "elevation", "usage": "Thumb drop shadow" },
-		{ "name": "switch-label-color", "category": "label", "usage": "Inactive label text color" },
+		{ "name": "sw-shadow", "category": "elevation", "usage": "Thumb drop shadow" },
+		{ "name": "sw-label-color", "category": "label", "usage": "Inactive label text color" },
 		{
-			"name": "switch-label-active-color",
+			"name": "sw-label-active-color",
 			"category": "label",
 			"usage": "Active label text color"
 		},
-		{ "name": "switch-label-font-family", "category": "label", "usage": "Label font family" },
+		{ "name": "sw-label-font-family", "category": "label", "usage": "Label font family" },
 		{
-			"name": "switch-label-font-size",
+			"name": "sw-label-font-size",
 			"category": "label",
 			"usage": "Label base font size (scales with --scale)"
 		},

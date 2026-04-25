@@ -2,10 +2,10 @@
 //
 // Theming model (parity with sibling KeenMate web components):
 //   1. Consumer sets `--base-*` on a parent element (or :root).
-//   2. Component-level `--switch-*` / `--multiswitch-*` resolve through
-//      `var(--base-*, fallback)` so themes cascade automatically.
-//   3. Every component-level variable is also overridable directly by
-//      consumers who want per-instance overrides without touching --base-*.
+//   2. Component-level `--sw-*` resolve through `var(--base-*, fallback)`
+//      so themes cascade automatically.
+//   3. Every `--sw-*` is also overridable directly by consumers who want
+//      per-instance styling without touching --base-*.
 //
 // Hardcoded SCSS values below are sizing constants only — colors and
 // theme-related values flow through the variable layer at the bottom.
@@ -18,7 +18,7 @@ $thumb-height: 28px;
 $step-spacing: 2px; // gap between steps in MultiSwitch
 $label-gap: 10px; // distance from switch edge to absolutely-positioned label
 
-// Color fallbacks — used only when neither --switch-* nor --base-* is set
+// Color fallbacks — used only when neither --sw-* nor --base-* is set
 $fallback-bg-off: #ccc;
 $fallback-accent: #4299e1;
 $fallback-thumb-bg: #fff;
@@ -37,32 +37,42 @@ $transition-easing: ease;
 // Effects
 $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
-// Theme variable layer — applied at component roots so the cascade picks up
-// either --switch-*, --base-*, or the hardcoded fallback in that order.
-@mixin theme-vars {
-	--switch-accent-color: var(--base-accent-color, #{$fallback-accent});
-	// Off / unselected surface — accept either name used across the KeenMate ecosystem
-	--switch-bg-off: var(--base-primary-bg, var(--base-disabled-bg, #{$fallback-bg-off}));
-	// Thumb fill — must contrast with the switch surface in any theme.
-	// `--base-text-color-on-accent` is the cross-library "always-readable on a colored
-	// surface" token (typically #fff in light AND dark themes). We deliberately do NOT
-	// chain through `--base-input-bg` because that would make the thumb match the input
-	// field surface color, which collapses to the page background in dark themes.
-	--switch-thumb-bg: var(--base-text-color-on-accent, #{$fallback-thumb-bg});
-	// Thumb border defaults to transparent. Themes that want a visible thumb border
-	// should set --switch-thumb-border-color directly — tying it to --base-border-color
-	// produced muddy thumbs in dark themes (border color matched the page chrome).
-	--switch-thumb-border-color: transparent;
-	--switch-focus-color: var(--base-accent-color, #{$fallback-focus-color});
-	--switch-focus-ring: 0 0 0 3px var(--switch-focus-color);
-	--switch-border-radius: var(--base-border-radius-sm, #{$border-radius});
-	--switch-shadow: var(--base-shadow-sm, #{$shadow});
-
-	--switch-label-color: var(--base-text-color-3, #{$fallback-label-color});
-	--switch-label-active-color: var(--base-text-color-1, #{$fallback-label-active-color});
-	--switch-label-font-family: var(--base-font-family, inherit);
-	--switch-label-font-size: var(--base-font-size-sm, #{$default-label-font-size});
-}
+// Theme resolution chains.
+//
+// IMPORTANT: these are SCSS strings, not @mixin declarations. They expand into
+// `var()` chains in the property values themselves — they MUST NOT be set as
+// custom-property declarations on the component root, because that would
+// shadow any --sw-* / --base-* override a parent element supplies. The
+// CSS custom property cascade gives priority to a same-element declaration
+// over an inherited one, so `.switch { --sw-thumb-bg: var(...) }` would
+// beat `.theme-x { --sw-thumb-bg: cyan }` even though `.theme-x` is the
+// ancestor.
+//
+// Resolution order (highest priority first):
+//   1. --current-* / --step-* (set inline by itemStyles)
+//   2. --sw-* (per-instance or per-theme override)
+//   3. --base-* (cross-library theme tokens)
+//   4. Hardcoded fallback
+$bg-off-chain: var(
+	--sw-bg-off,
+	var(--base-primary-bg, var(--base-disabled-bg, #{$fallback-bg-off}))
+);
+$bg-on-chain: var(--sw-bg-on, var(--base-accent-color, #{$fallback-accent}));
+$thumb-bg-chain: var(--sw-thumb-bg, var(--base-text-color-on-accent, #{$fallback-thumb-bg}));
+$thumb-border-chain: var(--sw-thumb-border-color, transparent);
+$focus-color-chain: var(--sw-focus-color, var(--base-accent-color, #{$fallback-focus-color}));
+$border-radius-chain: var(--sw-border-radius, var(--base-border-radius-sm, #{$border-radius}));
+$shadow-chain: var(--sw-shadow, var(--base-shadow-sm, #{$shadow}));
+$label-color-chain: var(--sw-label-color, var(--base-text-color-3, #{$fallback-label-color}));
+$label-active-color-chain: var(
+	--sw-label-active-color,
+	var(--base-text-color-1, #{$fallback-label-active-color})
+);
+$label-font-family-chain: var(--sw-label-font-family, var(--base-font-family, inherit));
+$label-font-size-chain: var(
+	--sw-label-font-size,
+	var(--base-font-size-sm, #{$default-label-font-size})
+);
 
 // Calculation Functions
 @function slider-height() {
@@ -91,11 +101,10 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	transition: $property $transition-duration $transition-easing;
 }
 
-// Focus ring uses the theme variable (set by `theme-vars`).
 @mixin focus-outline {
 	&:focus-visible {
 		outline: none;
-		box-shadow: var(--switch-focus-ring);
+		box-shadow: 0 0 0 3px #{$focus-color-chain};
 	}
 }
 
@@ -108,30 +117,32 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 // Switch Component Styles
 .switch {
-	@include theme-vars;
-
 	position: relative;
-	background-color: var(--current-bg-color, var(--switch-bg-off));
-	border-radius: var(--switch-border-radius);
+	background-color: var(--current-bg-color, #{$bg-off-chain});
+	border-radius: #{$border-radius-chain};
 	cursor: pointer;
 	@include transition(background-color);
 	outline: none;
 	user-select: none;
 
+	&.checked {
+		background-color: var(--current-bg-color, #{$bg-on-chain});
+	}
+
 	// Sizing constants exposed as CSS custom properties
 	--thumb-offset: #{thumb-offset()};
 	--margin: #{$margin};
-	--switch-width: #{switch-width()};
-	--switch-height: #{$switch-height};
+	--sw-width: #{switch-width()};
+	--sw-height: #{$switch-height};
 	--thumb-height: #{$thumb-height};
 	--scale: 1;
 
-	width: calc(var(--switch-width) * var(--scale));
-	height: calc(var(--switch-height) * var(--scale));
+	width: calc(var(--sw-width) * var(--scale));
+	height: calc(var(--sw-height) * var(--scale));
 
 	&.vertical {
-		width: calc(var(--switch-height) * var(--scale));
-		height: calc(var(--switch-width) * var(--scale));
+		width: calc(var(--sw-height) * var(--scale));
+		height: calc(var(--sw-width) * var(--scale));
 	}
 
 	@include focus-outline;
@@ -139,12 +150,12 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	.thumb {
 		position: absolute;
-		background-color: var(--current-thumb-color, var(--switch-thumb-bg));
-		border-radius: var(--switch-border-radius);
+		background-color: var(--current-thumb-color, #{$thumb-bg-chain});
+		border-radius: #{$border-radius-chain};
 		@include transition(transform);
-		box-shadow: var(--switch-shadow);
+		box-shadow: #{$shadow-chain};
 
-		border: 1px solid var(--current-thumb-border-color, var(--switch-thumb-border-color));
+		border: 1px solid var(--current-thumb-border-color, #{$thumb-border-chain});
 
 		width: calc(var(--thumb-height) * var(--scale));
 		height: calc(var(--thumb-height) * var(--scale));
@@ -166,17 +177,14 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 // MultiSwitch Component Styles
 // Container for block mode to handle layout
 .multi-switch-container {
-	@include theme-vars;
-
 	display: inline-block;
 	position: relative;
 
 	// Sizing constants exposed as CSS custom properties
-	--multi-switch-width: #{multi-switch-width(3)};
 	--step-offset: #{step-offset(3)};
 	--margin: #{$margin};
 	--thumb-height: #{$thumb-height};
-	--switch-height: #{$switch-height};
+	--sw-height: #{$switch-height};
 	--step-spacing: #{$step-spacing};
 
 	--scale: 1;
@@ -336,8 +344,8 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 .multi-switch {
 	position: relative;
-	background-color: var(--switch-bg-off);
-	border-radius: var(--switch-border-radius);
+	background-color: var(--sw-bg-off);
+	border-radius: var(--sw-border-radius);
 	cursor: pointer;
 	@include transition(background-color);
 	outline: none;
@@ -346,7 +354,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	// Apply custom background color if provided
 	&:has(.step-segment.active) {
-		background-color: var(--current-bg-color, var(--switch-bg-off));
+		background-color: var(--current-bg-color, var(--sw-bg-off));
 	}
 
 	// CSS custom properties moved to container level
@@ -359,7 +367,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 			) *
 			var(--scale)
 	);
-	height: calc(var(--switch-height) * var(--scale));
+	height: calc(var(--sw-height) * var(--scale));
 
 	// Dynamic step offset calculation
 	--step-offset: calc((var(--thumb-height) + var(--step-spacing)) * var(--scale));
@@ -370,7 +378,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	// Vertical orientation
 	&.vertical {
-		width: calc(var(--switch-height) * var(--scale));
+		width: calc(var(--sw-height) * var(--scale));
 		height: calc(
 			(
 					var(--thumb-height) * var(--steps) + var(--margin) * 2 + var(--step-spacing) *
@@ -382,19 +390,19 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	.thumb {
 		position: absolute;
-		background-color: var(--current-thumb-color, var(--switch-thumb-bg));
-		border-radius: var(--switch-border-radius);
+		background-color: var(--current-thumb-color, var(--sw-thumb-bg));
+		border-radius: var(--sw-border-radius);
 		top: calc(var(--margin) * var(--scale));
 		left: calc(var(--margin) * var(--scale));
 		transition:
 			transform $transition-duration $transition-easing,
 			background-color $transition-duration $transition-easing,
 			border-color $transition-duration $transition-easing;
-		box-shadow: var(--switch-shadow);
+		box-shadow: var(--sw-shadow);
 		z-index: 10; // render above step segments
 
 		// Custom thumb border if provided
-		border: 1px solid var(--current-thumb-border-color, var(--switch-thumb-border-color));
+		border: 1px solid var(--current-thumb-border-color, var(--sw-thumb-border-color));
 
 		// Scaled dimensions
 		width: calc(var(--thumb-height) * var(--scale));
@@ -415,7 +423,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	.step-segment {
 		position: absolute;
 		background-color: var(--step-bg-color, rgba(0, 0, 0, 0.1));
-		border-radius: var(--switch-border-radius);
+		border-radius: var(--sw-border-radius);
 		@include transition(background-color);
 		z-index: 1; // Step segments render below thumb
 
@@ -424,7 +432,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 		// Calculate position and size for each segment with spacing
 		width: calc(var(--thumb-height) * var(--scale));
-		height: calc((var(--switch-height) - (var(--margin) * 2)) * var(--scale));
+		height: calc((var(--sw-height) - (var(--margin) * 2)) * var(--scale));
 		top: calc(var(--margin) * var(--scale));
 		left: calc(
 			(var(--margin) + (var(--thumb-height) + var(--step-spacing)) * var(--step-index)) *
@@ -437,7 +445,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	}
 
 	&.vertical .step-segment {
-		width: calc((var(--switch-height) - (var(--margin) * 2)) * var(--scale));
+		width: calc((var(--sw-height) - (var(--margin) * 2)) * var(--scale));
 		height: calc(var(--thumb-height) * var(--scale));
 		left: calc(var(--margin) * var(--scale));
 		top: calc(
@@ -450,14 +458,14 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	// Default label styling
 	.default-label {
-		color: var(--switch-label-color);
-		font-family: var(--switch-label-font-family);
-		font-size: calc(var(--switch-label-font-size) * var(--scale, 1));
+		color: var(--sw-label-color);
+		font-family: var(--sw-label-font-family);
+		font-size: calc(var(--sw-label-font-size) * var(--scale, 1));
 		font-weight: $default-label-font-weight;
 		@include transition(color);
 
 		&.active {
-			color: var(--switch-label-active-color);
+			color: var(--sw-label-active-color);
 			font-weight: $default-label-active-font-weight;
 		}
 	}

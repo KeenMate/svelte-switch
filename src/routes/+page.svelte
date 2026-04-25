@@ -33,7 +33,7 @@
 			icon: '🌈',
 			title: 'Theming',
 			description:
-				'Customize via --base-* variables (cascade from a parent) or per-instance --switch-*.'
+				'Customize via --base-* variables (cascade from a parent) or per-instance --sw-*.'
 		}
 	];
 
