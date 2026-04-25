@@ -1,6 +1,8 @@
-# Consolidation v1.5.0 — Code Audit & Refactor Plan
+# Consolidation v2.0.0 — Code Audit & Refactor Plan (shipped)
 
 Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main branch at commit `88325be`. Focus: code unification, dead code removal, Svelte 5 idiom alignment, and API consistency.
+
+**Status:** shipped as v2.0.0 across 10 commits (`88325be..a90bd4a`). What was originally scoped as a non-breaking 1.5.0 release grew to require breaking snippet renames; the full sweep was bundled into a major bump.
 
 ---
 

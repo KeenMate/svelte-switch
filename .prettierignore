@@ -18,7 +18,7 @@ bun.lockb
 CLAUDE.md
 CHANGELOG.md
 README.md
-consolidation-v1.5.0.md
+consolidation-v2.0.0.md
 
 # Infra
 docker-compose.yml
