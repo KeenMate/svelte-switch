@@ -5,109 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.0] - 2026-04-25
-
-Theming polish + a fix for a real cascade bug introduced in 2.1.0. Non-breaking; per-instance `--switch-*` overrides from 2.1.0 are renamed to `--sw-*` for parity with sibling KeenMate libs (`--ms-*`, `--drp-*`).
-
-### 💥 Variable rename
-
-- `--switch-*` → `--sw-*` (every component-level CSS custom property). Matches the abbreviation convention of `--ms-*` (multiselect) and `--drp-*` (daterangepicker), and what `@keenmate/theme-designer` expects when generating per-component overrides.
-
-### 🐛 Fixed
-
-- **Theme cascade was being shadowed.** 2.1.0 set `--switch-*` on the `.switch` / `.multi-switch-container` roots via a `theme-vars` mixin. CSS gives priority to a same-element declaration over an inherited one, so `.my-theme { --switch-thumb-bg: cyan }` on a parent was silently beaten by the component's own `--switch-thumb-bg: var(...)`. Replaced with SCSS `var()` chain strings that expand inline at the property declarations — every layer is now externally overridable.
-- **MultiSwitch invisible in dark themes.** The `.multi-switch` block kept bare `var(--sw-bg-off)` references after the rename instead of using the new chain. Without an explicit `--sw-*` override, the surface and thumb resolved to nothing. Fixed.
-- **Unused-CSS warning wall (50 → 0).** Switch.svelte and MultiSwelte both did `@use './assets/main.scss'`, inlining the entire stylesheet into both components. Each component carried the other's CSS as "unused" and consumers' bundles paid for the duplication. Split into per-component partials (see Internal below).
-
-### ✨ Added
-
-#### `--sw-bg-on` (binary on-state surface)
-
-Binary `Switch` had no separate "on" surface color in 2.1.0 — it stayed gray in both states with only the thumb position signaling on/off. Added `--sw-bg-on`, defaulting to `--base-accent-color`. `.switch.checked` now uses it via the same `--current-bg-color || $bg-on-chain` pattern that the off state uses for `--sw-bg-off`. Standard iOS/Material toggle behavior. Themes that want the surface to stay neutral can override `--sw-bg-on` directly.
-
-#### Step segment surface chains
-
-Added `--sw-step-bg` and `--sw-step-bg-active` for the MultiSwitch step segments ("placeholder" indicators behind each step). They chain through `--base-accent-color-light` and `--base-accent-color-light-hover` (theme-designer's auto-generated accent-light tokens), so segments stay in palette across themes without per-component tuning. `itemStyles[i].backgroundColor` still wins via `--step-bg-color` as before.
-
-Also added `--sw-label-hover-bg` / `--sw-label-hover-bg-active` for the clickable per-step label hover background.
-
-#### `/examples/base-variables` — interactive playground
-
-New demo route with one row per `--base-*` variable the library consumes. Color picker + text input + clear button per row; live preview reacts in real time. CSS export block produces a copy-pasteable `.my-app { ... }` that recreates whatever you've configured.
-
-#### Theming presets enriched
-
-Each theme card on `/examples/theming` now passes a per-theme `itemStyles` array using brand-appropriate colors (Audi: eco-green → comfort-gray → dynamic-red, Neon: deep purple → mid magenta → full magenta with cyan thumb, etc.). The MultiSwitch surface flips through the palette as you click between steps, instead of sitting as a static gray rectangle.
-
-### 🧹 Internal
-
-- **SCSS split into per-component partials.** New structure:
-    - `src/lib/assets/_theme.scss` — variables, fallback constants, chain SCSS strings, mixins, calc functions. NO style rules.
-    - `src/lib/assets/_switch.scss` — `.switch { ... }` rules only. `@use 'theme'`.
-    - `src/lib/assets/_multi-switch.scss` — `.multi-switch-container`, `.labels-container`, `.label-single`, `.multi-switch`, `.default-label`. `@use 'theme'`.
-    - `src/lib/assets/main.scss` — `@forward` aggregator for consumers wanting both bundles via the package's `./styles.scss` export.
-
-  `Switch.svelte` imports `./assets/switch`; `MultiSwitch.svelte` imports `./assets/multi-switch`. Each compiled component contains only its own selectors.
-
-- Hoisted `.default-label` out of the `.multi-switch` nesting where it never matched anything (it lives inside `.labels-container .label`, a sibling of `.multi-switch`).
-
-- `--base-disabled-bg` removed from the variable manifest. It was documented as a fallback for `--base-primary-bg` in 2.1.0, briefly repurposed for segment color, and ultimately replaced by `--base-accent-color-light` once we cross-checked theme-designer's canonical base-variable list.
-
-## [2.1.0] - 2026-04-25
-
-Ecosystem-parity release. Adds the same global API surface, theme variable cascade, and categorized logging system used by sibling KeenMate libraries (`@keenmate/web-multiselect`, `@keenmate/web-daterangepicker`). Non-breaking — pure additions.
-
-### ✨ Added
-
-#### `window.components['svelte-switch']` global API
-
-Importing `@keenmate/svelte-switch` (in any environment with a `window` object) registers a global API matching the convention used by the other KeenMate libraries:
-
-```js
-window.components['svelte-switch'].version();           // '2.1.0'
-window.components['svelte-switch'].config;              // { name, version, author, license, repository, homepage }
-window.components['svelte-switch'].getInstances();      // HTMLElement[] — currently mounted root elements
-window.components['svelte-switch'].logging.enableLogging();
-window.components['svelte-switch'].logging.setLogLevel('debug');
-window.components['svelte-switch'].logging.setCategoryLevel('SWITCH:INTERACTION', 'trace');
-```
-
-The sibling web-component libraries also expose `register()` to define their custom element. svelte-switch has nothing to register (it ships Svelte components, not custom elements), so that method is intentionally absent.
-
-#### Categorized logging
-
-A vendored `loglevel` + `loglevel-plugin-prefix` setup mirrors the sister libraries. Three categories:
-
-- `SWITCH:INIT` — component mount / destroy, props snapshot
-- `SWITCH:INTERACTION` — toggle / select events
-- `SWITCH:RENDER` — reserved for derived-state changes (currently unused, exported for future use)
-
-Default level is `silent`. Toggle via `window.components['svelte-switch'].logging`, or import `enableLogging` / `setLogLevel` / `setCategoryLevel` from the package.
-
-#### `--base-*` theme variable cascade
-
-Component CSS now resolves through `var(--base-*, fallback)`. Set `--base-accent-color`, `--base-disabled-bg`, `--base-input-bg`, `--base-border-color`, `--base-border-radius-sm`, `--base-text-color-1`, `--base-text-color-3`, `--base-font-family`, `--base-font-size-sm` on a parent element and every nested switch picks up the theme — same convention as the other KeenMate web components.
-
-The full intermediate variable layer (`--sw-accent-color`, `--sw-bg-off`, `--sw-thumb-bg`, etc.) is also overridable for per-instance styling. See `component-variables.manifest.json` at the package root for the complete list.
-
-#### `getInstances()` instance tracking
-
-Switch and MultiSwitch register their root DOM element in a module-level `Set` on mount and remove it on destroy, queryable via the global API.
-
-#### New example route
-
-`/examples/theming` demonstrates the `--base-*` cascade with two themed sections (violet, emerald-on-dark).
-
-### 🧹 Internal
-
-- Vendored `loglevel-esm.js` + `loglevel-plugin-prefix-esm.js` under `src/lib/vendor/loglevel/` with adjacent `.d.ts` shims, matching the structure used in `web-multiselect`.
-- `package.json` adds `./component-variables.manifest.json` to `exports` and `files`. `sideEffects` includes `./dist/index.js` so consumers' bundlers don't tree-shake the global API registration.
-- `vitest.config.ts` excludes `.svelte-kit/` so tests aren't double-counted (svelte-package mirrors source into `__package__/` which vitest was picking up).
-- `tsconfig.json` excludes `src/lib/vendor/**/*.js` from svelte-check (vendored, plain JS); types still flow via the adjacent `.d.ts` files.
-
 ## [2.0.0] - 2026-04-25
 
-Major release. The internal architecture is unchanged; the public snippet API is reshaped to be consistent across `Switch` and `MultiSwitch`, and the vanilla-JS `update()` escape hatch is removed in favour of Svelte 5's reactive props. Existing consumers using `<Switch bind:checked>` / `<MultiSwitch bind:selectedIndex>` without snippets are unaffected.
+Major release. Public snippet API reshaped for consistency, generics added, vanilla-JS `update()` escape hatch removed in favor of Svelte 5's reactive props, full theming layer added (cross-library `--base-*` + per-instance `--sw-*`), `window.components` global API, categorized logger, interactive playground.
+
+Existing consumers using `<Switch bind:checked>` / `<MultiSwitch bind:selectedIndex>` without snippets are unaffected by the API rewrite. Snippet authors and `update()` consumers need to migrate (table below).
 
 ### 💥 Breaking Changes
 
@@ -217,12 +119,102 @@ props.size = 80;
 - `MultiSwitch` click-to-select hit-test ignored the 2px outer margin and 2px inter-step spacing — clicks near segment boundaries at small sizes / high step counts could land one step off. Replaced with margin-aware stride math.
 - `MultiSwitch` per-step labels are now `<button>` elements with proper keyboard activation (Enter/Space) and `disabled` attribute, instead of `<div onclick>`.
 
+### ✨ Added — Theming layer
+
+#### `--base-*` cross-library cascade
+
+Every color / radius / shadow / typography variable the library consumes resolves through `var(--base-*, fallback)`. Set a `--base-*` once on a parent (or `:root`), every nested switch picks up the theme — same convention as sibling KeenMate libraries (`@keenmate/web-multiselect`, `@keenmate/web-daterangepicker`).
+
+The library reads:
+
+| Variable | Drives |
+| --- | --- |
+| `--base-accent-color` | Focus ring + binary Switch on-state surface (via `--sw-bg-on`) |
+| `--base-primary-bg` | Off / unselected switch surface |
+| `--base-text-color-on-accent` | Thumb fill |
+| `--base-border-color` | Default border color |
+| `--base-text-color-1` / `--base-text-color-3` | Active / inactive label text |
+| `--base-accent-color-light` / `--base-accent-color-light-hover` | MultiSwitch step segment surfaces (the "placeholder" boxes) |
+| `--base-border-radius-sm` | Corner radius |
+| `--base-shadow-sm` | Thumb drop shadow |
+| `--base-font-family` / `--base-font-size-sm` | Label typography |
+
+All compatible with `@keenmate/theme-designer` — themes generated there drop into svelte-switch with no per-component work.
+
+#### `--sw-*` per-instance overrides
+
+Component-level intermediate layer. Override one switch's thumb without affecting other KM components, or override one variable a theme didn't anticipate. Resolution order at every property: **`itemStyles` data** → **`--sw-*`** → **`--base-*`** → hardcoded fallback.
+
+| Component variable | Default chain |
+| --- | --- |
+| `--sw-accent-color` | `--base-accent-color` |
+| `--sw-bg-off` | `--base-primary-bg` |
+| `--sw-bg-on` | `--base-accent-color` |
+| `--sw-thumb-bg` | `--base-text-color-on-accent` |
+| `--sw-thumb-border-color` | `transparent` |
+| `--sw-step-bg` / `--sw-step-bg-active` | `--base-accent-color-light` / `-light-hover` |
+| `--sw-label-color` / `--sw-label-active-color` | `--base-text-color-3` / `-1` |
+| `--sw-label-hover-bg` / `--sw-label-hover-bg-active` | hardcoded light-theme tints |
+| `--sw-focus-color` / `--sw-focus-ring` | `--base-accent-color` |
+| `--sw-border-radius` / `--sw-shadow` | `--base-border-radius-sm` / `--base-shadow-sm` |
+
+`component-variables.manifest.json` at the package root catalogs every variable with category and usage — same schema as the sibling KeenMate libraries.
+
+#### Binary Switch flips to accent on-state
+
+Off surface = `--sw-bg-off`, on surface = `--sw-bg-on` (defaulting to accent). Standard iOS / Material toggle behavior. 1.x stayed gray in both states, with only the thumb position signaling on/off.
+
+### ✨ Added — `window.components['svelte-switch']` global API
+
+Importing the library registers a global API matching the convention used by other KeenMate libs:
+
+```js
+window.components['svelte-switch'].version();           // '2.0.0'
+window.components['svelte-switch'].config;              // package metadata
+window.components['svelte-switch'].getInstances();     // HTMLElement[] of mounted roots
+window.components['svelte-switch'].logging.enableLogging();
+window.components['svelte-switch'].logging.setLogLevel('debug');
+window.components['svelte-switch'].logging.setCategoryLevel('SWITCH:INTERACTION', 'trace');
+```
+
+`register()` (used by the sibling libs to define their custom element) is intentionally absent — svelte-switch ships Svelte components, not custom elements, so there's nothing to register.
+
+### ✨ Added — Categorized logging
+
+Vendored `loglevel` + `loglevel-plugin-prefix`, mirroring the sister libraries. Three categories:
+
+- `SWITCH:INIT` — component mount / destroy + props snapshot
+- `SWITCH:INTERACTION` — toggle / select events
+- `SWITCH:RENDER` — reserved for derived-state logging
+
+Default level is `silent` (production-safe). Toggle via `window.components['svelte-switch'].logging.*` from the browser console, or import `enableLogging` / `setLogLevel` / `setCategoryLevel` directly.
+
+### ✨ Added — Demo site
+
+Site restructured to mirror `@keenmate/svelte-treeview`: card-grid landing at `/`, per-topic pages under `/examples/*`. New routes:
+
+- `/examples/binary` — Switch axes (size, orientation, checked, disabled)
+- `/examples/multi` — MultiSwitch axes + keyboard
+- `/examples/labels` — interactive label picker + 16-cell matrix (positions × modes × orientations)
+- `/examples/styled` — `itemStyles` patterns including the priority-levels showcase
+- `/examples/theming` — 7 brand presets (Dark, Neon, Audi Sport, Rounded Pink, Sharp Brutalist, Material, Glassmorphism), each with per-theme `itemStyles`
+- `/examples/base-variables` — interactive playground with one row per `--base-*`, color picker + text input + clear button per row, live preview, copy-pasteable CSS export
+
 ### 🧹 Internal
 
-- Three label-rendering snippets (`labelContent`, `singleLabel`, `perStepLabels`) replace ≈320 lines of duplicated branch markup.
-- Shared helpers extracted to `src/lib/utils.ts`: `getStyleForIndex`, `itemAt`, `resolveLabelText`. Covered by 15 unit tests via `vitest`.
-- Demo site restructured to mirror `@keenmate/svelte-treeview`: card-grid landing at `/`, per-topic pages under `/examples/*`, shared `ExampleHeader`, `examples-shared.css`.
-- Tooling parity with svelte-treeview: prettier, eslint flat config, `.editorconfig`, `vitest`, vite `define:` block exposing `__VERSION__`.
+- **Three label-rendering snippets** (`labelContent`, `singleLabel`, `perStepLabels`) replace ≈320 lines of duplicated branch markup in MultiSwitch.
+- **Shared helpers** extracted to `src/lib/utils.ts`: `getStyleForIndex`, `itemAt`, `resolveLabelText`. Covered by 15 unit tests via `vitest`.
+- **SCSS split into per-component partials** — Switch.svelte and MultiSwitch.svelte previously both inlined the entire stylesheet, shipping each other's CSS as unused selectors. New structure:
+    - `src/lib/assets/_theme.scss` — variables, fallback constants, chain SCSS strings, mixins, calc functions. NO style rules.
+    - `src/lib/assets/_switch.scss` — `.switch { ... }` only.
+    - `src/lib/assets/_multi-switch.scss` — `.multi-switch-container`, `.labels-container`, `.label-single`, `.multi-switch`, `.default-label`.
+    - `src/lib/assets/main.scss` — `@forward` aggregator for consumers wanting both via the package's `./styles.scss` export.
+- **Theme cascade implementation** uses SCSS chain strings (`$bg-off-chain`, `$thumb-bg-chain`, etc.) inlined at the property declarations rather than declaring `--sw-*` vars on the component root. The "set on root" pattern would shadow parent overrides because CSS gives priority to same-element declarations over inherited ones.
+- Vendored `loglevel-esm.js` + `loglevel-plugin-prefix-esm.js` under `src/lib/vendor/loglevel/` with adjacent `.d.ts` shims (zero runtime deps, strict TS stays clean).
+- Tooling parity with svelte-treeview: prettier, eslint flat config, `.editorconfig`, `vitest`, vite `define:` block exposing `__VERSION__` / `__PACKAGE_NAME__` / `__AUTHOR__` / `__LICENSE__` / `__HOMEPAGE__` / `__REPOSITORY__`.
+- `package.json` adds `./component-variables.manifest.json` to `exports` and `files`. `sideEffects` includes `./dist/index.js` so consumers' bundlers don't tree-shake the global API registration.
+- `vitest.config.ts` excludes `.svelte-kit/` so tests aren't double-counted (svelte-package mirrors source into `__package__/`).
+- `tsconfig.json` excludes `src/lib/vendor/**/*.js` from svelte-check (vendored, plain JS); types still flow via the adjacent `.d.ts` files.
 - Build-time stale `src/lib/assets/main.css` deleted (138-line snapshot from a pre-1.0 build, out of sync with `main.scss`).
 
 ## [1.4.0] - 2025-01-23
