@@ -19,7 +19,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 ### Design / structural
 - [ ] **D9** — Make components generic over item type `<T>` instead of `any[]`
 - [x] **D10** — Type `Switch.items` as tuple `[T, T]` (remove runtime warn) — *done with D21; `readonly [unknown, unknown] | null`; generics pass (D9) will swap unknown→T*
-- [ ] **D11** — Extract `getStyleForIndex` + label-text resolver + `itemAt` into `src/lib/utils.ts`
+- [x] **D11** — Extract `getStyleForIndex` + label-text resolver + `itemAt` into `src/lib/utils.ts` — *also exported `ItemStyles` type alias*
 - [ ] **D12** — Unify `isSelected` semantics across Switch / MultiSwitch snippet contexts
 - [ ] **D13** — Unify snippet context shape (`item` vs `currentItem`, drop inconsistent fields)
 - [ ] **D14** — Split `children` into `thumb` vs `segment` snippets (or restrict `children` to one role)
@@ -38,7 +38,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [x] **T36** — Fold `test-label-modes.html` into a proper `/dev/labels` route (kill the orphan HTML file)
 - [x] **T37** — Add `.editorconfig`, `.prettierrc`, `.prettierignore`, `eslint.config.js` matching treeview's setup (supersedes P23) — *installed prettier, eslint 9 flat config, eslint-plugin-svelte 3, typescript-eslint 8, prettier-plugin-svelte; reformat landed as separate commit*
 - [x] **T38** — Add `sideEffects: ["**/*.css", "**/*.scss"]` to `package.json` for tree-shaking
-- [ ] **T39** — Add `vitest` with unit tests for `getStyleForIndex`, label-text resolver, click hit-test math (enabled once D11 extracts utils)
+- [x] **T39** — Add `vitest` with unit tests — *15 tests covering `getStyleForIndex`, `itemAt`, `resolveLabelText`; `npm test` / `npm run test:run` scripts; click hit-test still inline in MultiSwitch (extract deferred to a future pass)*
 - [x] **T40** — Pin a unique dev port — *17778 (adjacent to treeview's 17777)*
 - [x] **T41** — Add `prerender.handleHttpError: 'warn'` + `handleMissingId: 'warn'` to `svelte.config.js`
 - [x] **T42** — Include `CHANGELOG.md` in the `files` array of `package.json` (so it ships with the package)
@@ -46,8 +46,8 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 ### Polish
 - [x] **P22** — Drop hardcoded `v1.3.0` in homepage — *version display removed; importing `package.json` is blocked by Vite's `server.fs.allow`, and adding the version via `vite.config.ts` define was more config than the demo header warrants*
 - [x] **P23** — Add `.editorconfig` + `.prettierrc` to enforce indent style — *done via T37*
-- [ ] **P24** — Extract repeated `items ? items[i] : undefined` pattern
-- [ ] **P25** — Hoist `import type { Snippet } from 'svelte'` once per file
+- [x] **P24** — Extract repeated `items ? items[i] : undefined` pattern — *replaced with `itemAt(items, i)` helper*
+- [x] **P25** — Hoist `import type { Snippet } from 'svelte'` once per file
 - [ ] **P26** — Replace `transition: all` with pinned properties
 - [x] **P27** — Unify `items && items[i]` vs `items ? items[i] : undefined` — *replaced with `items?.[i]` during C1 collapse*
 - [ ] **P28** — Clean up dead/redundant `$derived` values in Switch

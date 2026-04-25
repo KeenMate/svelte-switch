@@ -1,11 +1,8 @@
 <script lang="ts">
-	type Orientation = 'horizontal' | 'vertical';
+	import type { Snippet } from 'svelte';
+	import { getStyleForIndex, itemAt, type ItemStyles } from './utils.js';
 
-	interface StepStyle {
-		backgroundColor?: string;
-		thumbColor?: string;
-		thumbBorderColor?: string;
-	}
+	type Orientation = 'horizontal' | 'vertical';
 
 	interface Props {
 		checked?: boolean;
@@ -13,14 +10,10 @@
 		orientation?: Orientation;
 		size?: number;
 		items?: readonly [unknown, unknown] | null;
-		itemStyles?: StepStyle[] | StepStyle;
+		itemStyles?: ItemStyles;
 		onToggle?: (checked: boolean) => void;
-		children?: import('svelte').Snippet<
-			[{ currentIndex: number; item: unknown; isSelected: boolean }]
-		>;
-		thumbTemplate?: import('svelte').Snippet<
-			[{ currentIndex: number; currentItem: unknown; itemsCount: number }]
-		>;
+		children?: Snippet<[{ currentIndex: number; item: unknown; isSelected: boolean }]>;
+		thumbTemplate?: Snippet<[{ currentIndex: number; currentItem: unknown; itemsCount: number }]>;
 		disableThumbRender?: boolean;
 	}
 
@@ -37,22 +30,12 @@
 		disableThumbRender = false
 	}: Props = $props();
 
-	// Helper function to get style for a specific index
-	const getStyleForIndex = (index: number): StepStyle => {
-		if (Array.isArray(itemStyles)) {
-			return itemStyles[index] || {};
-		} else if (itemStyles && typeof itemStyles === 'object') {
-			return itemStyles;
-		}
-		return {};
-	};
-
 	const isVertical = $derived(orientation === 'vertical');
 
 	const scale = $derived(size / 50);
 
 	const currentIndex = $derived(checked ? 1 : 0);
-	const currentItem = $derived(items ? items[currentIndex] : undefined);
+	const currentItem = $derived(itemAt(items, currentIndex));
 	const isSelected = $derived(checked);
 	let currentStepContext = $derived({ currentIndex, currentItem, itemsCount: 2 });
 
@@ -104,9 +87,10 @@
 	class:disabled={isDisabled}
 	class:vertical={isVertical}
 	style:--scale={scale}
-	style:--current-bg-color={getStyleForIndex(currentIndex).backgroundColor || ''}
-	style:--current-thumb-color={getStyleForIndex(currentIndex).thumbColor || ''}
-	style:--current-thumb-border-color={getStyleForIndex(currentIndex).thumbBorderColor || ''}
+	style:--current-bg-color={getStyleForIndex(itemStyles, currentIndex).backgroundColor || ''}
+	style:--current-thumb-color={getStyleForIndex(itemStyles, currentIndex).thumbColor || ''}
+	style:--current-thumb-border-color={getStyleForIndex(itemStyles, currentIndex).thumbBorderColor ||
+		''}
 	onclick={toggle}
 	onkeydown={handleKeydown}
 	role="switch"

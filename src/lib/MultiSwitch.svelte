@@ -1,13 +1,10 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
+	import { getStyleForIndex, itemAt, resolveLabelText, type ItemStyles } from './utils.js';
+
 	type Orientation = 'horizontal' | 'vertical';
 	type LabelPosition = 'left' | 'right' | 'top' | 'bottom';
 	type LabelRenderMode = 'absolute' | 'block';
-
-	interface StepStyle {
-		backgroundColor?: string;
-		thumbColor?: string;
-		thumbBorderColor?: string;
-	}
 
 	interface Props {
 		selectedIndex?: number;
@@ -15,21 +12,17 @@
 		orientation?: Orientation;
 		size?: number;
 		itemsCount?: number;
-		items?: any[] | null;
-		itemStyles?: StepStyle[] | StepStyle;
+		items?: readonly unknown[] | null;
+		itemStyles?: ItemStyles;
 		shouldDisplayLabels?: boolean;
 		labelPosition?: LabelPosition;
 		labelRenderMode?: LabelRenderMode;
 		labelMember?: string;
-		labelCallback?: (item: any, index: number) => string;
+		labelCallback?: (item: unknown, index: number) => string;
 		onItemChange?: (index: number) => void;
-		children?: import('svelte').Snippet<[{ currentIndex: number; item: any; isSelected: boolean }]>;
-		thumbTemplate?: import('svelte').Snippet<
-			[{ currentIndex: number; currentItem: any; itemsCount: number }]
-		>;
-		labelTemplate?: import('svelte').Snippet<
-			[{ currentIndex: number; item: any; isSelected: boolean }]
-		>;
+		children?: Snippet<[{ currentIndex: number; item: unknown; isSelected: boolean }]>;
+		thumbTemplate?: Snippet<[{ currentIndex: number; currentItem: unknown; itemsCount: number }]>;
+		labelTemplate?: Snippet<[{ currentIndex: number; item: unknown; isSelected: boolean }]>;
 		disableThumbRender?: boolean;
 	}
 
@@ -53,29 +46,8 @@
 		disableThumbRender = false
 	}: Props = $props();
 
-	// Helper function to get style for a specific index
-	const getStyleForIndex = (index: number): StepStyle => {
-		if (Array.isArray(itemStyles)) {
-			return itemStyles[index] || {};
-		} else if (itemStyles && typeof itemStyles === 'object') {
-			return itemStyles;
-		}
-		return {};
-	};
-
-	// Helper function to get label text for a specific index
-	const getLabelText = (index: number): string => {
-		const item = items ? items[index] : undefined;
-
-		// Priority: 1) labelMember, 2) labelCallback, 3) default
-		if (labelMember && item && item[labelMember] != null) {
-			return item[labelMember];
-		}
-		if (labelCallback) {
-			return labelCallback(item, index);
-		}
-		return `Option ${index + 1}`;
-	};
+	const getLabelText = (index: number): string =>
+		resolveLabelText(items, labelMember, labelCallback, index);
 
 	const isVertical = $derived(orientation === 'vertical');
 
@@ -88,7 +60,7 @@
 	);
 
 	const currentIndex = $derived(selectedIndex);
-	const currentItem = $derived(items ? items[selectedIndex] : undefined);
+	const currentItem = $derived(itemAt(items, selectedIndex));
 	let currentStepContext = $derived({
 		currentIndex,
 		currentItem,
@@ -187,7 +159,7 @@
 	{#if labelTemplate}
 		{@render labelTemplate({
 			currentIndex: index,
-			item: items ? items[index] : undefined,
+			item: itemAt(items, index),
 			isSelected
 		})}
 	{:else}
@@ -266,9 +238,10 @@
 		class:disabled={isDisabled}
 		class:vertical={isVertical}
 		class:block-labels={labelRenderMode === 'block' && shouldDisplayLabels}
-		style:--current-bg-color={getStyleForIndex(selectedIndex).backgroundColor || ''}
-		style:--current-thumb-color={getStyleForIndex(selectedIndex).thumbColor || ''}
-		style:--current-thumb-border-color={getStyleForIndex(selectedIndex).thumbBorderColor || ''}
+		style:--current-bg-color={getStyleForIndex(itemStyles, selectedIndex).backgroundColor || ''}
+		style:--current-thumb-color={getStyleForIndex(itemStyles, selectedIndex).thumbColor || ''}
+		style:--current-thumb-border-color={getStyleForIndex(itemStyles, selectedIndex)
+			.thumbBorderColor || ''}
 		onclick={(e) => {
 			if (isDisabled) return;
 			selectStep(hitTestStep(e));
@@ -299,8 +272,8 @@
 				class="step-segment"
 				class:active={index === selectedIndex}
 				style:--step-index={index}
-				style:--step-bg-color={getStyleForIndex(index).backgroundColor || ''}
-				style:--step-border-color={getStyleForIndex(index).thumbBorderColor || ''}
+				style:--step-bg-color={getStyleForIndex(itemStyles, index).backgroundColor || ''}
+				style:--step-border-color={getStyleForIndex(itemStyles, index).thumbBorderColor || ''}
 			>
 				{@render children?.({
 					currentIndex: index,
