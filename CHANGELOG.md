@@ -7,9 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2026-04-25
 
-Major release. Public snippet API reshaped for consistency, generics added, vanilla-JS `update()` escape hatch removed in favor of Svelte 5's reactive props, full theming layer added (cross-library `--base-*` + per-instance `--sw-*`), `window.components` global API, categorized logger, interactive playground.
+Major release. Public snippet API reshaped for consistency, generics added, vanilla-JS `update()` escape hatch removed in favor of Svelte 5's reactive props, full theming layer (cross-library `--base-*` + per-instance `--sw-*`), `window.components` global API, categorized logger, named sizes aligned with `@keenmate/pure-admin` form heights, and an interactive playground.
 
-Existing consumers using `<Switch bind:checked>` / `<MultiSwitch bind:selectedIndex>` without snippets are unaffected by the API rewrite. Snippet authors and `update()` consumers need to migrate (table below).
+Most consumers using `<Switch bind:checked>` / `<MultiSwitch bind:selectedIndex>` without snippets only see one visible change: the default switch height grew from 32px to 35px (the new `'md'` named-size default — see Breaking Changes). Snippet authors and `update()` consumers need to migrate (tables below).
 
 ### 💥 Breaking Changes
 
@@ -95,6 +95,24 @@ Both components now accept a generic type parameter inferred from `items`:
     {item.id} <!-- typed as { id: number } in 2.0; was `any` in 1.x -->
   {/snippet}
 </MultiSwitch>
+```
+
+#### Default `size` changed from `50` (numeric) to `'md'` (named)
+
+Switches with no `size` prop are now 35px tall instead of 32px (3px / ≈9% taller). Consumers passing an explicit number (`<Switch size={50} />`) are unaffected. The change aligns the default with `@keenmate/pure-admin`'s form-element height table so switches drop into forms next to inputs without per-instance tweaks.
+
+To restore the old default exactly:
+
+```svelte
+<Switch size={50} />  <!-- legacy 32px height (scale = 50 / 50 = 1) -->
+```
+
+Or theme it globally:
+
+```css
+:root {
+  --base-input-size-md-height: 3.2;   /* default switch back to 32px */
+}
 ```
 
 #### `update()` method removed
@@ -194,9 +212,9 @@ Default level is `silent` (production-safe). Toggle via `window.components['svel
 
 ### ✨ Added — Named size prop
 
-`size` prop now accepts `'xs' | 'sm' | 'md' | 'lg' | 'xl'` matching pure-admin's form-element height table (31 / 33 / 35 / 38 / 41px). Default size changed from `50` (numeric) to `'md'` (35px) — switches drop into pure-admin forms aligned with neighboring inputs without per-instance configuration.
+`size` prop now accepts `'xs' | 'sm' | 'md' | 'lg' | 'xl'` matching pure-admin's form-element height table (31 / 33 / 35 / 38 / 41px). Numeric `size` still works for explicit non-form sizing (`size={80}` → scale = 80 / 50).
 
-Numeric `size` still works for explicit non-form sizing (`size={80}` → scale = 80/50). Named sizes apply a `.size-{name}` CSS class that sets `--scale` via the `--base-input-size-{name}-height` chain, so `--base-*` overrides up the tree drive the named heights uniformly.
+Named sizes apply a `.size-{name}` CSS class that sets `--scale` via the `--base-input-size-{name}-height` chain, so `--base-*` overrides up the tree drive the named heights uniformly. (See Breaking Changes for the default-size change.)
 
 ### ✨ Added — Demo site
 

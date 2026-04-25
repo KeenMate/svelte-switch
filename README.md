@@ -6,17 +6,20 @@ A modern, customizable switch component library for Svelte 5 with support for bo
 
 ## Features
 
-- **Binary Switch**: Classic on/off toggle functionality
-- **Multi-Step Switch**: Support for 3+ step switches (like volume controls, temperature settings)
-- **Orientation Support**: Both horizontal and vertical layouts
-- **Custom Sizing**: Scalable to any size while maintaining proportions
-- **Custom Content**: Slot support for icons, text, or any content in the thumb
-- **Step Styling**: Individual styling for each step in multi-step switches
-- **Label Support**: Optional labels with flexible rendering modes (absolute/block positioning)
-- **Interactive Labels**: Clickable labels for enhanced user experience in vertical multi-step switches
-- **Accessibility**: Full keyboard navigation and ARIA support
-- **TypeScript**: Complete type safety with TypeScript interfaces
-- **No Dependencies**: Zero external dependencies, just peer dependency on Svelte 5
+- **Binary Switch** and **Multi-Step Switch** components
+- **Generic over `<T>`** — `items` flow into snippet contexts with full type inference
+- **Five named sizes** (`xs`/`sm`/`md`/`lg`/`xl`) aligned with `@keenmate/pure-admin` form-element heights, plus numeric sizing
+- **Snippet-based templating** — `thumb`, `segment`, `label` snippets with consistent `{ index, item, isSelected }` context
+- **Cross-library theming** via `--base-*` cascade (compatible with `@keenmate/theme-designer`); per-instance `--sw-*` overrides; data-driven via `itemStyles`
+- **Horizontal + vertical** orientations
+- **Auto labels** with `shouldDisplayLabels` — pick text from `items`, an `item` property (`labelMember`), or a custom callback (`labelCallback`)
+- **Clickable labels** in vertical orientation — proper `<button>` elements, full keyboard activation
+- `window.components['svelte-switch']` global API matching sibling KeenMate libs (`web-multiselect`, `web-daterangepicker`)
+- Categorized **logger** (vendored loglevel) with runtime-controllable log levels per category
+- **Accessibility**: keyboard navigation, ARIA roles, focus rings
+- **No runtime dependencies** — only Svelte 5 as a peer
+
+> **Migrating from 1.x?** See the [v2.0.0 entry in CHANGELOG.md](./CHANGELOG.md#200---2026-04-25) for the snippet API rename table and `update()` removal recipe.
 
 ## Installation
 
@@ -224,7 +227,7 @@ The `thumb` snippet receives `{ index, item, isSelected }`. With `items` provide
 | `checked`     | `boolean`                                     | `false`        | Bindable checked state                                            |
 | `isDisabled`  | `boolean`                                     | `false`        | Disable the switch                                                |
 | `orientation` | `'horizontal' \| 'vertical'`                  | `'horizontal'` | Switch orientation                                                |
-| `size`        | `number`                                      | `50`           | Switch size in pixels (50 = native)                               |
+| `size`        | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| number` | `'md'`      | Named size (matches pure-admin form heights: 31/33/35/38/41px) or pixel-scale number (`scale = size / 50`) |
 | `items`       | `readonly [T, T] \| null`                     | `null`         | Two data items keyed to off/on; `item` of `thumb` reads from here |
 | `itemStyles`  | `StepStyle[] \| StepStyle`                    | `[]`           | Per-state styles (array) or shared style (object)                 |
 | `onToggle`    | `(checked: boolean) => void`                  | -              | Toggle event handler                                              |
@@ -237,7 +240,7 @@ The `thumb` snippet receives `{ index, item, isSelected }`. With `items` provide
 | `selectedIndex`       | `number`                                                   | `0`            | Bindable selected step index                                               |
 | `isDisabled`          | `boolean`                                                  | `false`        | Disable the switch                                                         |
 | `orientation`         | `'horizontal' \| 'vertical'`                               | `'horizontal'` | Switch orientation                                                         |
-| `size`                | `number`                                                   | `50`           | Switch size in pixels                                                      |
+| `size`                | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| number`           | `'md'`         | Named size (matches pure-admin form heights) or pixel-scale number         |
 | `itemsCount`          | `number`                                                   | `3`            | Number of steps; ignored when `items` is provided                          |
 | `items`               | `readonly T[] \| null`                                     | `null`         | Optional data array; `items.length` overrides `itemsCount` when both given |
 | `itemStyles`          | `StepStyle[] \| StepStyle`                                 | `[]`           | Per-step styles (array) or shared style (object)                           |
@@ -352,41 +355,29 @@ props.checked = true;
 props.size = 80;
 ```
 
-## Keyboard Navigation
+## Logging
 
-- **Arrow Keys**: Navigate between steps (all directions supported)
-- **Tab**: Focus management with proper tab order
-- **Enter/Space**: Toggle binary switch
+Categorized logger (vendored `loglevel`) with three categories:
 
-## Styling
+- `SWITCH:INIT` — component mount / destroy + props snapshot
+- `SWITCH:INTERACTION` — toggle / select events
+- `SWITCH:RENDER` — derived-state changes (reserved)
 
-The component uses CSS custom properties for dynamic styling. All calculations are handled in SCSS for optimal performance:
+Default level is `silent`. Toggle from the browser console:
 
-- `--scale`: Size scaling factor
-- `--steps`: Number of steps (MultiSwitch)
-- `--current-bg-color`: Dynamic background color
-- `--current-thumb-color`: Dynamic thumb color
-- `--current-thumb-border-color`: Dynamic thumb border color
-
-### Default Label Styling (v1.3.0+)
-
-When using `shouldDisplayLabels={true}` without a `label` snippet, you can customize the default label appearance using SCSS variables:
-
-```scss
-// Override default label variables
-$default-label-color: #666;                    // Normal label color
-$default-label-active-color: #333;             // Active label color
-$default-label-font-size: 14px;                // Base font size
-$default-label-font-weight: normal;            // Normal font weight
-$default-label-active-font-weight: bold;       // Active label font weight
+```js
+window.components['svelte-switch'].logging.enableLogging();
+window.components['svelte-switch'].logging.setCategoryLevel('SWITCH:INTERACTION', 'trace');
 ```
 
-Default labels automatically:
-- Display `items` array content when available
-- Fallback to "Item 1", "Item 2", etc. when using `itemsCount`
-- Apply bold font-weight to the active/selected label
-- Scale font-size with the component's `size` prop
-- Respect `labelPosition` for positioning logic
+Or import the controls directly: `enableLogging`, `disableLogging`, `setLogLevel`, `setCategoryLevel`, `getCategories` are all exported from the package.
+
+## Keyboard Navigation
+
+- **Arrow Keys**: navigate between steps (all directions)
+- **Tab**: focus the switch
+- **Enter / Space**: toggle binary switch
+- **Enter / Space** on per-step labels (vertical + clickable mode): jump to that step
 
 ## Requirements
 
