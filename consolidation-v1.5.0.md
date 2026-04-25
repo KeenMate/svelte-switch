@@ -25,7 +25,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [ ] **D14** — Split `children` into `thumb` vs `segment` snippets (or restrict `children` to one role)
 - [ ] **D15** — Remove / rename `disableThumbRender` after D14
 - [x] **D16** — Fix click-to-select hit-testing (respect margins + step-spacing) — *extracted `hitTestStep()` using proper stride; constants mirror main.scss*
-- [ ] **D17** — Replace `style:--x={... || ""}` with `... ?? null`
+- [x] **D17** — Replace `style:--x={... || ""}` with `... ?? null` — *Svelte now skips emitting the property when undefined; CSS `var(--x, fallback)` still works for genuine theming*
 - [x] **D18** — Tighten SCSS `:has()` selectors so future label combos don't silently break — *labels-container top/bottom now covered by column-direction rule*
 - [x] **D19** — Replace clickable `<div class="label">` with `<button>` — *keyboard activation free, all `svelte-ignore a11y_*` on labels dropped, disabled state via button's `:disabled`*
 - [x] **D20** — Make `aria-valuemin/max/now` typing consistent — *side effect of C1 template rewrite; all three now numeric*
@@ -48,13 +48,13 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [x] **P23** — Add `.editorconfig` + `.prettierrc` to enforce indent style — *done via T37*
 - [x] **P24** — Extract repeated `items ? items[i] : undefined` pattern — *replaced with `itemAt(items, i)` helper*
 - [x] **P25** — Hoist `import type { Snippet } from 'svelte'` once per file
-- [ ] **P26** — Replace `transition: all` with pinned properties
+- [x] **P26** — Replace `transition: all` with pinned properties — *`.label-single` pins transform/opacity/color; multi-switch `.thumb` pins transform/background-color/border-color*
 - [x] **P27** — Unify `items && items[i]` vs `items ? items[i] : undefined` — *replaced with `items?.[i]` during C1 collapse*
 - [ ] **P28** — Clean up dead/redundant `$derived` values in Switch
-- [ ] **P29** — Extract `$label-gap: 10px` SCSS variable
-- [ ] **P30** — Scope root-level `.thumb` selector under its component
-- [ ] **P31** — Expose focus styling as CSS custom properties (theming prep)
-- [ ] **P32** — Move items-length validation out of `$effect`
+- [x] **P29** — Extract `$label-gap: 10px` SCSS variable — *seven occurrences collapsed*
+- [x] **P30** — Scope root-level `.thumb` selector under its component — *Switch's `.thumb` now nested under `.switch`, no global leak*
+- [x] **P31** — Expose focus styling as CSS custom properties — *`--focus-color` and `--focus-ring` overridable per consumer*
+- [x] **P32** — Move items-length validation out of `$effect` — *done as part of D21; the `$effect` is gone entirely now that items is a tuple type*
 
 ---
 

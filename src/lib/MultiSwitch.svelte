@@ -238,10 +238,10 @@
 		class:disabled={isDisabled}
 		class:vertical={isVertical}
 		class:block-labels={labelRenderMode === 'block' && shouldDisplayLabels}
-		style:--current-bg-color={getStyleForIndex(itemStyles, selectedIndex).backgroundColor || ''}
-		style:--current-thumb-color={getStyleForIndex(itemStyles, selectedIndex).thumbColor || ''}
+		style:--current-bg-color={getStyleForIndex(itemStyles, selectedIndex).backgroundColor ?? null}
+		style:--current-thumb-color={getStyleForIndex(itemStyles, selectedIndex).thumbColor ?? null}
 		style:--current-thumb-border-color={getStyleForIndex(itemStyles, selectedIndex)
-			.thumbBorderColor || ''}
+			.thumbBorderColor ?? null}
 		onclick={(e) => {
 			if (isDisabled) return;
 			selectStep(hitTestStep(e));
@@ -272,8 +272,8 @@
 				class="step-segment"
 				class:active={index === selectedIndex}
 				style:--step-index={index}
-				style:--step-bg-color={getStyleForIndex(itemStyles, index).backgroundColor || ''}
-				style:--step-border-color={getStyleForIndex(itemStyles, index).thumbBorderColor || ''}
+				style:--step-bg-color={getStyleForIndex(itemStyles, index).backgroundColor ?? null}
+				style:--step-border-color={getStyleForIndex(itemStyles, index).thumbBorderColor ?? null}
 			>
 				{@render children?.({
 					currentIndex: index,

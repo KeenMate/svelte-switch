@@ -87,10 +87,10 @@
 	class:disabled={isDisabled}
 	class:vertical={isVertical}
 	style:--scale={scale}
-	style:--current-bg-color={getStyleForIndex(itemStyles, currentIndex).backgroundColor || ''}
-	style:--current-thumb-color={getStyleForIndex(itemStyles, currentIndex).thumbColor || ''}
-	style:--current-thumb-border-color={getStyleForIndex(itemStyles, currentIndex).thumbBorderColor ||
-		''}
+	style:--current-bg-color={getStyleForIndex(itemStyles, currentIndex).backgroundColor ?? null}
+	style:--current-thumb-color={getStyleForIndex(itemStyles, currentIndex).thumbColor ?? null}
+	style:--current-thumb-border-color={getStyleForIndex(itemStyles, currentIndex).thumbBorderColor ??
+		null}
 	onclick={toggle}
 	onkeydown={handleKeydown}
 	role="switch"

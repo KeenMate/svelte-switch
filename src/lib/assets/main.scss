@@ -2,10 +2,11 @@
 
 // Variables
 $border-radius: 4px;
-$margin: 2px; // 2px margin/padding for top, bottom, left, right
-$switch-height: 32px; // Fixed switch height
-$thumb-height: 28px; // Fixed thumb height
-$step-spacing: 2px; // Space between each step
+$margin: 2px; // padding around the thumb on all sides
+$switch-height: 32px;
+$thumb-height: 28px;
+$step-spacing: 2px; // gap between steps in MultiSwitch
+$label-gap: 10px; // distance from switch edge to absolutely-positioned label
 
 // Colors
 $switch-bg-off: #ccc;
@@ -26,7 +27,6 @@ $transition-easing: ease;
 
 // Effects
 $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-$focus-shadow: 0 0 0 3px $focus-color;
 
 // Calculation Functions
 @function slider-height() {
@@ -55,10 +55,15 @@ $focus-shadow: 0 0 0 3px $focus-color;
 	transition: $property $transition-duration $transition-easing;
 }
 
+// Theming hooks: consumers can override --focus-color / --focus-ring
+// from outside the component scope.
 @mixin focus-outline {
+	--focus-color: #{$focus-color};
+	--focus-ring: 0 0 0 3px var(--focus-color);
+
 	&:focus-visible {
 		outline: none;
-		box-shadow: $focus-shadow;
+		box-shadow: var(--focus-ring);
 	}
 }
 
@@ -79,21 +84,14 @@ $focus-shadow: 0 0 0 3px $focus-color;
 	outline: none;
 	user-select: none;
 
-	// Default dimensions (can be overridden by component)
-	width: switch-width(); // (28px * 2) + 4px = 60px
-	height: $switch-height; // 32px
-
 	// Expose Sass calculations as CSS custom properties
 	--thumb-offset: #{thumb-offset()};
 	--margin: #{$margin};
 	--switch-width: #{switch-width()};
 	--switch-height: #{$switch-height};
 	--thumb-height: #{$thumb-height};
-
-	// Scale factor (default 1, overridden by component)
 	--scale: 1;
 
-	// Scaled dimensions using CSS calc()
 	width: calc(var(--switch-width) * var(--scale));
 	height: calc(var(--switch-height) * var(--scale));
 
@@ -103,42 +101,32 @@ $focus-shadow: 0 0 0 3px $focus-color;
 	}
 
 	@include focus-outline;
+	@include disabled-state;
 
-	&.checked {
-		// Background color is handled by --current-bg-color CSS custom property
+	.thumb {
+		position: absolute;
+		background-color: var(--current-thumb-color, $thumb-bg);
+		border-radius: $border-radius;
+		@include transition(transform);
+		box-shadow: $shadow;
+
+		border: 1px solid var(--current-thumb-border-color, transparent);
+
+		width: calc(var(--thumb-height) * var(--scale));
+		height: calc(var(--thumb-height) * var(--scale));
+		top: calc(var(--margin) * var(--scale));
+		left: calc(var(--margin) * var(--scale));
+
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
-	@include disabled-state;
-}
-
-.thumb {
-	position: absolute;
-	background-color: var(--current-thumb-color, $thumb-bg);
-	border-radius: $border-radius;
-	top: $margin;
-	left: $margin;
-	@include transition(transform);
-	box-shadow: $shadow;
-
-	// Custom thumb border if provided
-	border: 1px solid var(--current-thumb-border-color, transparent);
-
-	// Scaled dimensions using CSS calc()
-	width: calc(var(--thumb-height) * var(--scale));
-	height: calc(var(--thumb-height) * var(--scale));
-	top: calc(var(--margin) * var(--scale));
-	left: calc(var(--margin) * var(--scale));
-
-	// Center content within thumb
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.switch.vertical .thumb {
-	left: 50%;
-	transform: translateX(-50%);
-	top: calc(var(--margin) * var(--scale));
+	&.vertical .thumb {
+		left: 50%;
+		transform: translateX(-50%);
+		top: calc(var(--margin) * var(--scale));
+	}
 }
 
 // MultiSwitch Component Styles
@@ -163,25 +151,25 @@ $focus-shadow: 0 0 0 3px $focus-color;
 	&:not(.block-labels) {
 		.label-single {
 			&.label-position-top {
-				bottom: calc(100% + 10px * var(--scale));
+				bottom: calc(100% + #{$label-gap} * var(--scale));
 				left: 50%;
 				transform: translateX(-50%);
 			}
 
 			&.label-position-bottom {
-				top: calc(100% + 10px * var(--scale));
+				top: calc(100% + #{$label-gap} * var(--scale));
 				left: 50%;
 				transform: translateX(-50%);
 			}
 
 			&.label-position-left {
-				right: calc(100% + 10px * var(--scale));
+				right: calc(100% + #{$label-gap} * var(--scale));
 				top: 50%;
 				transform: translateY(-50%);
 			}
 
 			&.label-position-right {
-				left: calc(100% + 10px * var(--scale));
+				left: calc(100% + #{$label-gap} * var(--scale));
 				top: 50%;
 				transform: translateY(-50%);
 			}
@@ -189,12 +177,12 @@ $focus-shadow: 0 0 0 3px $focus-color;
 
 		.labels-container {
 			&.label-position-left {
-				right: calc(100% + 10px * var(--scale));
+				right: calc(100% + #{$label-gap} * var(--scale));
 				left: auto;
 			}
 
 			&.label-position-right {
-				left: calc(100% + 10px * var(--scale));
+				left: calc(100% + #{$label-gap} * var(--scale));
 			}
 		}
 	}
@@ -202,7 +190,7 @@ $focus-shadow: 0 0 0 3px $focus-color;
 	&.block-labels {
 		display: inline-flex;
 		align-items: center;
-		gap: calc(10px * var(--scale, 1));
+		gap: calc(#{$label-gap} * var(--scale, 1));
 
 		// Top/bottom labels → column direction. Cover both single and per-step containers
 		// so the layout is correct regardless of which variant the template picks.
@@ -298,7 +286,10 @@ $focus-shadow: 0 0 0 3px $focus-color;
 // Single label styles (moved to container level)
 .label-single {
 	position: absolute;
-	@include transition(all);
+	transition:
+		transform $transition-duration $transition-easing,
+		opacity $transition-duration $transition-easing,
+		color $transition-duration $transition-easing;
 	white-space: nowrap;
 
 	// Block mode - use static positioning
@@ -360,9 +351,12 @@ $focus-shadow: 0 0 0 3px $focus-color;
 		border-radius: $border-radius;
 		top: calc(var(--margin) * var(--scale));
 		left: calc(var(--margin) * var(--scale));
-		@include transition(all);
+		transition:
+			transform $transition-duration $transition-easing,
+			background-color $transition-duration $transition-easing,
+			border-color $transition-duration $transition-easing;
 		box-shadow: $shadow;
-		z-index: 10; // Ensure thumb renders above step segments
+		z-index: 10; // render above step segments
 
 		// Custom thumb border if provided
 		border: 1px solid var(--current-thumb-border-color, transparent);
