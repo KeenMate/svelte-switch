@@ -38,76 +38,31 @@ npm install @keenmate/svelte-switch
 <Switch bind:checked />
 ```
 
-### Switch with Labels
-
-```svelte
-<Switch
-  bind:checked
-  labels={['OFF', 'ON']}
-/>
-```
-
 ### Vertical Switch
 
 ```svelte
-<Switch
-  bind:checked
-  orientation="vertical"
-  size={60}
-/>
+<Switch bind:checked orientation="vertical" size={60} />
 ```
 
-### Switch with Custom Content
+### Switch with Custom Thumb Content
 
 ```svelte
 <Switch size={60}>
-  {#snippet children({ currentIndex, item, isSelected })}
+  {#snippet thumb({ index, item, isSelected })}
     <span>{isSelected ? '✓' : '✗'}</span>
   {/snippet}
 </Switch>
 ```
 
-### Enhanced Thumb Template (v1.3.0+)
-
-The `thumbTemplate` snippet provides enhanced context for more sophisticated thumb content:
+The `thumb` snippet receives `{ index, item, isSelected }`. With `items` provided, `item` is typed as the corresponding tuple element:
 
 ```svelte
-<!-- Step counter example -->
-<Switch items={['Off', 'On']}>
-  {#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
-    <div style="font-size: 0.8rem; text-align: center;">
-      <div>Step {currentIndex + 1}/{itemsCount}</div>
-      <div>{currentItem}</div>
-    </div>
+<Switch items={['Off', 'On'] as const}>
+  {#snippet thumb({ index, item })}
+    <span>{index + 1}/2 — {item}</span>
   {/snippet}
 </Switch>
-
-<!-- MultiSwitch with progress indicator -->
-<MultiSwitch bind:selectedIndex itemsCount={4}>
-  {#snippet thumbTemplate({ currentIndex, currentItem, itemsCount })}
-    <span style="font-size: 0.7rem;">
-      {currentIndex + 1}/{itemsCount}
-    </span>
-  {/snippet}
-</MultiSwitch>
 ```
-
-**Template Comparison:**
-- `children`: `{ currentIndex, item, isSelected }` - Basic content for all steps
-- `thumbTemplate`: `{ currentIndex, currentItem, itemsCount }` - Enhanced context with total count
-
-### Web Component Integration
-
-When using switches in non-reactive environments (web components, plain JavaScript, or any context where Svelte's reactivity system isn't available), the `disableThumbRender` property prevents stale template content:
-
-```javascript
-// Disable thumb template rendering in non-reactive environments
-switchInstance.update({
-  disableThumbRender: true
-});
-```
-
-This property is primarily designed for non-reactive environments where template functions are called only once and won't update with state changes. It ensures only static styling is rendered, avoiding stale dynamic content.
 
 ### Multi-Step Switch
 
@@ -118,13 +73,28 @@ This property is primarily designed for non-reactive environments where template
   let selectedIndex = $state(0);
 </script>
 
-<MultiSwitch
-  bind:selectedIndex
-  itemsCount={4}
-  size={80}
->
-  {#snippet children({ currentIndex, item, isSelected })}
-    <span>{['Low', 'Med', 'High', 'Max'][currentIndex]}</span>
+<MultiSwitch bind:selectedIndex itemsCount={4} size={80}>
+  {#snippet thumb({ index })}
+    <span>{['Low', 'Med', 'High', 'Max'][index]}</span>
+  {/snippet}
+</MultiSwitch>
+```
+
+`MultiSwitch` exposes three snippets, each with one job:
+
+| Snippet  | Renders                            | Context                                    |
+| -------- | ---------------------------------- | ------------------------------------------ |
+| `thumb`  | content inside the moving thumb    | `{ index, item }`                          |
+| `segment`| content per step background        | `{ index, item, isSelected }`              |
+| `label`  | content per displayed label        | `{ index, item, isSelected }`              |
+
+```svelte
+<MultiSwitch items={['Cold', 'Warm', 'Hot']}>
+  {#snippet thumb({ item })}
+    <span>{item}</span>
+  {/snippet}
+  {#snippet segment({ index, isSelected })}
+    <span style="opacity: {isSelected ? 1 : 0.4}">●</span>
   {/snippet}
 </MultiSwitch>
 ```
@@ -218,7 +188,7 @@ This property is primarily designed for non-reactive environments where template
   orientation="vertical"
   size={70}
 >
-  {#snippet labelTemplate({ item, isSelected })}
+  {#snippet label({ index, item, isSelected })}
     <span style="color: {isSelected ? '#333' : '#666'}; font-weight: {isSelected ? 'bold' : 'normal'}">
       {item} Size
     </span>
@@ -238,67 +208,48 @@ This property is primarily designed for non-reactive environments where template
   ];
 </script>
 
-<MultiSwitch
-  bind:selectedIndex
-  itemsCount={4}
-  size={70}
-  itemStyles={temperatureStyles}
->
-  {#snippet children({ currentIndex, item, isSelected })}
-    <span>{['❄️', '🌡️', '🔥', '🌋'][currentIndex]}</span>
+<MultiSwitch bind:selectedIndex itemsCount={4} size={70} itemStyles={temperatureStyles}>
+  {#snippet thumb({ index })}
+    <span>{['❄️', '🌡️', '🔥', '🌋'][index]}</span>
   {/snippet}
 </MultiSwitch>
 ```
 
 ## API Reference
 
-### Switch Props
+### `Switch<T>` Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `checked` | `boolean` | `false` | Bindable checked state |
-| `isDisabled` | `boolean` | `false` | Disable the switch |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
-| `size` | `number` | `50` | Switch size in pixels |
-| `labels` | `string[]` | - | Optional labels for switch states (e.g., `['OFF', 'ON']`) |
-| `onToggle` | `(checked: boolean) => void` | - | Toggle event handler |
-| `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
-| `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
-| `disableThumbRender` | `boolean` | `false` | Disable rendering children template in thumb (primarily for non-reactive environments) |
+| Prop          | Type                                          | Default        | Description                                                       |
+| ------------- | --------------------------------------------- | -------------- | ----------------------------------------------------------------- |
+| `checked`     | `boolean`                                     | `false`        | Bindable checked state                                            |
+| `isDisabled`  | `boolean`                                     | `false`        | Disable the switch                                                |
+| `orientation` | `'horizontal' \| 'vertical'`                  | `'horizontal'` | Switch orientation                                                |
+| `size`        | `number`                                      | `50`           | Switch size in pixels (50 = native)                               |
+| `items`       | `readonly [T, T] \| null`                     | `null`         | Two data items keyed to off/on; `item` of `thumb` reads from here |
+| `itemStyles`  | `StepStyle[] \| StepStyle`                    | `[]`           | Per-state styles (array) or shared style (object)                 |
+| `onToggle`    | `(checked: boolean) => void`                  | -              | Toggle event handler                                              |
+| `thumb`       | `Snippet<[{ index, item, isSelected }]>`      | -              | Content rendered inside the moving thumb                          |
 
-### Switch Methods
+### `MultiSwitch<T>` Props
 
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `update()` | `{ checked?, isDisabled?, orientation?, size?, items?, itemStyles?, onToggle?, disableThumbRender? }` | Updates component properties from external JavaScript/HTML |
-
-### MultiSwitch Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `selectedIndex` | `number` | `0` | Bindable selected step index |
-| `isDisabled` | `boolean` | `false` | Disable the switch |
-| `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | Switch orientation |
-| `size` | `number` | `50` | Switch size in pixels |
-| `itemsCount` | `number` | `3` | Number of steps |
-| `items` | `any[]` | `null` | Array of data items (optional) |
-| `itemStyles` | `StepStyle[] \| StepStyle` | `[]` | Custom styling for each step (array) or all steps (object) |
-| `shouldDisplayLabels` | `boolean` | `false` | Enable automatic label display (v1.3.0+) |
-| `labelPosition` | `'top' \| 'bottom' \| 'left' \| 'right'` | `'bottom'` | Label position (horizontal: all positions, vertical: left/right only) |
-| `labelRenderMode` | `'absolute' \| 'block'` | `'absolute'` | Label rendering mode - absolute (may overlap) or block (takes space) (v1.4.0+) |
-| `labelMember` | `string` | - | Property name to extract label text from items (e.g., `"name"` reads `item.name`) (v1.4.0+) |
-| `labelCallback` | `(item: any, index: number) => string` | - | Custom function to generate label text with item and index access (v1.4.0+) |
-| `onItemChange` | `(index: number) => void` | - | Item change event handler |
-| `children` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom content for thumb |
-| `thumbTemplate` | `Snippet<[{ currentIndex: number, currentItem: any, itemsCount: number }]>` | - | Enhanced thumb content with extended context |
-| `labelTemplate` | `Snippet<[{ currentIndex: number, item: any, isSelected: boolean }]>` | - | Custom label content template (optional, uses default if not provided) |
-| `disableThumbRender` | `boolean` | `false` | Disable rendering children template in thumb (primarily for non-reactive environments) |
-
-### MultiSwitch Methods
-
-| Method | Parameters | Description |
-|--------|------------|-------------|
-| `update()` | `{ selectedIndex?, isDisabled?, orientation?, size?, itemsCount?, items?, itemStyles?, shouldDisplayLabels?, labelPosition?, labelRenderMode?, labelMember?, labelCallback?, onItemChange?, disableThumbRender? }` | Updates component properties from external JavaScript/HTML |
+| Prop                  | Type                                                       | Default        | Description                                                                |
+| --------------------- | ---------------------------------------------------------- | -------------- | -------------------------------------------------------------------------- |
+| `selectedIndex`       | `number`                                                   | `0`            | Bindable selected step index                                               |
+| `isDisabled`          | `boolean`                                                  | `false`        | Disable the switch                                                         |
+| `orientation`         | `'horizontal' \| 'vertical'`                               | `'horizontal'` | Switch orientation                                                         |
+| `size`                | `number`                                                   | `50`           | Switch size in pixels                                                      |
+| `itemsCount`          | `number`                                                   | `3`            | Number of steps; ignored when `items` is provided                          |
+| `items`               | `readonly T[] \| null`                                     | `null`         | Optional data array; `items.length` overrides `itemsCount` when both given |
+| `itemStyles`          | `StepStyle[] \| StepStyle`                                 | `[]`           | Per-step styles (array) or shared style (object)                           |
+| `shouldDisplayLabels` | `boolean`                                                  | `false`        | Enable automatic label display                                             |
+| `labelPosition`       | `'top' \| 'bottom' \| 'left' \| 'right'`                   | `'bottom'`     | Label position (vertical orientation supports left/right only)             |
+| `labelRenderMode`     | `'absolute' \| 'block'`                                    | `'absolute'`   | `absolute` may overlap container; `block` takes space in document flow     |
+| `labelMember`         | `string`                                                   | -              | Read label text from `item[labelMember]`                                   |
+| `labelCallback`       | `(item: T \| undefined, index: number) => string`          | -              | Custom label resolver; called when `labelMember` doesn't match             |
+| `onItemChange`        | `(index: number) => void`                                  | -              | Selection change handler                                                   |
+| `thumb`               | `Snippet<[{ index, item }]>`                               | -              | Content inside the moving thumb (one render)                               |
+| `segment`             | `Snippet<[{ index, item, isSelected }]>`                   | -              | Content per step background (one render per step)                          |
+| `label`               | `Snippet<[{ index, item, isSelected }]>`                   | -              | Custom label content; falls back to `getLabelText` resolver                |
 
 ### StepStyle Interface
 
@@ -310,43 +261,25 @@ interface StepStyle {
 }
 ```
 
-## External JavaScript/HTML Usage
+## Vanilla JavaScript usage
 
-When using the components directly from vanilla JavaScript or HTML (not within Svelte), you can use the `update()` method to programmatically change component properties:
+Use Svelte 5's `mount()` with a reactive props object — the components have no `update()` method (it was removed in 2.0; props are reactive in Svelte 5):
 
 ```javascript
-// Create Switch instance
-const switchInstance = new Switch({
+import { mount } from 'svelte';
+import { Switch } from '@keenmate/svelte-switch';
+
+const props = $state({ checked: false, size: 50 });
+
+mount(Switch, {
   target: document.getElementById('switch-container'),
-  props: { checked: false, size: 50 }
+  props
 });
 
-// Update properties externally
-switchInstance.update({
-  checked: true,
-  size: 80,
-  isDisabled: false
-});
-
-// Create MultiSwitch instance
-const multiSwitchInstance = new MultiSwitch({
-  target: document.getElementById('multiswitch-container'),
-  props: { selectedIndex: 0, itemsCount: 4 }
-});
-
-// Update properties externally
-multiSwitchInstance.update({
-  selectedIndex: 2,
-  size: 70,
-  itemsCount: 5,
-  itemStyles: [
-    { backgroundColor: '#ff0000', thumbColor: '#ffffff', thumbBorderColor: '#cc0000' },
-    { backgroundColor: '#00ff00', thumbColor: '#000000', thumbBorderColor: '#00cc00' }
-  ]
-});
+// Mutate the state object — the component updates reactively:
+props.checked = true;
+props.size = 80;
 ```
-
-This mechanism addresses Svelte 5 reactivity issues when components are used outside of Svelte environments.
 
 ## Keyboard Navigation
 
@@ -366,7 +299,7 @@ The component uses CSS custom properties for dynamic styling. All calculations a
 
 ### Default Label Styling (v1.3.0+)
 
-When using `shouldDisplayLabels={true}` without `labelTemplate`, you can customize the default label appearance using SCSS variables:
+When using `shouldDisplayLabels={true}` without a `label` snippet, you can customize the default label appearance using SCSS variables:
 
 ```scss
 // Override default label variables

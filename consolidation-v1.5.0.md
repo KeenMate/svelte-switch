@@ -9,21 +9,21 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 ### Critical
 - [x] **C1** — Collapse MultiSwitch label template duplication — *320-line label block → ~70-line snippet-based dispatch; net −140 lines in the component*
 - [x] **C2** — Fix / delete `test-update.html` (uses Svelte 4 API + renamed `stepsCount`) — *deleted*
-- [ ] **C3** — Include `labelTemplate` (and other snippets) in `MultiSwitch.update()` OR delete `update()` entirely
-- [ ] **C4** — Replace `update()` anti-pattern with a reactive-state idiom (or drop it)
+- [x] **C3** — Include `labelTemplate` (and other snippets) in `MultiSwitch.update()` OR delete `update()` entirely — *deleted entirely (C4)*
+- [x] **C4** — Replace `update()` anti-pattern with a reactive-state idiom (or drop it) — *dropped; documented `mount() + $state` pattern in README + CLAUDE.md*
 - [x] **C5** — Delete stale `src/lib/assets/main.css`
 - [x] **C6** — Fix `effectiveStepsCount` stale comment / `itemsCount` behavior — *items.length wins when provided, itemsCount is fallback; comment accurate*
 - [x] **C7** — Fix `currentStepContext` passing `itemsCount` instead of `effectiveStepsCount`
 - [x] **C8** — Migrate `+layout.svelte` from deprecated `$app/stores` → `$app/state`
 
 ### Design / structural
-- [ ] **D9** — Make components generic over item type `<T>` instead of `any[]`
+- [x] **D9** — Make components generic over item type `<T>` instead of `any[]` — *both components now `<script generics="T">`; item type flows into snippet contexts*
 - [x] **D10** — Type `Switch.items` as tuple `[T, T]` (remove runtime warn) — *done with D21; `readonly [unknown, unknown] | null`; generics pass (D9) will swap unknown→T*
 - [x] **D11** — Extract `getStyleForIndex` + label-text resolver + `itemAt` into `src/lib/utils.ts` — *also exported `ItemStyles` type alias*
-- [ ] **D12** — Unify `isSelected` semantics across Switch / MultiSwitch snippet contexts
-- [ ] **D13** — Unify snippet context shape (`item` vs `currentItem`, drop inconsistent fields)
-- [ ] **D14** — Split `children` into `thumb` vs `segment` snippets (or restrict `children` to one role)
-- [ ] **D15** — Remove / rename `disableThumbRender` after D14
+- [x] **D12** — Unify `isSelected` semantics across Switch / MultiSwitch snippet contexts — *Switch.thumb / MultiSwitch.segment / MultiSwitch.label all share `isSelected: index === activeIndex`; MultiSwitch.thumb omits it (always true)*
+- [x] **D13** — Unify snippet context shape — *all snippets use `{ index, item, ?isSelected }`; `currentIndex`/`currentItem`/`itemsCount` removed*
+- [x] **D14** — Split `children` into `thumb` vs `segment` snippets — *`children` removed entirely; explicit `thumb` (single render) + `segment` (per-step) + `label`*
+- [x] **D15** — Remove `disableThumbRender` — *redundant after D14; "no thumb content" is now expressed as "don't pass the `thumb` snippet"*
 - [x] **D16** — Fix click-to-select hit-testing (respect margins + step-spacing) — *extracted `hitTestStep()` using proper stride; constants mirror main.scss*
 - [x] **D17** — Replace `style:--x={... || ""}` with `... ?? null` — *Svelte now skips emitting the property when undefined; CSS `var(--x, fallback)` still works for genuine theming*
 - [x] **D18** — Tighten SCSS `:has()` selectors so future label combos don't silently break — *labels-container top/bottom now covered by column-direction rule*
@@ -50,7 +50,7 @@ Audit of `@keenmate/svelte-switch` performed on 2026-04-24 against the main bran
 - [x] **P25** — Hoist `import type { Snippet } from 'svelte'` once per file
 - [x] **P26** — Replace `transition: all` with pinned properties — *`.label-single` pins transform/opacity/color; multi-switch `.thumb` pins transform/background-color/border-color*
 - [x] **P27** — Unify `items && items[i]` vs `items ? items[i] : undefined` — *replaced with `items?.[i]` during C1 collapse*
-- [ ] **P28** — Clean up dead/redundant `$derived` values in Switch
+- [x] **P28** — Clean up dead/redundant `$derived` values in Switch — *`currentStepContext` removed; thumb context built inline; `itemsCount` field gone*
 - [x] **P29** — Extract `$label-gap: 10px` SCSS variable — *seven occurrences collapsed*
 - [x] **P30** — Scope root-level `.thumb` selector under its component — *Switch's `.thumb` now nested under `.switch`, no global leak*
 - [x] **P31** — Expose focus styling as CSS custom properties — *`--focus-color` and `--focus-ring` overridable per consumer*

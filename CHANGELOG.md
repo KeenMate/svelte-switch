@@ -5,6 +5,126 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-04-25
+
+Major release. The internal architecture is unchanged; the public snippet API is reshaped to be consistent across `Switch` and `MultiSwitch`, and the vanilla-JS `update()` escape hatch is removed in favour of Svelte 5's reactive props. Existing consumers using `<Switch bind:checked>` / `<MultiSwitch bind:selectedIndex>` without snippets are unaffected.
+
+### 💥 Breaking Changes
+
+#### Snippet API renamed and split
+
+| 1.x | 2.0 |
+| --- | --- |
+| `children` (`Switch`) | `thumb` |
+| `children` (`MultiSwitch`, ran in BOTH the moving thumb AND each step background) | split into `thumb` (one render) + `segment` (one render per step) |
+| `thumbTemplate` | merged into `thumb` |
+| `labelTemplate` | `label` |
+
+Snippet context is now consistent:
+
+| 1.x | 2.0 |
+| --- | --- |
+| `currentIndex` | `index` |
+| `currentItem` | `item` |
+| `itemsCount` (in `thumbTemplate`) | dropped — read from props if needed |
+
+`isSelected` semantics are unified: `Switch.thumb`, `MultiSwitch.segment`, and `MultiSwitch.label` all receive `isSelected: boolean`. `MultiSwitch.thumb` does NOT receive `isSelected` (it's always the selected position by definition).
+
+**Migration:**
+
+```svelte
+<!-- 1.x -->
+<Switch bind:checked>
+  {#snippet children({ isSelected })}
+    {isSelected ? '✓' : '✗'}
+  {/snippet}
+</Switch>
+
+<!-- 2.0 -->
+<Switch bind:checked>
+  {#snippet thumb({ isSelected })}
+    {isSelected ? '✓' : '✗'}
+  {/snippet}
+</Switch>
+```
+
+```svelte
+<!-- 1.x — children rendered TWICE: once as thumb, once per step background -->
+<MultiSwitch>
+  {#snippet children({ currentIndex, isSelected })}
+    <span>{isSelected ? '★' : '☆'}</span>
+  {/snippet}
+</MultiSwitch>
+
+<!-- 2.0 — explicit split, each snippet has one job -->
+<MultiSwitch>
+  {#snippet thumb({ index })}
+    <span>★ {index}</span>
+  {/snippet}
+  {#snippet segment({ index, isSelected })}
+    <span>{isSelected ? '★' : '☆'}</span>
+  {/snippet}
+</MultiSwitch>
+```
+
+```svelte
+<!-- 1.x -->
+{#snippet labelTemplate({ currentIndex, item, isSelected })}…{/snippet}
+
+<!-- 2.0 -->
+{#snippet label({ index, item, isSelected })}…{/snippet}
+```
+
+#### `disableThumbRender` prop removed
+
+In 1.x this was needed to suppress the `children` snippet when you wanted no thumb content but still wanted to pass it for segment rendering. With `thumb` and `segment` now distinct snippets, just don't pass `thumb`.
+
+#### `Switch.items` is now a strict tuple
+
+Already tightened in 1.4.x as `readonly [unknown, unknown] | null`. In 2.0 it becomes `readonly [T, T] | null` via the new generic.
+
+#### Generic over item type `<T>`
+
+Both components now accept a generic type parameter inferred from `items`:
+
+```svelte
+<MultiSwitch items={[{ id: 1 }, { id: 2 }]}>
+  {#snippet label({ item })}
+    {item.id} <!-- typed as { id: number } in 2.0; was `any` in 1.x -->
+  {/snippet}
+</MultiSwitch>
+```
+
+#### `update()` method removed
+
+Both components shipped a `.update({...})` instance method intended for vanilla-JS consumers (Svelte 4 era). Svelte 5 props are reactive — set them on the props object you pass to `mount()` and they'll propagate. For vanilla JS:
+
+```js
+import { mount } from 'svelte';
+import { Switch } from '@keenmate/svelte-switch';
+
+const props = $state({ checked: false, size: 50 });
+mount(Switch, { target: el, props });
+
+// Later — just mutate the state object:
+props.checked = true;
+props.size = 80;
+```
+
+### 🐛 Fixed
+
+- `MultiSwitch` thumb snippet context received the wrong step count when `items` and `itemsCount` were both passed (`itemsCount` won — should have matched `items.length`). Now uses `effectiveStepsCount`.
+- `MultiSwitch` click-to-select hit-test ignored the 2px outer margin and 2px inter-step spacing — clicks near segment boundaries at small sizes / high step counts could land one step off. Replaced with margin-aware stride math.
+- `MultiSwitch` per-step labels are now `<button>` elements with proper keyboard activation (Enter/Space) and `disabled` attribute, instead of `<div onclick>`.
+
+### 🧹 Internal
+
+- Three label-rendering snippets (`labelContent`, `singleLabel`, `perStepLabels`) replace ≈320 lines of duplicated branch markup.
+- Shared helpers extracted to `src/lib/utils.ts`: `getStyleForIndex`, `itemAt`, `resolveLabelText`. Covered by 15 unit tests via `vitest`.
+- Demo site restructured to mirror `@keenmate/svelte-treeview`: card-grid landing at `/`, per-topic pages under `/examples/*`, shared `ExampleHeader`, `examples-shared.css`.
+- Tooling parity with svelte-treeview: prettier, eslint flat config, `.editorconfig`, `vitest`, vite `define:` block exposing `__VERSION__`.
+- Build-time stale `src/lib/assets/main.css` deleted (138-line snapshot from a pre-1.0 build, out of sync with `main.scss`).
+
 ## [1.4.0] - 2025-01-23
 
 ### ✨ Added

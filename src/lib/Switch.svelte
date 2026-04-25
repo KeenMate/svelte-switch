@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="T">
 	import type { Snippet } from 'svelte';
 	import { getStyleForIndex, itemAt, type ItemStyles } from './utils.js';
 
@@ -9,12 +9,10 @@
 		isDisabled?: boolean;
 		orientation?: Orientation;
 		size?: number;
-		items?: readonly [unknown, unknown] | null;
+		items?: readonly [T, T] | null;
 		itemStyles?: ItemStyles;
 		onToggle?: (checked: boolean) => void;
-		children?: Snippet<[{ currentIndex: number; item: unknown; isSelected: boolean }]>;
-		thumbTemplate?: Snippet<[{ currentIndex: number; currentItem: unknown; itemsCount: number }]>;
-		disableThumbRender?: boolean;
+		thumb?: Snippet<[{ index: number; item: T | undefined; isSelected: boolean }]>;
 	}
 
 	let {
@@ -25,19 +23,14 @@
 		items = null,
 		itemStyles = [],
 		onToggle,
-		children,
-		thumbTemplate,
-		disableThumbRender = false
+		thumb
 	}: Props = $props();
 
 	const isVertical = $derived(orientation === 'vertical');
-
 	const scale = $derived(size / 50);
 
-	const currentIndex = $derived(checked ? 1 : 0);
-	const currentItem = $derived(itemAt(items, currentIndex));
-	const isSelected = $derived(checked);
-	let currentStepContext = $derived({ currentIndex, currentItem, itemsCount: 2 });
+	const index = $derived(checked ? 1 : 0);
+	const item = $derived(itemAt(items, index));
 
 	function toggle() {
 		if (isDisabled) return;
@@ -51,32 +44,6 @@
 			toggle();
 		}
 	}
-
-	// External update method for HTML/JavaScript usage
-	export function update(
-		updates: Partial<
-			Pick<
-				Props,
-				| 'checked'
-				| 'isDisabled'
-				| 'orientation'
-				| 'size'
-				| 'items'
-				| 'itemStyles'
-				| 'onToggle'
-				| 'disableThumbRender'
-			>
-		>
-	) {
-		if (updates.checked !== undefined) checked = updates.checked;
-		if (updates.isDisabled !== undefined) isDisabled = updates.isDisabled;
-		if (updates.orientation !== undefined) orientation = updates.orientation;
-		if (updates.size !== undefined) size = updates.size;
-		if (updates.items !== undefined) items = updates.items;
-		if (updates.itemStyles !== undefined) itemStyles = updates.itemStyles;
-		if (updates.onToggle !== undefined) onToggle = updates.onToggle;
-		if (updates.disableThumbRender !== undefined) disableThumbRender = updates.disableThumbRender;
-	}
 </script>
 
 <!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -87,10 +54,9 @@
 	class:disabled={isDisabled}
 	class:vertical={isVertical}
 	style:--scale={scale}
-	style:--current-bg-color={getStyleForIndex(itemStyles, currentIndex).backgroundColor ?? null}
-	style:--current-thumb-color={getStyleForIndex(itemStyles, currentIndex).thumbColor ?? null}
-	style:--current-thumb-border-color={getStyleForIndex(itemStyles, currentIndex).thumbBorderColor ??
-		null}
+	style:--current-bg-color={getStyleForIndex(itemStyles, index).backgroundColor ?? null}
+	style:--current-thumb-color={getStyleForIndex(itemStyles, index).thumbColor ?? null}
+	style:--current-thumb-border-color={getStyleForIndex(itemStyles, index).thumbBorderColor ?? null}
 	onclick={toggle}
 	onkeydown={handleKeydown}
 	role="switch"
@@ -104,10 +70,8 @@
 			? `translateY(${checked ? 'calc(var(--thumb-offset) * var(--scale))' : '0px'}) translateX(-50%)`
 			: `translateX(${checked ? 'calc(var(--thumb-offset) * var(--scale))' : '0px'})`}
 	>
-		{#if thumbTemplate}
-			{@render thumbTemplate(currentStepContext)}
-		{:else if children && !disableThumbRender}
-			{@render children({ currentIndex, item: currentItem, isSelected })}
+		{#if thumb}
+			{@render thumb({ index, item, isSelected: checked })}
 		{/if}
 	</div>
 </div>

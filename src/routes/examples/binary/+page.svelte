@@ -19,7 +19,7 @@
 		<h2>Demo</h2>
 		<div class="demo-area" style="display: flex; justify-content: center; min-height: 160px;">
 			<Switch bind:checked {size} {orientation} {isDisabled}>
-				{#snippet children({ isSelected })}
+				{#snippet thumb({ isSelected })}
 					<span>{isSelected ? '✓' : '✗'}</span>
 				{/snippet}
 			</Switch>

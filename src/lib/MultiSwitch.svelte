@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="T">
 	import type { Snippet } from 'svelte';
 	import { getStyleForIndex, itemAt, resolveLabelText, type ItemStyles } from './utils.js';
 
@@ -12,18 +12,17 @@
 		orientation?: Orientation;
 		size?: number;
 		itemsCount?: number;
-		items?: readonly unknown[] | null;
+		items?: readonly T[] | null;
 		itemStyles?: ItemStyles;
 		shouldDisplayLabels?: boolean;
 		labelPosition?: LabelPosition;
 		labelRenderMode?: LabelRenderMode;
 		labelMember?: string;
-		labelCallback?: (item: unknown, index: number) => string;
+		labelCallback?: (item: T | undefined, index: number) => string;
 		onItemChange?: (index: number) => void;
-		children?: Snippet<[{ currentIndex: number; item: unknown; isSelected: boolean }]>;
-		thumbTemplate?: Snippet<[{ currentIndex: number; currentItem: unknown; itemsCount: number }]>;
-		labelTemplate?: Snippet<[{ currentIndex: number; item: unknown; isSelected: boolean }]>;
-		disableThumbRender?: boolean;
+		thumb?: Snippet<[{ index: number; item: T | undefined }]>;
+		segment?: Snippet<[{ index: number; item: T | undefined; isSelected: boolean }]>;
+		label?: Snippet<[{ index: number; item: T | undefined; isSelected: boolean }]>;
 	}
 
 	let {
@@ -40,17 +39,15 @@
 		labelMember,
 		labelCallback,
 		onItemChange,
-		children,
-		thumbTemplate,
-		labelTemplate,
-		disableThumbRender = false
+		thumb,
+		segment,
+		label
 	}: Props = $props();
 
 	const getLabelText = (index: number): string =>
-		resolveLabelText(items, labelMember, labelCallback, index);
+		resolveLabelText(items, labelMember, labelCallback as never, index);
 
 	const isVertical = $derived(orientation === 'vertical');
-
 	const scale = $derived(size / 50);
 
 	// When `items` is provided, its length is authoritative and `itemsCount` is ignored.
@@ -59,13 +56,7 @@
 		items && items.length > 0 ? items.length : itemsCount
 	);
 
-	const currentIndex = $derived(selectedIndex);
 	const currentItem = $derived(itemAt(items, selectedIndex));
-	let currentStepContext = $derived({
-		currentIndex,
-		currentItem,
-		itemsCount: effectiveStepsCount
-	});
 
 	// Per-step labels are stacked (one per step) only when the switch is vertical
 	// and labels sit on its side. Every other position uses a single label tied to
@@ -114,54 +105,11 @@
 			onItemChange?.(selectedIndex);
 		}
 	}
-
-	// External update method for HTML/JavaScript usage
-	export function update(
-		updates: Partial<
-			Pick<
-				Props,
-				| 'selectedIndex'
-				| 'isDisabled'
-				| 'orientation'
-				| 'size'
-				| 'itemsCount'
-				| 'itemStyles'
-				| 'items'
-				| 'shouldDisplayLabels'
-				| 'labelPosition'
-				| 'labelRenderMode'
-				| 'labelMember'
-				| 'labelCallback'
-				| 'onItemChange'
-				| 'disableThumbRender'
-			>
-		>
-	) {
-		if (updates.selectedIndex !== undefined) selectedIndex = updates.selectedIndex;
-		if (updates.isDisabled !== undefined) isDisabled = updates.isDisabled;
-		if (updates.orientation !== undefined) orientation = updates.orientation;
-		if (updates.size !== undefined) size = updates.size;
-		if (updates.itemsCount !== undefined) itemsCount = updates.itemsCount;
-		if (updates.itemStyles !== undefined) itemStyles = updates.itemStyles;
-		if (updates.items !== undefined) items = updates.items;
-		if (updates.shouldDisplayLabels !== undefined)
-			shouldDisplayLabels = updates.shouldDisplayLabels;
-		if (updates.labelPosition !== undefined) labelPosition = updates.labelPosition;
-		if (updates.labelRenderMode !== undefined) labelRenderMode = updates.labelRenderMode;
-		if (updates.labelMember !== undefined) labelMember = updates.labelMember;
-		if (updates.labelCallback !== undefined) labelCallback = updates.labelCallback;
-		if (updates.onItemChange !== undefined) onItemChange = updates.onItemChange;
-		if (updates.disableThumbRender !== undefined) disableThumbRender = updates.disableThumbRender;
-	}
 </script>
 
 {#snippet labelContent(index: number, isSelected: boolean)}
-	{#if labelTemplate}
-		{@render labelTemplate({
-			currentIndex: index,
-			item: itemAt(items, index),
-			isSelected
-		})}
+	{#if label}
+		{@render label({ index, item: itemAt(items, index), isSelected })}
 	{:else}
 		<span class="default-label" class:active={isSelected}>
 			{getLabelText(index)}
@@ -193,7 +141,7 @@
 	>
 		{#each Array(effectiveStepsCount) as _, index}
 			{@const isSelected = index === selectedIndex}
-			{#if !thumbTemplate}
+			{#if !thumb}
 				<button
 					type="button"
 					class="label clickable"
@@ -260,10 +208,8 @@
 				? `translateY(calc(var(--step-offset) * ${selectedIndex})) translateX(-50%)`
 				: `translateX(calc(var(--step-offset) * ${selectedIndex}))`}
 		>
-			{#if thumbTemplate}
-				{@render thumbTemplate(currentStepContext)}
-			{:else if children && !disableThumbRender}
-				{@render children({ currentIndex, item: currentItem, isSelected: true })}
+			{#if thumb}
+				{@render thumb({ index: selectedIndex, item: currentItem })}
 			{/if}
 		</div>
 
@@ -275,11 +221,13 @@
 				style:--step-bg-color={getStyleForIndex(itemStyles, index).backgroundColor ?? null}
 				style:--step-border-color={getStyleForIndex(itemStyles, index).thumbBorderColor ?? null}
 			>
-				{@render children?.({
-					currentIndex: index,
-					item: items?.[index],
-					isSelected: false
-				})}
+				{#if segment}
+					{@render segment({
+						index,
+						item: itemAt(items, index),
+						isSelected: index === selectedIndex
+					})}
+				{/if}
 			</div>
 		{/each}
 	</div>

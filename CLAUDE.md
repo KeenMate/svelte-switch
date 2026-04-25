@@ -59,52 +59,44 @@ Both components follow consistent prop patterns:
 - `isDisabled` boolean prop
 - `orientation` as `'horizontal' | 'vertical'`
 - `size` number for scaling (default 50px)
-- `children` snippet for custom content
-- `thumbTemplate` snippet for enhanced thumb content (v1.3.0+)
 - Optional callback props (`onToggle`, `onItemChange`)
 
-**MultiSwitch Label Features (v1.3.0+):**
+**Snippets (v2.0+):**
+- `Switch.thumb` — content inside the thumb. Context: `{ index, item, isSelected }`.
+- `MultiSwitch.thumb` — content inside the moving thumb (one render). Context: `{ index, item }`.
+- `MultiSwitch.segment` — content per step background (one render per step). Context: `{ index, item, isSelected }`.
+- `MultiSwitch.label` — custom label content (replaces 1.x `labelTemplate`). Context: `{ index, item, isSelected }`.
+
+**Generics (v2.0+):**
+Both components are generic over the items element type `<T>`. `Switch.items` is `readonly [T, T] | null` (binary tuple). `MultiSwitch.items` is `readonly T[] | null`.
+
+**MultiSwitch Label Features:**
 - `shouldDisplayLabels` boolean to enable automatic label display
 - `labelPosition` for positioning (`'top' | 'bottom' | 'left' | 'right'`)
-- `labelTemplate` snippet for custom label content (optional)
-- `items` array for label content (when no custom template provided)
+- `label` snippet for custom label content (optional; falls back to default rendering)
+- `items` array for label content (when no `label` snippet provided)
 
-**MultiSwitch Label Rendering (v1.4.0+):**
+**MultiSwitch Label Rendering:**
 - `labelRenderMode` for rendering mode (`'absolute' | 'block'`) - default is 'absolute'
   - `'absolute'`: Labels use absolute positioning (may overlap container borders)
   - `'block'`: Labels take up actual space in document flow (stays within container)
-- **Clickable Labels**: In vertical orientation with left/right positions, labels become clickable when no `thumbTemplate` is defined, allowing users to jump to any step by clicking the label
+- **Clickable Labels**: In vertical orientation with left/right positions, labels are rendered as `<button>` elements when no `thumb` snippet is provided, with full keyboard activation
 - **Enhanced Layout**: Block mode uses proper flexbox layout ensuring labels appear in correct positions (top/left before switch, bottom/right after switch)
 
-### External Update Mechanism
-Both components export an `update()` method for external property updates when used from HTML/JavaScript (not needed for Svelte-to-Svelte usage):
+### Vanilla JavaScript Usage
+Use Svelte 5's `mount()` with a reactive props object. The `update()` method that 1.x exposed has been removed — props are reactive in Svelte 5, mutate the state object passed to `mount()`:
 
-**Switch Component:**
 ```javascript
-switchInstance.update({
-  checked: true,
-  size: 80,
-  isDisabled: false,
-  orientation: 'vertical'
-});
-```
+import { mount } from 'svelte';
+import { Switch } from '@keenmate/svelte-switch';
 
-**MultiSwitch Component:**
-```javascript
-multiSwitchInstance.update({
-  selectedIndex: 2,
-  size: 70,
-  itemsCount: 5,
-  itemStyles: [/* style objects */],
-  shouldDisplayLabels: true,
-  labelPosition: 'right',
-  labelRenderMode: 'block',
-  isDisabled: true,
-  orientation: 'horizontal'
-});
-```
+const props = $state({ checked: false, size: 50 });
+mount(Switch, { target: el, props });
 
-This mechanism addresses Svelte 5 reactivity issues when components are used directly from vanilla JavaScript/HTML environments.
+// Later — mutate the state object, the component reacts:
+props.checked = true;
+props.size = 80;
+```
 
 ### Styling System
 Components use a scale-based sizing system where all dimensions are calculated from a base size (50px) using a scale factor. SCSS handles mathematical calculations with CSS custom properties for dynamic theming.
@@ -134,17 +126,17 @@ interface StepStyle {
 
 **Important**: `thumbBorderColor` specifically affects thumb borders only. This leaves room for a future `borderColor` property for switch container borders.
 
-### Default Label System (v1.3.0+)
-MultiSwitch components support automatic label rendering without requiring custom `labelTemplate`:
+### Default Label System
+MultiSwitch components support automatic label rendering without requiring a custom `label` snippet:
 
 #### Label Display Logic
 - **Horizontal orientation**: Only active/selected label shown at specified position (top/bottom/left/right)
 - **Vertical orientation**: All labels shown, but only for left/right positions (top/bottom ignored)
 
-#### Content Priority (v1.4.0+ Updated)
-1. When `labelMember` provided: Reads property from object items (e.g., `labelMember="name"` reads `item.name`)
-2. When `labelCallback` provided: Custom function with access to item and index: `(item: any, index: number) => string`
-3. When `labelTemplate` provided: Takes precedence over all automatic rendering
+#### Content Priority
+1. When `label` snippet provided: Takes precedence over all automatic rendering
+2. When `labelMember` provided: Reads property from object items (e.g., `labelMember="name"` reads `item.name`)
+3. When `labelCallback` provided: Custom function `(item: T | undefined, index: number) => string`
 4. Default fallback: "Option 1", "Option 2", etc.
 
 #### SCSS Customization
@@ -191,7 +183,7 @@ $default-label-active-font-weight: bold;       // Active label font weight
   orientation="vertical"
 />
 
-<!-- Custom labels with template (takes precedence) -->
+<!-- Custom labels with the label snippet (takes precedence) -->
 <MultiSwitch
   items={['Small', 'Medium', 'Large']}
   shouldDisplayLabels={true}
@@ -199,7 +191,7 @@ $default-label-active-font-weight: bold;       // Active label font weight
   labelRenderMode="block"
   orientation="vertical"
 >
-  {#snippet labelTemplate({ item, isSelected })}
+  {#snippet label({ item, isSelected })}
     <span style="color: {isSelected ? '#333' : '#666'}">{item} Size</span>
   {/snippet}
 </MultiSwitch>
@@ -223,7 +215,7 @@ Follow the `[verb][Something]` convention for boolean properties and descriptive
 - `shouldDisplayLabels` (not `labels` - clearly indicates boolean behavior)
 - `labelPosition` (not `position` - specifies what is being positioned)
 - `labelRenderMode` (not `renderMode` - specifies it's for label rendering)
-- `labelTemplate` (not `label` - follows template naming convention)
+- v2.0 dropped the `Template` suffix on snippets — `labelTemplate` → `label`, `thumbTemplate` collapsed into `thumb`. Snippet names ARE the slot names in Svelte 5; the suffix was redundant.
 
 **Rationale:**
 - Avoid ambiguous single words that don't clearly communicate purpose
