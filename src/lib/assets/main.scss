@@ -43,8 +43,16 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	--switch-accent-color: var(--base-accent-color, #{$fallback-accent});
 	// Off / unselected surface — accept either name used across the KeenMate ecosystem
 	--switch-bg-off: var(--base-primary-bg, var(--base-disabled-bg, #{$fallback-bg-off}));
-	--switch-thumb-bg: var(--base-input-bg, #{$fallback-thumb-bg});
-	--switch-thumb-border-color: var(--base-border-color, transparent);
+	// Thumb fill — must contrast with the switch surface in any theme.
+	// `--base-text-color-on-accent` is the cross-library "always-readable on a colored
+	// surface" token (typically #fff in light AND dark themes). We deliberately do NOT
+	// chain through `--base-input-bg` because that would make the thumb match the input
+	// field surface color, which collapses to the page background in dark themes.
+	--switch-thumb-bg: var(--base-text-color-on-accent, #{$fallback-thumb-bg});
+	// Thumb border defaults to transparent. Themes that want a visible thumb border
+	// should set --switch-thumb-border-color directly — tying it to --base-border-color
+	// produced muddy thumbs in dark themes (border color matched the page chrome).
+	--switch-thumb-border-color: transparent;
 	--switch-focus-color: var(--base-accent-color, #{$fallback-focus-color});
 	--switch-focus-ring: 0 0 0 3px var(--switch-focus-color);
 	--switch-border-radius: var(--base-border-radius-sm, #{$border-radius});

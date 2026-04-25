@@ -239,7 +239,8 @@
 		color: #5a3e36;
 	}
 
-	/* Sharp Brutalist */
+	/* Sharp Brutalist — explicitly opts back into a thumb border (the brutalist look
+	   needs the hard outline; the default theme-var layer keeps thumb-border transparent) */
 	.sharp-theme {
 		background: #ffffff;
 		border: 2px solid #000000 !important;
@@ -250,6 +251,7 @@
 		--base-accent-color: #000000;
 		--base-border-radius-sm: 0;
 		--base-shadow-sm: none;
+		--switch-thumb-border-color: #000000;
 	}
 	.sharp-theme h3 {
 		color: #000;

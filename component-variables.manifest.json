@@ -19,14 +19,9 @@
 			"usage": "Fallback for off / unselected switch surface when --base-primary-bg is not set"
 		},
 		{
-			"name": "base-input-bg",
+			"name": "base-text-color-on-accent",
 			"required": false,
-			"usage": "Thumb fill"
-		},
-		{
-			"name": "base-border-color",
-			"required": false,
-			"usage": "Default thumb border color (when itemStyles.thumbBorderColor is not set)"
+			"usage": "Thumb fill — must contrast with the switch surface in any theme (typically white)"
 		},
 		{
 			"name": "base-border-radius-sm",
@@ -74,7 +69,7 @@
 		{
 			"name": "switch-thumb-border-color",
 			"category": "border",
-			"usage": "Default thumb border color"
+			"usage": "Thumb border color (defaults to transparent — set per-theme/per-instance when a visible outline is wanted)"
 		},
 		{ "name": "switch-focus-color", "category": "focus", "usage": "Focus ring color" },
 		{
