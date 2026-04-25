@@ -4,6 +4,8 @@
 @use './theme' as *;
 
 .switch {
+	@include named-sizes;
+
 	position: relative;
 	background-color: var(--current-bg-color, #{$bg-off-chain});
 	border-radius: #{$border-radius-chain};

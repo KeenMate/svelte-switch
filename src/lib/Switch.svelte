@@ -5,12 +5,17 @@
 	import { initLogger, interactionLogger } from './logger.js';
 
 	type Orientation = 'horizontal' | 'vertical';
+	type SizeName = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 	interface Props {
 		checked?: boolean;
 		isDisabled?: boolean;
 		orientation?: Orientation;
-		size?: number;
+		// Named size aligns with pure-admin's form-element heights
+		// (xs=31px, sm=33px, md=35px, lg=38px, xl=41px). Numeric size keeps the
+		// legacy "size in pixels — scaled from natural 32px height via size/50"
+		// behavior for explicit non-form sizing.
+		size?: SizeName | number;
 		items?: readonly [T, T] | null;
 		itemStyles?: ItemStyles;
 		onToggle?: (checked: boolean) => void;
@@ -21,7 +26,7 @@
 		checked = $bindable(false),
 		isDisabled = false,
 		orientation = 'horizontal',
-		size = 50,
+		size = 'md',
 		items = null,
 		itemStyles = [],
 		onToggle,
@@ -29,7 +34,12 @@
 	}: Props = $props();
 
 	const isVertical = $derived(orientation === 'vertical');
-	const scale = $derived(size / 50);
+
+	// Named sizes apply a .size-{name} class which sets --scale via CSS chain
+	// through --base-input-size-{name}-height. Numeric sizes set --scale inline
+	// directly (no class).
+	const sizeClass = $derived(typeof size === 'string' ? `size-${size}` : '');
+	const numericScale = $derived(typeof size === 'number' ? size / 50 : null);
 
 	const index = $derived(checked ? 1 : 0);
 	const item = $derived(itemAt(items, index));
@@ -65,11 +75,11 @@
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	bind:this={rootEl}
-	class="switch"
+	class="switch {sizeClass}"
 	class:checked
 	class:disabled={isDisabled}
 	class:vertical={isVertical}
-	style:--scale={scale}
+	style:--scale={numericScale}
 	style:--current-bg-color={getStyleForIndex(itemStyles, index).backgroundColor ?? null}
 	style:--current-thumb-color={getStyleForIndex(itemStyles, index).thumbColor ?? null}
 	style:--current-thumb-border-color={getStyleForIndex(itemStyles, index).thumbBorderColor ?? null}

@@ -5,6 +5,8 @@
 
 // Container for block mode to handle layout
 .multi-switch-container {
+	@include named-sizes;
+
 	display: inline-block;
 	position: relative;
 

@@ -29,6 +29,13 @@
 			description: 'Per-index itemStyles (array) vs a single shared style (object).'
 		},
 		{
+			href: '/examples/sizes',
+			icon: '📐',
+			title: 'Sizes',
+			description:
+				'Named sizes (xs / sm / md / lg / xl) aligned with pure-admin form-element heights.'
+		},
+		{
 			href: '/examples/theming',
 			icon: '🌈',
 			title: 'Theming',

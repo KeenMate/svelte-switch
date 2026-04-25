@@ -57,6 +57,31 @@
 			"name": "base-font-size-sm",
 			"required": false,
 			"usage": "Label font size coefficient (multiplied by --sw-rem). 1.4 → 14px at default rem; 1.6 → 16px."
+		},
+		{
+			"name": "base-input-size-xs-height",
+			"required": false,
+			"usage": "Switch height coefficient for size='xs'. Default 3.1 → 31px (matches pure-admin XS)."
+		},
+		{
+			"name": "base-input-size-sm-height",
+			"required": false,
+			"usage": "Switch height coefficient for size='sm'. Default 3.3 → 33px (matches pure-admin SM)."
+		},
+		{
+			"name": "base-input-size-md-height",
+			"required": false,
+			"usage": "Switch height coefficient for size='md' (the default size). Default 3.5 → 35px (matches pure-admin Default)."
+		},
+		{
+			"name": "base-input-size-lg-height",
+			"required": false,
+			"usage": "Switch height coefficient for size='lg'. Default 3.8 → 38px (matches pure-admin LG)."
+		},
+		{
+			"name": "base-input-size-xl-height",
+			"required": false,
+			"usage": "Switch height coefficient for size='xl'. Default 4.1 → 41px (matches pure-admin XL)."
 		}
 	],
 	"componentVariables": [
@@ -111,6 +136,31 @@
 			"name": "sw-rem",
 			"category": "sizing",
 			"usage": "Base sizing unit (default 10px). Multiplied by coefficient-based sizes (border-radius, font-size). Set to `1rem` for pure-admin contexts where html { font-size: 10px }."
+		},
+		{
+			"name": "sw-height-xs",
+			"category": "sizing",
+			"usage": "Override the size='xs' height coefficient. Default chains through --base-input-size-xs-height (3.1 → 31px)."
+		},
+		{
+			"name": "sw-height-sm",
+			"category": "sizing",
+			"usage": "Override the size='sm' height coefficient. Default chains through --base-input-size-sm-height (3.3 → 33px)."
+		},
+		{
+			"name": "sw-height-md",
+			"category": "sizing",
+			"usage": "Override the size='md' (default) height coefficient. Default chains through --base-input-size-md-height (3.5 → 35px)."
+		},
+		{
+			"name": "sw-height-lg",
+			"category": "sizing",
+			"usage": "Override the size='lg' height coefficient. Default chains through --base-input-size-lg-height (3.8 → 38px)."
+		},
+		{
+			"name": "sw-height-xl",
+			"category": "sizing",
+			"usage": "Override the size='xl' height coefficient. Default chains through --base-input-size-xl-height (4.1 → 41px)."
 		},
 		{
 			"name": "sw-border-radius",

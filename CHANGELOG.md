@@ -138,6 +138,7 @@ The library reads:
 | `--base-border-radius-sm` | Corner radius (unitless coefficient × `--sw-rem`) |
 | `--base-shadow-sm` | Thumb drop shadow |
 | `--base-font-family` / `--base-font-size-sm` | Label typography (font-size is a coefficient × `--sw-rem`) |
+| `--base-input-size-{xs,sm,md,lg,xl}-height` | Switch height per named size (matches pure-admin form table: 31/33/35/38/41px) |
 
 All compatible with `@keenmate/theme-designer` — themes generated there drop into svelte-switch with no per-component work.
 
@@ -158,6 +159,7 @@ Component-level intermediate layer. Override one switch's thumb without affectin
 | `--sw-focus-color` / `--sw-focus-ring` | `--base-accent-color` |
 | `--sw-rem` | `10px` literal — multiplier for coefficient-based sizes; set to `1rem` for pure-admin |
 | `--sw-border-radius` / `--sw-shadow` | `--base-border-radius-sm` (coefficient × `--sw-rem`) / `--base-shadow-sm` |
+| `--sw-height-{xs,sm,md,lg,xl}` | `--base-input-size-{size}-height` (coefficient × `--sw-rem`) |
 
 `component-variables.manifest.json` at the package root catalogs every variable with category and usage — same schema as the sibling KeenMate libraries.
 
@@ -190,6 +192,12 @@ Vendored `loglevel` + `loglevel-plugin-prefix`, mirroring the sister libraries. 
 
 Default level is `silent` (production-safe). Toggle via `window.components['svelte-switch'].logging.*` from the browser console, or import `enableLogging` / `setLogLevel` / `setCategoryLevel` directly.
 
+### ✨ Added — Named size prop
+
+`size` prop now accepts `'xs' | 'sm' | 'md' | 'lg' | 'xl'` matching pure-admin's form-element height table (31 / 33 / 35 / 38 / 41px). Default size changed from `50` (numeric) to `'md'` (35px) — switches drop into pure-admin forms aligned with neighboring inputs without per-instance configuration.
+
+Numeric `size` still works for explicit non-form sizing (`size={80}` → scale = 80/50). Named sizes apply a `.size-{name}` CSS class that sets `--scale` via the `--base-input-size-{name}-height` chain, so `--base-*` overrides up the tree drive the named heights uniformly.
+
 ### ✨ Added — Demo site
 
 Site restructured to mirror `@keenmate/svelte-treeview`: card-grid landing at `/`, per-topic pages under `/examples/*`. New routes:
@@ -198,6 +206,7 @@ Site restructured to mirror `@keenmate/svelte-treeview`: card-grid landing at `/
 - `/examples/multi` — MultiSwitch axes + keyboard
 - `/examples/labels` — interactive label picker + 16-cell matrix (positions × modes × orientations)
 - `/examples/styled` — `itemStyles` patterns including the priority-levels showcase
+- `/examples/sizes` — pure-admin-aligned named sizes table (xs / sm / md / lg / xl) + numeric examples + pure-admin integration recipe
 - `/examples/theming` — 7 brand presets (Dark, Neon, Audi Sport, Rounded Pink, Sharp Brutalist, Material, Glassmorphism), each with per-theme `itemStyles`
 - `/examples/base-variables` — interactive playground with one row per `--base-*`, color picker + text input + clear button per row, live preview, copy-pasteable CSS export
 

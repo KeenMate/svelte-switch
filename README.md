@@ -289,6 +289,31 @@ by `--sw-rem` (default `10px`). This matches the pattern used by
 For pure-admin integration, set `--sw-rem: 1rem` somewhere up the tree —
 all sizes become rem-based and respect the user's font-size preference.
 
+#### Named sizes
+
+The `size` prop accepts `'xs' | 'sm' | 'md' | 'lg' | 'xl'` (matching
+pure-admin's form-element height table) or a number for explicit sizing.
+Default is `'md'` (35px tall).
+
+```svelte
+<Switch size="xs" />        <!-- 31px tall, matches pure-admin XS input -->
+<Switch size="sm" />        <!-- 33px -->
+<Switch size="md" />        <!-- 35px (default) -->
+<Switch size="lg" />        <!-- 38px -->
+<Switch size="xl" />        <!-- 41px -->
+
+<Switch size={80} />        <!-- numeric: scale = 80 / 50 = 1.6, height = 51.2px -->
+```
+
+Each named size resolves through `--base-input-size-{size}-height` ×
+`--sw-rem`, so per-app overrides via the cross-library cascade work too:
+
+```css
+:root {
+  --base-input-size-md-height: 4.0;  /* default switch becomes 40px tall */
+}
+```
+
 ```svelte
 <div style="--base-accent-color: #8b5cf6; --base-primary-bg: #1f2937;">
   <Switch bind:checked />

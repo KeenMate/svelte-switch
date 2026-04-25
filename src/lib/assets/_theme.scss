@@ -72,6 +72,45 @@ $label-font-size-coeff: var(--sw-label-font-size, var(--base-font-size-sm, 1.4))
 $border-radius-chain: calc(#{$border-radius-coeff} * #{$rem-chain});
 $label-font-size-chain: calc(#{$label-font-size-coeff} * #{$rem-chain});
 
+// Named-size height chains, matching pure-admin's input height table:
+//   xs → 31px (3.1), sm → 33px (3.3), md → 35px (3.5), lg → 38px (3.8), xl → 41px (4.1)
+//
+// Each --sw-height-{size} resolves through --base-input-size-{size}-height
+// (the cross-library convention used by multiselect / daterangepicker / pure-admin),
+// so wrapping a switch in a pure-admin form-size class auto-aligns its height
+// with neighboring inputs of the same size.
+$height-xs-chain: calc(var(--sw-height-xs, var(--base-input-size-xs-height, 3.1)) * #{$rem-chain});
+$height-sm-chain: calc(var(--sw-height-sm, var(--base-input-size-sm-height, 3.3)) * #{$rem-chain});
+$height-md-chain: calc(var(--sw-height-md, var(--base-input-size-md-height, 3.5)) * #{$rem-chain});
+$height-lg-chain: calc(var(--sw-height-lg, var(--base-input-size-lg-height, 3.8)) * #{$rem-chain});
+$height-xl-chain: calc(var(--sw-height-xl, var(--base-input-size-xl-height, 4.1)) * #{$rem-chain});
+
+// Natural unscaled height — the switch's intrinsic dimensions are based on
+// $thumb-height (28) + 2 * $margin (4) = 32px. The .size-* classes set --scale
+// so the resolved height matches the chains above.
+$natural-height: 32px;
+
+// Mixin generating .size-{name} rules that set --scale. Apply at .switch /
+// .multi-switch root level — the existing --scale variable already drives
+// every dimension via SCSS calcs, so just retargeting it does the work.
+@mixin named-sizes {
+	&.size-xs {
+		--scale: calc(#{$height-xs-chain} / #{$natural-height});
+	}
+	&.size-sm {
+		--scale: calc(#{$height-sm-chain} / #{$natural-height});
+	}
+	&.size-md {
+		--scale: calc(#{$height-md-chain} / #{$natural-height});
+	}
+	&.size-lg {
+		--scale: calc(#{$height-lg-chain} / #{$natural-height});
+	}
+	&.size-xl {
+		--scale: calc(#{$height-xl-chain} / #{$natural-height});
+	}
+}
+
 // Step segment surface — chains through theme-designer's accent-light tokens.
 // Conceptually the segments are the track the accent-tinted thumb moves along,
 // so a faint accent tint stays in palette across themes. The -light variants

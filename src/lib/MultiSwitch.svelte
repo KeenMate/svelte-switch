@@ -7,12 +7,17 @@
 	type Orientation = 'horizontal' | 'vertical';
 	type LabelPosition = 'left' | 'right' | 'top' | 'bottom';
 	type LabelRenderMode = 'absolute' | 'block';
+	type SizeName = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 	interface Props {
 		selectedIndex?: number;
 		isDisabled?: boolean;
 		orientation?: Orientation;
-		size?: number;
+		// Named size aligns with pure-admin's form-element heights
+		// (xs=31px, sm=33px, md=35px, lg=38px, xl=41px). Numeric size keeps the
+		// legacy "size in pixels — scaled from natural 32px height via size/50"
+		// behavior for explicit non-form sizing.
+		size?: SizeName | number;
 		itemsCount?: number;
 		items?: readonly T[] | null;
 		itemStyles?: ItemStyles;
@@ -31,7 +36,7 @@
 		selectedIndex = $bindable(0),
 		isDisabled = false,
 		orientation = 'horizontal',
-		size = 50,
+		size = 'md',
 		itemsCount = 3,
 		items = null,
 		itemStyles = [],
@@ -50,7 +55,21 @@
 		resolveLabelText(items, labelMember, labelCallback as never, index);
 
 	const isVertical = $derived(orientation === 'vertical');
-	const scale = $derived(size / 50);
+
+	// Named sizes apply a .size-{name} class which sets --scale via CSS chain
+	// through --base-input-size-{name}-height. Numeric sizes set --scale inline.
+	const sizeClass = $derived(typeof size === 'string' ? `size-${size}` : '');
+	const numericScale = $derived(typeof size === 'number' ? size / 50 : null);
+
+	// scale used for hit-test math (from numeric value or named-size lookup).
+	const NAMED_SCALE: Record<SizeName, number> = {
+		xs: 31 / 32,
+		sm: 33 / 32,
+		md: 35 / 32,
+		lg: 38 / 32,
+		xl: 41 / 32
+	};
+	const scale = $derived(typeof size === 'number' ? size / 50 : NAMED_SCALE[size as SizeName]);
 
 	// When `items` is provided, its length is authoritative and `itemsCount` is ignored.
 	// Falls through to `itemsCount` only when `items` is null/empty.
@@ -191,9 +210,9 @@
 
 <div
 	bind:this={rootEl}
-	class="multi-switch-container"
+	class="multi-switch-container {sizeClass}"
 	class:block-labels={labelRenderMode === 'block' && shouldDisplayLabels}
-	style:--scale={scale}
+	style:--scale={numericScale}
 	style:--steps={effectiveStepsCount}
 >
 	{#if shouldDisplayLabels && labelsGoBefore}
