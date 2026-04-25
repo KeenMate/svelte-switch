@@ -27,6 +27,13 @@
 			icon: '🎨',
 			title: 'Item Styles',
 			description: 'Per-index itemStyles (array) vs a single shared style (object).'
+		},
+		{
+			href: '/examples/theming',
+			icon: '🌈',
+			title: 'Theming',
+			description:
+				'Customize via --base-* variables (cascade from a parent) or per-instance --switch-*.'
 		}
 	];
 

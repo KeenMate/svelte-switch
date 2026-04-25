@@ -1,6 +1,16 @@
 // Main Sass file for Svelte Switch Component
+//
+// Theming model (parity with sibling KeenMate web components):
+//   1. Consumer sets `--base-*` on a parent element (or :root).
+//   2. Component-level `--switch-*` / `--multiswitch-*` resolve through
+//      `var(--base-*, fallback)` so themes cascade automatically.
+//   3. Every component-level variable is also overridable directly by
+//      consumers who want per-instance overrides without touching --base-*.
+//
+// Hardcoded SCSS values below are sizing constants only — colors and
+// theme-related values flow through the variable layer at the bottom.
 
-// Variables
+// Sizing constants
 $border-radius: 4px;
 $margin: 2px; // padding around the thumb on all sides
 $switch-height: 32px;
@@ -8,15 +18,14 @@ $thumb-height: 28px;
 $step-spacing: 2px; // gap between steps in MultiSwitch
 $label-gap: 10px; // distance from switch edge to absolutely-positioned label
 
-// Colors
-$switch-bg-off: #ccc;
-$switch-bg-on: #4299e1;
-$thumb-bg: white;
-$focus-color: rgba(66, 153, 225, 0.5);
+// Color fallbacks — used only when neither --switch-* nor --base-* is set
+$fallback-bg-off: #ccc;
+$fallback-accent: #4299e1;
+$fallback-thumb-bg: #fff;
+$fallback-focus-color: rgba(66, 153, 225, 0.5);
+$fallback-label-color: #666;
+$fallback-label-active-color: #333;
 
-// Default label colors
-$default-label-color: #666;
-$default-label-active-color: #333;
 $default-label-font-size: 14px;
 $default-label-font-weight: normal;
 $default-label-active-font-weight: bold;
@@ -27,6 +36,24 @@ $transition-easing: ease;
 
 // Effects
 $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+// Theme variable layer — applied at component roots so the cascade picks up
+// either --switch-*, --base-*, or the hardcoded fallback in that order.
+@mixin theme-vars {
+	--switch-accent-color: var(--base-accent-color, #{$fallback-accent});
+	--switch-bg-off: var(--base-disabled-bg, #{$fallback-bg-off});
+	--switch-thumb-bg: var(--base-input-bg, #{$fallback-thumb-bg});
+	--switch-thumb-border-color: var(--base-border-color, transparent);
+	--switch-focus-color: var(--base-accent-color, #{$fallback-focus-color});
+	--switch-focus-ring: 0 0 0 3px var(--switch-focus-color);
+	--switch-border-radius: var(--base-border-radius-sm, #{$border-radius});
+	--switch-shadow: var(--base-shadow-sm, #{$shadow});
+
+	--switch-label-color: var(--base-text-color-3, #{$fallback-label-color});
+	--switch-label-active-color: var(--base-text-color-1, #{$fallback-label-active-color});
+	--switch-label-font-family: var(--base-font-family, inherit);
+	--switch-label-font-size: var(--base-font-size-sm, #{$default-label-font-size});
+}
 
 // Calculation Functions
 @function slider-height() {
@@ -55,15 +82,11 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	transition: $property $transition-duration $transition-easing;
 }
 
-// Theming hooks: consumers can override --focus-color / --focus-ring
-// from outside the component scope.
+// Focus ring uses the theme variable (set by `theme-vars`).
 @mixin focus-outline {
-	--focus-color: #{$focus-color};
-	--focus-ring: 0 0 0 3px var(--focus-color);
-
 	&:focus-visible {
 		outline: none;
-		box-shadow: var(--focus-ring);
+		box-shadow: var(--switch-focus-ring);
 	}
 }
 
@@ -76,15 +99,17 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 // Switch Component Styles
 .switch {
+	@include theme-vars;
+
 	position: relative;
-	background-color: var(--current-bg-color, $switch-bg-off);
-	border-radius: $border-radius;
+	background-color: var(--current-bg-color, var(--switch-bg-off));
+	border-radius: var(--switch-border-radius);
 	cursor: pointer;
 	@include transition(background-color);
 	outline: none;
 	user-select: none;
 
-	// Expose Sass calculations as CSS custom properties
+	// Sizing constants exposed as CSS custom properties
 	--thumb-offset: #{thumb-offset()};
 	--margin: #{$margin};
 	--switch-width: #{switch-width()};
@@ -105,12 +130,12 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	.thumb {
 		position: absolute;
-		background-color: var(--current-thumb-color, $thumb-bg);
-		border-radius: $border-radius;
+		background-color: var(--current-thumb-color, var(--switch-thumb-bg));
+		border-radius: var(--switch-border-radius);
 		@include transition(transform);
-		box-shadow: $shadow;
+		box-shadow: var(--switch-shadow);
 
-		border: 1px solid var(--current-thumb-border-color, transparent);
+		border: 1px solid var(--current-thumb-border-color, var(--switch-thumb-border-color));
 
 		width: calc(var(--thumb-height) * var(--scale));
 		height: calc(var(--thumb-height) * var(--scale));
@@ -132,20 +157,21 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 // MultiSwitch Component Styles
 // Container for block mode to handle layout
 .multi-switch-container {
+	@include theme-vars;
+
 	display: inline-block;
 	position: relative;
 
-	// Expose calculations as CSS custom properties (moved here so labels can access them)
-	--multi-switch-width: #{multi-switch-width(3)}; // Default 3 steps
-	--step-offset: #{step-offset(3)}; // Default step offset
+	// Sizing constants exposed as CSS custom properties
+	--multi-switch-width: #{multi-switch-width(3)};
+	--step-offset: #{step-offset(3)};
 	--margin: #{$margin};
 	--thumb-height: #{$thumb-height};
 	--switch-height: #{$switch-height};
 	--step-spacing: #{$step-spacing};
 
-	// Scale factor (default 1, overridden by component)
 	--scale: 1;
-	--steps: 3; // Default steps
+	--steps: 3;
 
 	// In absolute mode, label positioning is relative to the container
 	&:not(.block-labels) {
@@ -301,8 +327,8 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 .multi-switch {
 	position: relative;
-	background-color: $switch-bg-off;
-	border-radius: $border-radius;
+	background-color: var(--switch-bg-off);
+	border-radius: var(--switch-border-radius);
 	cursor: pointer;
 	@include transition(background-color);
 	outline: none;
@@ -311,7 +337,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	// Apply custom background color if provided
 	&:has(.step-segment.active) {
-		background-color: var(--current-bg-color, $switch-bg-off);
+		background-color: var(--current-bg-color, var(--switch-bg-off));
 	}
 
 	// CSS custom properties moved to container level
@@ -347,19 +373,19 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	.thumb {
 		position: absolute;
-		background-color: var(--current-thumb-color, $thumb-bg);
-		border-radius: $border-radius;
+		background-color: var(--current-thumb-color, var(--switch-thumb-bg));
+		border-radius: var(--switch-border-radius);
 		top: calc(var(--margin) * var(--scale));
 		left: calc(var(--margin) * var(--scale));
 		transition:
 			transform $transition-duration $transition-easing,
 			background-color $transition-duration $transition-easing,
 			border-color $transition-duration $transition-easing;
-		box-shadow: $shadow;
+		box-shadow: var(--switch-shadow);
 		z-index: 10; // render above step segments
 
 		// Custom thumb border if provided
-		border: 1px solid var(--current-thumb-border-color, transparent);
+		border: 1px solid var(--current-thumb-border-color, var(--switch-thumb-border-color));
 
 		// Scaled dimensions
 		width: calc(var(--thumb-height) * var(--scale));
@@ -380,7 +406,7 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 	.step-segment {
 		position: absolute;
 		background-color: var(--step-bg-color, rgba(0, 0, 0, 0.1));
-		border-radius: $border-radius;
+		border-radius: var(--switch-border-radius);
 		@include transition(background-color);
 		z-index: 1; // Step segments render below thumb
 
@@ -415,13 +441,14 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 	// Default label styling
 	.default-label {
-		color: $default-label-color;
-		font-size: calc(#{$default-label-font-size} * var(--scale, 1) * 1px);
+		color: var(--switch-label-color);
+		font-family: var(--switch-label-font-family);
+		font-size: calc(var(--switch-label-font-size) * var(--scale, 1));
 		font-weight: $default-label-font-weight;
 		@include transition(color);
 
 		&.active {
-			color: $default-label-active-color;
+			color: var(--switch-label-active-color);
 			font-weight: $default-label-active-font-weight;
 		}
 	}

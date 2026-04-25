@@ -1,6 +1,8 @@
 <script lang="ts" generics="T">
 	import type { Snippet } from 'svelte';
 	import { getStyleForIndex, itemAt, resolveLabelText, type ItemStyles } from './utils.js';
+	import { registerInstance, unregisterInstance } from './instances.js';
+	import { initLogger, interactionLogger } from './logger.js';
 
 	type Orientation = 'horizontal' | 'vertical';
 	type LabelPosition = 'left' | 'right' | 'top' | 'bottom';
@@ -86,9 +88,27 @@
 		return Math.max(0, Math.min(effectiveStepsCount - 1, rawStep));
 	}
 
+	let rootEl: HTMLElement | undefined = $state();
+
+	$effect(() => {
+		if (!rootEl) return;
+		initLogger.debug('MultiSwitch mounted', {
+			size,
+			orientation,
+			itemsCount: effectiveStepsCount,
+			selectedIndex
+		});
+		registerInstance(rootEl);
+		return () => {
+			initLogger.debug('MultiSwitch destroyed');
+			unregisterInstance(rootEl!);
+		};
+	});
+
 	function selectStep(index: number) {
 		if (isDisabled) return;
 		selectedIndex = index;
+		interactionLogger.debug('MultiSwitch select', { index });
 		onItemChange?.(index);
 	}
 
@@ -170,6 +190,7 @@
 {/snippet}
 
 <div
+	bind:this={rootEl}
 	class="multi-switch-container"
 	class:block-labels={labelRenderMode === 'block' && shouldDisplayLabels}
 	style:--scale={scale}

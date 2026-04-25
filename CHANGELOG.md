@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-04-25
+
+Ecosystem-parity release. Adds the same global API surface, theme variable cascade, and categorized logging system used by sibling KeenMate libraries (`@keenmate/web-multiselect`, `@keenmate/web-daterangepicker`). Non-breaking — pure additions.
+
+### ✨ Added
+
+#### `window.components['svelte-switch']` global API
+
+Importing `@keenmate/svelte-switch` (in any environment with a `window` object) registers a global API matching the convention used by the other KeenMate libraries:
+
+```js
+window.components['svelte-switch'].version();           // '2.1.0'
+window.components['svelte-switch'].config;              // { name, version, author, license, repository, homepage }
+window.components['svelte-switch'].getInstances();      // HTMLElement[] — currently mounted root elements
+window.components['svelte-switch'].logging.enableLogging();
+window.components['svelte-switch'].logging.setLogLevel('debug');
+window.components['svelte-switch'].logging.setCategoryLevel('SWITCH:INTERACTION', 'trace');
+```
+
+The sibling web-component libraries also expose `register()` to define their custom element. svelte-switch has nothing to register (it ships Svelte components, not custom elements), so that method is intentionally absent.
+
+#### Categorized logging
+
+A vendored `loglevel` + `loglevel-plugin-prefix` setup mirrors the sister libraries. Three categories:
+
+- `SWITCH:INIT` — component mount / destroy, props snapshot
+- `SWITCH:INTERACTION` — toggle / select events
+- `SWITCH:RENDER` — reserved for derived-state changes (currently unused, exported for future use)
+
+Default level is `silent`. Toggle via `window.components['svelte-switch'].logging`, or import `enableLogging` / `setLogLevel` / `setCategoryLevel` from the package.
+
+#### `--base-*` theme variable cascade
+
+Component CSS now resolves through `var(--base-*, fallback)`. Set `--base-accent-color`, `--base-disabled-bg`, `--base-input-bg`, `--base-border-color`, `--base-border-radius-sm`, `--base-text-color-1`, `--base-text-color-3`, `--base-font-family`, `--base-font-size-sm` on a parent element and every nested switch picks up the theme — same convention as the other KeenMate web components.
+
+The full intermediate variable layer (`--switch-accent-color`, `--switch-bg-off`, `--switch-thumb-bg`, etc.) is also overridable for per-instance styling. See `component-variables.manifest.json` at the package root for the complete list.
+
+#### `getInstances()` instance tracking
+
+Switch and MultiSwitch register their root DOM element in a module-level `Set` on mount and remove it on destroy, queryable via the global API.
+
+#### New example route
+
+`/examples/theming` demonstrates the `--base-*` cascade with two themed sections (violet, emerald-on-dark).
+
+### 🧹 Internal
+
+- Vendored `loglevel-esm.js` + `loglevel-plugin-prefix-esm.js` under `src/lib/vendor/loglevel/` with adjacent `.d.ts` shims, matching the structure used in `web-multiselect`.
+- `package.json` adds `./component-variables.manifest.json` to `exports` and `files`. `sideEffects` includes `./dist/index.js` so consumers' bundlers don't tree-shake the global API registration.
+- `vitest.config.ts` excludes `.svelte-kit/` so tests aren't double-counted (svelte-package mirrors source into `__package__/` which vitest was picking up).
+- `tsconfig.json` excludes `src/lib/vendor/**/*.js` from svelte-check (vendored, plain JS); types still flow via the adjacent `.d.ts` files.
+
 ## [2.0.0] - 2026-04-25
 
 Major release. The internal architecture is unchanged; the public snippet API is reshaped to be consistent across `Switch` and `MultiSwitch`, and the vanilla-JS `update()` escape hatch is removed in favour of Svelte 5's reactive props. Existing consumers using `<Switch bind:checked>` / `<MultiSwitch bind:selectedIndex>` without snippets are unaffected.

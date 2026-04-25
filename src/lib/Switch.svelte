@@ -1,6 +1,8 @@
 <script lang="ts" generics="T">
 	import type { Snippet } from 'svelte';
 	import { getStyleForIndex, itemAt, type ItemStyles } from './utils.js';
+	import { registerInstance, unregisterInstance } from './instances.js';
+	import { initLogger, interactionLogger } from './logger.js';
 
 	type Orientation = 'horizontal' | 'vertical';
 
@@ -32,9 +34,22 @@
 	const index = $derived(checked ? 1 : 0);
 	const item = $derived(itemAt(items, index));
 
+	let rootEl: HTMLElement | undefined = $state();
+
+	$effect(() => {
+		if (!rootEl) return;
+		initLogger.debug('Switch mounted', { size, orientation, checked });
+		registerInstance(rootEl);
+		return () => {
+			initLogger.debug('Switch destroyed');
+			unregisterInstance(rootEl!);
+		};
+	});
+
 	function toggle() {
 		if (isDisabled) return;
 		checked = !checked;
+		interactionLogger.debug('Switch toggle', { checked });
 		onToggle?.(checked);
 	}
 
@@ -49,6 +64,7 @@
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
+	bind:this={rootEl}
 	class="switch"
 	class:checked
 	class:disabled={isDisabled}

@@ -11,6 +11,8 @@ declare global {
 
 	const __VERSION__: string;
 	const __PACKAGE_NAME__: string;
+	const __AUTHOR__: string;
+	const __LICENSE__: string;
 	const __HOMEPAGE__: string;
 	const __REPOSITORY__: string;
 }
