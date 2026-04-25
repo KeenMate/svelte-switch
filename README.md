@@ -273,6 +273,22 @@ Two layers of CSS custom properties drive the visuals — set whichever fits you
 
 Resolution order at every property: **`itemStyles` data** → **`--sw-*`** → **`--base-*`** → hardcoded fallback.
 
+#### Sizing convention
+
+Border-radius and font-size variables are **unitless coefficients** multiplied
+by `--sw-rem` (default `10px`). This matches the pattern used by
+`@keenmate/web-multiselect` (`--ms-rem`), `@keenmate/web-daterangepicker`
+(`--drp-rem`), and `@keenmate/pure-admin` (`html { font-size: 10px }`):
+
+```css
+--base-border-radius-sm: 0.4;    /* × 10px = 4px */
+--base-border-radius-sm: 2.4;    /* × 10px = 24px (pillow corners) */
+--base-font-size-sm: 1.6;        /* × 10px = 16px */
+```
+
+For pure-admin integration, set `--sw-rem: 1rem` somewhere up the tree —
+all sizes become rem-based and respect the user's font-size preference.
+
 ```svelte
 <div style="--base-accent-color: #8b5cf6; --base-primary-bg: #1f2937;">
   <Switch bind:checked />

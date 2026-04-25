@@ -33,7 +33,8 @@
 			kind: 'color',
 			default: 'rgba(59, 130, 246, 0.1)',
 			colorDefault: '#dbeafe',
-			usage: 'Inactive MultiSwitch step segments. Picker = full-opacity tint; text input = rgba for alpha control'
+			usage:
+				'Inactive MultiSwitch step segments. Picker = full-opacity tint; text input = rgba for alpha control'
 		},
 		{
 			name: '--base-accent-color-light-hover',
@@ -69,8 +70,9 @@
 		{
 			name: '--base-border-radius-sm',
 			kind: 'text',
-			default: '4px',
-			usage: 'Corner radius for switch, thumb, segments'
+			default: '0.4',
+			usage:
+				'Corner radius coefficient (× --sw-rem). 0.4 → 4px at default rem; 2.4 → 24px (pillow); 0 → sharp.'
 		},
 		{
 			name: '--base-shadow-sm',
@@ -81,14 +83,23 @@
 		{
 			name: '--base-font-size-sm',
 			kind: 'text',
-			default: '14px',
-			usage: 'Base label font size (scales with switch size)'
+			default: '1.4',
+			usage: 'Label font-size coefficient (× --sw-rem). 1.4 → 14px at default rem; 1.6 → 16px.'
 		},
 		{
 			name: '--base-font-family',
 			kind: 'text',
 			default: 'inherit',
 			usage: 'Label font family'
+		},
+		// --sw-rem isn't --base-*, but it's the multiplier for every coefficient
+		// above so it belongs in the playground for full control.
+		{
+			name: '--sw-rem',
+			kind: 'text',
+			default: '10px',
+			usage:
+				'Base sizing unit. Multiplies coefficient-based sizes (border-radius, font-size). Use 1rem in pure-admin contexts where html { font-size: 10px }.'
 		}
 	];
 

@@ -135,9 +135,9 @@ The library reads:
 | `--base-border-color` | Default border color |
 | `--base-text-color-1` / `--base-text-color-3` | Active / inactive label text |
 | `--base-accent-color-light` / `--base-accent-color-light-hover` | MultiSwitch step segment surfaces (the "placeholder" boxes) |
-| `--base-border-radius-sm` | Corner radius |
+| `--base-border-radius-sm` | Corner radius (unitless coefficient × `--sw-rem`) |
 | `--base-shadow-sm` | Thumb drop shadow |
-| `--base-font-family` / `--base-font-size-sm` | Label typography |
+| `--base-font-family` / `--base-font-size-sm` | Label typography (font-size is a coefficient × `--sw-rem`) |
 
 All compatible with `@keenmate/theme-designer` — themes generated there drop into svelte-switch with no per-component work.
 
@@ -156,7 +156,8 @@ Component-level intermediate layer. Override one switch's thumb without affectin
 | `--sw-label-color` / `--sw-label-active-color` | `--base-text-color-3` / `-1` |
 | `--sw-label-hover-bg` / `--sw-label-hover-bg-active` | hardcoded light-theme tints |
 | `--sw-focus-color` / `--sw-focus-ring` | `--base-accent-color` |
-| `--sw-border-radius` / `--sw-shadow` | `--base-border-radius-sm` / `--base-shadow-sm` |
+| `--sw-rem` | `10px` literal — multiplier for coefficient-based sizes; set to `1rem` for pure-admin |
+| `--sw-border-radius` / `--sw-shadow` | `--base-border-radius-sm` (coefficient × `--sw-rem`) / `--base-shadow-sm` |
 
 `component-variables.manifest.json` at the package root catalogs every variable with category and usage — same schema as the sibling KeenMate libraries.
 

@@ -146,7 +146,7 @@
   --base-primary-bg: #1f2937;       /* off-state surface */
   --base-input-bg: #f9fafb;         /* thumb */
   --base-border-color: #4b5563;
-  --base-border-radius-sm: 12px;
+  --base-border-radius-sm: 1.2;     /* coefficient × --sw-rem (default 10px) → 12px */
   --base-text-color-3: #9ca3af;     /* inactive label */
   --base-text-color-1: #f9fafb;     /* active label */
 }`}</pre>
@@ -297,7 +297,7 @@
 		--base-border-color: #d0d0d0;
 		--base-primary-bg: #f5f5f5;
 		--base-accent-color: #bb0a30;
-		--base-border-radius-sm: 2px;
+		--base-border-radius-sm: 0.2;
 	}
 	.audi-theme h3 {
 		color: #bb0a30;
@@ -313,7 +313,7 @@
 		--base-border-color: #f0d0c0;
 		--base-primary-bg: #ffe5dc;
 		--base-accent-color: #ff6b9d;
-		--base-border-radius-sm: 24px;
+		--base-border-radius-sm: 2.4;
 	}
 	.rounded-theme h3,
 	.rounded-theme p {
@@ -348,7 +348,7 @@
 		--base-border-color: #e0e0e0;
 		--base-primary-bg: #f5f5f5;
 		--base-accent-color: #1976d2;
-		--base-border-radius-sm: 4px;
+		--base-border-radius-sm: 0.4;
 	}
 
 	/* Glassmorphism */
@@ -362,7 +362,7 @@
 		--base-border-color: rgba(255, 255, 255, 0.3);
 		--base-input-bg: rgba(255, 255, 255, 0.15);
 		--base-primary-bg: rgba(255, 255, 255, 0.25);
-		--base-border-radius-sm: 12px;
+		--base-border-radius-sm: 1.2;
 		/* Segment hints — white-tinted on the translucent gradient */
 		--sw-step-bg: rgba(255, 255, 255, 0.15);
 		--sw-step-bg-active: rgba(255, 255, 255, 0.3);

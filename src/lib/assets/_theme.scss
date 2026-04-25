@@ -46,7 +46,6 @@ $bg-on-chain: var(--sw-bg-on, var(--base-accent-color, #{$fallback-accent}));
 $thumb-bg-chain: var(--sw-thumb-bg, var(--base-text-color-on-accent, #{$fallback-thumb-bg}));
 $thumb-border-chain: var(--sw-thumb-border-color, transparent);
 $focus-color-chain: var(--sw-focus-color, var(--base-accent-color, #{$fallback-focus-color}));
-$border-radius-chain: var(--sw-border-radius, var(--base-border-radius-sm, #{$border-radius}));
 $shadow-chain: var(--sw-shadow, var(--base-shadow-sm, #{$shadow}));
 $label-color-chain: var(--sw-label-color, var(--base-text-color-3, #{$fallback-label-color}));
 $label-active-color-chain: var(
@@ -54,10 +53,24 @@ $label-active-color-chain: var(
 	var(--base-text-color-1, #{$fallback-label-active-color})
 );
 $label-font-family-chain: var(--sw-label-font-family, var(--base-font-family, inherit));
-$label-font-size-chain: var(
-	--sw-label-font-size,
-	var(--base-font-size-sm, #{$default-label-font-size})
-);
+
+// --sw-rem is the base sizing unit for coefficient-based sizes (border-radius,
+// font-size). Default 10px matches the convention used by --ms-rem (multiselect),
+// --drp-rem (daterangepicker), and pure-admin's html { font-size: 10px }. Set to
+// `1rem` when nesting svelte-switch inside a pure-admin context so all sizes
+// scale with the user's font-size preference; set to any other value (px or rem)
+// for proportional scaling of every coefficient-driven dimension at once.
+//
+// Coefficient values follow the theme-designer convention:
+//   border-radius-sm: 0.4 → 4px (default)
+//   font-size-sm:     1.4 → 14px (default)
+$rem-chain: var(--sw-rem, 10px);
+$border-radius-coeff: var(--sw-border-radius, var(--base-border-radius-sm, 0.4));
+$label-font-size-coeff: var(--sw-label-font-size, var(--base-font-size-sm, 1.4));
+
+// Resolved (coefficient × rem) — use these in property declarations.
+$border-radius-chain: calc(#{$border-radius-coeff} * #{$rem-chain});
+$label-font-size-chain: calc(#{$label-font-size-coeff} * #{$rem-chain});
 
 // Step segment surface — chains through theme-designer's accent-light tokens.
 // Conceptually the segments are the track the accent-tinted thumb moves along,

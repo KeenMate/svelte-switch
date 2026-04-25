@@ -31,7 +31,7 @@
 		{
 			"name": "base-border-radius-sm",
 			"required": false,
-			"usage": "Corner radius of the switch shell, thumb, and step segments"
+			"usage": "Corner radius coefficient (multiplied by --sw-rem). 0.4 → 4px at default rem; 2.4 → pillow corners; 0 → sharp."
 		},
 		{
 			"name": "base-shadow-sm",
@@ -56,7 +56,7 @@
 		{
 			"name": "base-font-size-sm",
 			"required": false,
-			"usage": "Base font size for default labels (scales with switch size)"
+			"usage": "Label font size coefficient (multiplied by --sw-rem). 1.4 → 14px at default rem; 1.6 → 16px."
 		}
 	],
 	"componentVariables": [
@@ -108,9 +108,14 @@
 			"usage": "Full focus ring shorthand (box-shadow)"
 		},
 		{
+			"name": "sw-rem",
+			"category": "sizing",
+			"usage": "Base sizing unit (default 10px). Multiplied by coefficient-based sizes (border-radius, font-size). Set to `1rem` for pure-admin contexts where html { font-size: 10px }."
+		},
+		{
 			"name": "sw-border-radius",
 			"category": "radius",
-			"usage": "Corner radius for switch, thumb, and step segments"
+			"usage": "Corner radius coefficient (multiplied by --sw-rem). Same convention as --base-border-radius-sm."
 		},
 		{ "name": "sw-shadow", "category": "elevation", "usage": "Thumb drop shadow" },
 		{ "name": "sw-label-color", "category": "label", "usage": "Inactive label text color" },
