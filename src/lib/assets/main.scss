@@ -41,7 +41,8 @@ $shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 // either --switch-*, --base-*, or the hardcoded fallback in that order.
 @mixin theme-vars {
 	--switch-accent-color: var(--base-accent-color, #{$fallback-accent});
-	--switch-bg-off: var(--base-disabled-bg, #{$fallback-bg-off});
+	// Off / unselected surface — accept either name used across the KeenMate ecosystem
+	--switch-bg-off: var(--base-primary-bg, var(--base-disabled-bg, #{$fallback-bg-off}));
 	--switch-thumb-bg: var(--base-input-bg, #{$fallback-thumb-bg});
 	--switch-thumb-border-color: var(--base-border-color, transparent);
 	--switch-focus-color: var(--base-accent-color, #{$fallback-focus-color});

@@ -9,9 +9,14 @@
 			"usage": "Accent color used for focus ring and (when no itemStyles) the active state"
 		},
 		{
+			"name": "base-primary-bg",
+			"required": false,
+			"usage": "Background of the off / unselected switch surface (preferred name)"
+		},
+		{
 			"name": "base-disabled-bg",
 			"required": false,
-			"usage": "Background of the off / unselected switch surface"
+			"usage": "Fallback for off / unselected switch surface when --base-primary-bg is not set"
 		},
 		{
 			"name": "base-input-bg",
@@ -55,24 +60,76 @@
 		}
 	],
 	"componentVariables": [
-		{ "name": "switch-accent-color", "category": "accent", "usage": "Accent color (focus ring, active state)" },
-		{ "name": "switch-bg-off", "category": "surface", "usage": "Switch background when off / not on selected step" },
+		{
+			"name": "switch-accent-color",
+			"category": "accent",
+			"usage": "Accent color (focus ring, active state)"
+		},
+		{
+			"name": "switch-bg-off",
+			"category": "surface",
+			"usage": "Switch background when off / not on selected step"
+		},
 		{ "name": "switch-thumb-bg", "category": "surface", "usage": "Thumb fill color" },
-		{ "name": "switch-thumb-border-color", "category": "border", "usage": "Default thumb border color" },
+		{
+			"name": "switch-thumb-border-color",
+			"category": "border",
+			"usage": "Default thumb border color"
+		},
 		{ "name": "switch-focus-color", "category": "focus", "usage": "Focus ring color" },
-		{ "name": "switch-focus-ring", "category": "focus", "usage": "Full focus ring shorthand (box-shadow)" },
-		{ "name": "switch-border-radius", "category": "radius", "usage": "Corner radius for switch, thumb, and step segments" },
+		{
+			"name": "switch-focus-ring",
+			"category": "focus",
+			"usage": "Full focus ring shorthand (box-shadow)"
+		},
+		{
+			"name": "switch-border-radius",
+			"category": "radius",
+			"usage": "Corner radius for switch, thumb, and step segments"
+		},
 		{ "name": "switch-shadow", "category": "elevation", "usage": "Thumb drop shadow" },
 		{ "name": "switch-label-color", "category": "label", "usage": "Inactive label text color" },
-		{ "name": "switch-label-active-color", "category": "label", "usage": "Active label text color" },
+		{
+			"name": "switch-label-active-color",
+			"category": "label",
+			"usage": "Active label text color"
+		},
 		{ "name": "switch-label-font-family", "category": "label", "usage": "Label font family" },
-		{ "name": "switch-label-font-size", "category": "label", "usage": "Label base font size (scales with --scale)" },
-		{ "name": "current-bg-color", "category": "per-step", "usage": "Per-instance background color (set via itemStyles.backgroundColor)" },
-		{ "name": "current-thumb-color", "category": "per-step", "usage": "Per-instance thumb color (set via itemStyles.thumbColor)" },
-		{ "name": "current-thumb-border-color", "category": "per-step", "usage": "Per-instance thumb border (set via itemStyles.thumbBorderColor)" },
-		{ "name": "step-bg-color", "category": "per-step", "usage": "Per-step segment background (set via itemStyles[index].backgroundColor)" },
-		{ "name": "step-border-color", "category": "per-step", "usage": "Per-step segment border (set via itemStyles[index].thumbBorderColor)" },
+		{
+			"name": "switch-label-font-size",
+			"category": "label",
+			"usage": "Label base font size (scales with --scale)"
+		},
+		{
+			"name": "current-bg-color",
+			"category": "per-step",
+			"usage": "Per-instance background color (set via itemStyles.backgroundColor)"
+		},
+		{
+			"name": "current-thumb-color",
+			"category": "per-step",
+			"usage": "Per-instance thumb color (set via itemStyles.thumbColor)"
+		},
+		{
+			"name": "current-thumb-border-color",
+			"category": "per-step",
+			"usage": "Per-instance thumb border (set via itemStyles.thumbBorderColor)"
+		},
+		{
+			"name": "step-bg-color",
+			"category": "per-step",
+			"usage": "Per-step segment background (set via itemStyles[index].backgroundColor)"
+		},
+		{
+			"name": "step-border-color",
+			"category": "per-step",
+			"usage": "Per-step segment border (set via itemStyles[index].thumbBorderColor)"
+		},
 		{ "name": "scale", "category": "sizing", "usage": "Size multiplier (size / 50)" },
-		{ "name": "steps", "category": "sizing", "usage": "Number of steps in MultiSwitch (auto-set from props)" }
+		{
+			"name": "steps",
+			"category": "sizing",
+			"usage": "Number of steps in MultiSwitch (auto-set from props)"
+		}
 	]
 }
